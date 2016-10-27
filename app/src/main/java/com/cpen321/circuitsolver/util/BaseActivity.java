@@ -5,12 +5,23 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import org.opencv.android.OpenCVLoader;
 
 /**
  * Created by Neil Goossen on 2016-10-15.
  */
 
 public class BaseActivity extends AppCompatActivity{
+
+    static{
+        if(!OpenCVLoader.initDebug()){
+            Log.i("opencv","opencv init failed");
+        }else{
+            Log.i("opencv","opencv init success");
+        }
+    }
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final int READ_IAMGE_ACTIVITY_REQUEST_CODE = 50;
@@ -32,6 +43,8 @@ public class BaseActivity extends AppCompatActivity{
             }
         }
     }
+
+
 
 
 }

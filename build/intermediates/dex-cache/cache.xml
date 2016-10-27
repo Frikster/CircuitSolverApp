@@ -2,130 +2,184 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-8407c181788f53d308cd185ddd16a26b5f6af152.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\25.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="5e497d60f0cb6ce87c458ac5420a46d0fed49bd0">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-24a6cb0fa6fbf81b4afa6f2535f8e5adc021b64b.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\transition\25.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="0c6d948e6cb9ea6f535d175fb61ba2930719c0e9">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-df2932d3c668950e4256ee9a3228c0ff342efa4a.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.0.0\support-annotations-25.0.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\support-annotations-25.0.0-81f3365a76974db5eb67aeba0df80a5fa61c54cc.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-f50c8adbe981da7da14309b13cfa24f03f98af62.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-4daf30fe1f08648dd065f37b325079b4997b33d6.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
         sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-d3fb4b684ca3ba5ce216002d4da42badc58bbf8a.jar" />
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_1811809735f718eb0a6134f40b7fdb01318dcc8a\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.0.0\support-annotations-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
-        sha1="26674000177e45447a0326a6ad84612761199a13">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-dc03ca6f2ffe2a791d69342c8fdfc571a4817dc5.jar" />
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-25.0.0_57ad02c5537102272b61cb3844c8fb34ba3d677d\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
-        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-fc55cf432809652d49c392754e909cb8a1e78978.jar" />
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-media-compat-25.0.0_3a4d2afb973fff8de726373b146365cc48c3b7cf\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
         sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-d6b7872ff8ed7bbac7ab2ff5f3dd14250b3659b0.jar" />
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_f5055f5b014857fb78262d2b5c6ba2c54240d2c3\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.0.0\jars\classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
-        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-f426834407c5571635c751aed59bcaee02c393da.jar" />
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-utils-25.0.0_09507ee96945332e1705f01049357cdf0806ebee\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-3eaee1bebc6acf741d45a84758f58ce42a0ceadd.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
         sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-b453946ea74af08d138a17c531d4db975ae8220d.jar" />
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-25.0.0_02962c21772e87ce6567be465adc63a7c96ea305\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.0.0\jars\classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
         sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-e151ca8e0e805b1da12428ea26778e4c1b3b0070.jar" />
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-animated-vector-drawable-25.0.0_e2181e44dffaf3f9ff2846e268bb41fd51c87a25\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\libs\internal_impl-25.0.0.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-c796e3c94b7b7dcab58e641b2bbbe9e2408ed603.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\design\25.0.0\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.1"
-        sha1="26384be22ddc74cfe197ebda9edbc7d1fd8bd537">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-5f2d2129c7f403ebb5ad09a34d6dcc5796e7d62a.jar" />
-    </item>
-    <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
         sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-c5d625b2488bbd6e529a0848394fece79a903a7f.jar" />
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-vector-drawable-25.0.0_df0f66b421650fdec535afb15437eca42b564956\classes.dex" />
     </item>
     <item
-        jar="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\classes.jar"
-        jumboMode="false"
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_cf3dc08cb638bf2b153a9c43be449210bfcdb5ed\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_3a9ee784977bc87d64f9b78f41827b916137f122\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="5e497d60f0cb6ce87c458ac5420a46d0fed49bd0">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-recyclerview-v7-25.0.0_3290c15044bb56d6cecb78cb6c7cc8010e96ee4d\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="c4000e6fa29f51046d3a23b96154cbc453c9c8fe">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_5be43b1f5b60dc934c91cf87cefa245fd342cd6a\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-25.0.0_d607ac98bf756ab01d931a7cdc835b20ce50f4da\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\design\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="26384be22ddc74cfe197ebda9edbc7d1fd8bd537">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-25.0.0_28d8b3ddf46bcbddec6245df3c2c1944a31d18c9\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-core-ui-25.0.0_bce66279c08305546bc3c079b9b43f32d65032a2\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="ae7846742c54bed80cfef22d2a1a52031d597e9e">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_18d222dd0a50feb4816a97b52c31b4bfcd1f0e27\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-fragment-25.0.0_43b2d7ffd669396228345dae884ebd9e341ac331\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\transition\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="0c6d948e6cb9ea6f535d175fb61ba2930719c0e9">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-transition-25.0.0_028eb62fa957635ea805841502bedc0c09d8df78\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
         revision="23.0.1"
         sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
-        <dex dex="C:\Users\Neil\test\CircuitSolverApp\app\build\intermediates\pre-dexed\debug\classes-9a46f9f93286f701b4d67bbba0c7a364e0cf7da0.jar" />
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-compat-25.0.0_12e4344d0b7e1fa3537f9aaeccf284f18e739184\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.0.0\jars\classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="23.0.1"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Users\Simon\Documents\Vancouver\School\CPEN 321\GitHub\CircuitSolverApp\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-25.0.0_6b6342c55ec6101a6b89c273c64aea87e1c2f6d0\classes.dex" />
     </item>
 
 </items>

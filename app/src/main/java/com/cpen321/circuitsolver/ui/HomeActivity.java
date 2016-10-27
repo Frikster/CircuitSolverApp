@@ -11,11 +11,15 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.opencv.MainOpencv;
 import com.cpen321.circuitsolver.util.BaseActivity;
 import com.cpen321.circuitsolver.util.Constants;
 
@@ -39,9 +43,40 @@ public class HomeActivity extends BaseActivity {
 
     private Uri tmpImageLocation;
 
+    /*Button loadBtn;
+    ImageView myIm;
+
+    TextView loadingMsg;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MainOpencv main = new MainOpencv();
+        Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.mipmap.circuittest2);
+        Bitmap m = main.houghLines(bMap);
+
+        /*super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+
+        loadBtn = (Button) findViewById(R.id.button);
+        myIm = (ImageView) findViewById(R.id.myImage);
+        loadingMsg = (TextView) findViewById(R.id.textView);*/
+
+
+        /*loadBtn.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+                MainOpencv main = new MainOpencv();
+                loadBtn.setEnabled(false);
+                Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.mipmap.circuittest2);
+                Bitmap m = main.houghLines(bMap);
+                myIm.setImageBitmap(m);
+                loadingMsg.setVisibility(View.INVISIBLE);
+            }
+        });*/
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -66,6 +101,8 @@ public class HomeActivity extends BaseActivity {
             }
         });
     }
+
+
 
     // TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE (NOT MY OWN CODE)
 
@@ -103,7 +140,7 @@ public class HomeActivity extends BaseActivity {
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
-                storageDir      /* directory */
+                storageDir      /* directory*/
         );
 
         // Save a file: path for use with ACTION_VIEW intents
@@ -187,5 +224,8 @@ public class HomeActivity extends BaseActivity {
 
         return thumbnails;
     }
+
+
+
 
 }
