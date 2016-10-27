@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.Date;
 
 public class HomeActivity extends BaseActivity {
-    private static final String APP_NAME = "com.cpen321.circuitsolver.ui.CameraActivity";
+    private static final String APP_NAME = "com.cpen321.circuitsolver";
 
     String mCurrentPhotoPath;
 
@@ -73,6 +73,8 @@ public class HomeActivity extends BaseActivity {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            System.out.println("BLBASDFLHJASGDKJLHKLAJSDH");
+
             // Create the File where the photo should go
             File photoFile = null;
             try {
@@ -163,6 +165,8 @@ public class HomeActivity extends BaseActivity {
             try{
                 FileInputStream inStream = new FileInputStream(image);
                 Bitmap thumbnail = BitmapFactory.decodeStream(inStream);
+                if (thumbnail == null)
+                    continue;
                 int width = thumbnail.getWidth();
                 int height = thumbnail.getHeight();
                 final int scaleToHeight = 600;

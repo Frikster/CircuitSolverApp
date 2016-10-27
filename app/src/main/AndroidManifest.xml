@@ -31,7 +31,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.cpen321.circuitsolver.ui.CameraActivity"
+            android:authorities="com.cpen321.circuitsolver"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

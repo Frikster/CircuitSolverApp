@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">CircuitSolver</string>
-
-    <string name="appbar_scrolling_view_behavior"></string>
+    <string name="app_name">Circuit Solver</string>
 
     <string name="take_picture">Take Picture</string>
     <string name="title_activity_home">Circuit Solver</string>
