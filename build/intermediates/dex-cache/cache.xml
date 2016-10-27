@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="5e497d60f0cb6ce87c458ac5420a46d0fed49bd0">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-10a79d632fbb5d5c00704077160efd40c6ae7c61.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\design\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="26384be22ddc74cfe197ebda9edbc7d1fd8bd537">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-0d303a52e8e5866f6c0ad1d3c0cbeb6fb52e68d5.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.0.0\support-annotations-25.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="a22d2cc94da87b254451fa8ed28afc30b4653773">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\support-annotations-25.0.0-81f3365a76974db5eb67aeba0df80a5fa61c54cc.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="665d21a8a069c96b4d9e8b434f5096d865b4e261">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-c3b464ceb06202c8fa3615f21ec02b2fc3a0b537.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="75b1f366ff0bbc78f8b1f7cf0dc82e7c53afef6a">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-ea67b973021e171ac11a3c60dda0c2602f656c6a.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="07daa0b6e1d455c82a38422ffe287c18823d339a">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-6835b6663e49965b82eb37a1a7a6c9a1ab0e62e9.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="8bc45ce1f63d1a391fd38b32a201be5a42f9c95d">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-424d4175764bbdd58df0a5a8483ad6aec9754508.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-v4\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-333008f3ca3338d61580189cbe20da901ea86c68.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="d29714cc76b38157e3cbd034c66e1ec808eb4c19">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-5f2d39ba16d3833c34dddbeea095a31ec29a7b7a.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="4ccbcda5c72027c7f7c14be9ff8640d9cb0d8da0">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-0360071ab98bab59d61311b93eca79e424e97cbc.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-fragment\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="ee5faf4dee5b6a4364bf51587871047dde7c703a">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-4f36fd0a2a003806a64d136796c319e6c1fb8f08.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="3b61a70884adaf0be3fc06c70c801e3e6df13133">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-d62a703db235339963cc4738f02f37cec3e8cd7b.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="26674000177e45447a0326a6ad84612761199a13">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-c41224e2042401327293a6a50d13465a27dc92c8.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="76fb65a4b41ea42dab8a1310ed772a2420c96b52">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-bf1918430f152492327bb9b1c544accb3069fafd.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="53a420cd4f49274db6bd43475f8006ba67ef6bbd">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-bb4bf25b23a3623c6718ed9f933a4524f3b47874.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-compat\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="f2e3b9bc1ec25f652e8007ce7774c991e38f6a00">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-20f7472414e8f481113794c163d254a73bf425dc.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\transition\25.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="0c6d948e6cb9ea6f535d175fb61ba2930719c0e9">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\classes-32e6539ce4442eae67f28eed37a8c8a2c07bd70e.jar" />
+    </item>
+    <item
+        jar="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.0.0\jars\libs\internal_impl-25.0.0.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="e5343c9d19cb19ff55f6b268c7f3fe8c9d224f6f">
+        <dex dex="C:\Users\Neil\complete_circuit_solver\app\build\intermediates\pre-dexed\debug\internal_impl-25.0.0-a40653a699b1e4e2cc09b596e1b916448f44a218.jar" />
+    </item>
+
+</items>

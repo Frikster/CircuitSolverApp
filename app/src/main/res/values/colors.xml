@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#a62d2b</color>
+    <color name="colorPrimaryDark">#701113</color>
+    <color name="colorAccent">#a62d2b</color>
+    <color name="backgroundGray">#f2f2f2</color>
+
+    <!--Circuit Colours-->
+    <color name="circuitBackground">#f0f0f0</color>
+
+
 </resources>

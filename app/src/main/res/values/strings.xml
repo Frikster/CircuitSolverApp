@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">CircuitSolverApp</string>
+    <string name="app_name">CircuitSolver</string>
+
+    <string name="appbar_scrolling_view_behavior"></string>
+
+    <string name="take_picture">Take Picture</string>
+    <string name="title_activity_home">Circuit Solver</string>
+    <string name="saved_circuits">Saved Circuits:</string>
+    <string name="example_circuits">Example Circuits:</string>
+    <string name="title_activity_analysis">AnalysisActivity</string>
 </resources>
