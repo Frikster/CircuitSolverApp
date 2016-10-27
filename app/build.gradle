@@ -33,4 +33,5 @@ dependencies {
     compile project(':libraries:opencv')
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'org.testng:testng:6.9.6'
 }
