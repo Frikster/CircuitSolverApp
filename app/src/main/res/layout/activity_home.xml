@@ -32,11 +32,11 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/cam_icon" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_to_ui"
-        app:layout_anchorGravity="center_vertical|left"
-        android:layout_gravity="center_vertical|center_horizontal" />
+    <!--<Button-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/button_to_ui"-->
+        <!--app:layout_anchorGravity="center_vertical|left"-->
+        <!--android:layout_gravity="center_vertical|center_horizontal" />-->
 
 </android.support.design.widget.CoordinatorLayout>
