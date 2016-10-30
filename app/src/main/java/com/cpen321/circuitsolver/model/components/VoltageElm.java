@@ -1,7 +1,7 @@
 package com.cpen321.circuitsolver.model.components;
 
-import android.graphics.Point;
 
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.util.Constants;
 
 /**
@@ -11,7 +11,7 @@ public class VoltageElm extends CircuitElm {
 
     private double voltage;
 
-    public VoltageElm(Point p1, Point p2, double voltage){
+    public VoltageElm(SimplePoint p1, SimplePoint p2, double voltage){
         super(p1, p2);
         this.voltage = voltage;
     }

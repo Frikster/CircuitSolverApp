@@ -1,7 +1,7 @@
 package com.cpen321.circuitsolver.model.components;
 
-import android.graphics.Point;
 
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.util.Constants;
 
 /**
@@ -9,7 +9,7 @@ import com.cpen321.circuitsolver.util.Constants;
  */
 public class WireElm extends CircuitElm {
 
-    public WireElm(Point p1, Point p2){
+    public WireElm(SimplePoint p1, SimplePoint p2){
         super(p1, p2);
     }
 

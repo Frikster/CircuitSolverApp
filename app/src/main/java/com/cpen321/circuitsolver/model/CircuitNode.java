@@ -1,7 +1,5 @@
 package com.cpen321.circuitsolver.model;
 
-import android.graphics.Point;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +9,7 @@ import java.util.List;
  */
 public class CircuitNode {
 
-    private List<Point> points = new ArrayList<Point>();
+    private List<SimplePoint> points = new ArrayList<SimplePoint>();
     private boolean isValidVoltage;
     private double voltage;
 
@@ -42,13 +40,13 @@ public class CircuitNode {
      * @param p the point to check
      * @return true if node coresponds to the given point, false otherwise
      */
-    public boolean correspondsToPoint(Point p){
+    public boolean correspondsToPoint(SimplePoint p){
         if(points.contains(p))
             return true;
         return false;
     }
 
-    public void addPoint(Point p){
+    public void addPoint(SimplePoint p){
         points.add(p);
     }
 
@@ -56,12 +54,12 @@ public class CircuitNode {
      * Appends the points to CircuitNode's list of points
      * @param points
      */
-    public void addPoints(List<Point> points){
+    public void addPoints(List<SimplePoint> points){
         //Rep invariant: parameter points should not be modified
         this.points.addAll(points);
     }
 
-    public List<Point> getPoints(){
+    public List<SimplePoint> getPoints(){
         return Collections.unmodifiableList(points);
     }
 
@@ -69,7 +67,7 @@ public class CircuitNode {
     public String toString(){
         StringBuilder s = new StringBuilder();
         s.append("CircuitNode: {");
-        for(Point p: points){
+        for(SimplePoint p: points){
             s.append(p.toString());
         }
         s.append("}");
@@ -82,7 +80,7 @@ public class CircuitNode {
         if(other instanceof CircuitNode){
             if(points.size() != ((CircuitNode) other).getPoints().size())
                 return false;
-            for(Point p: points){
+            for(SimplePoint p: points){
                 if(!((CircuitNode) other).getPoints().contains(p)){
                     return false;
                 }

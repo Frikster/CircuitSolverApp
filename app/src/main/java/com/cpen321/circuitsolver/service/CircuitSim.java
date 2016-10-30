@@ -1,8 +1,8 @@
 package com.cpen321.circuitsolver.service;
 
-import android.graphics.Point;
 
 import com.cpen321.circuitsolver.model.CircuitNode;
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
 
@@ -34,8 +34,8 @@ public class CircuitSim {
         for(CircuitElm e: elements){
             //Wire elements are technically part of one node (voltage is the same at both ends)
             if(e.getType().equals(Constants.WIRE)){
-                Point p1 = e.getPoint(0);
-                Point p2 = e.getPoint(1);
+                SimplePoint p1 = e.getPoint(0);
+                SimplePoint p2 = e.getPoint(1);
                 CircuitNode cn;
                 //if p1 corresponds to node but p2 doesn't, then add p2 to corresponding node
                 if(nodesContainPoint(p1) && !nodesContainPoint(p2)) {
@@ -73,7 +73,7 @@ public class CircuitSim {
             //Handle node allocation for all circuit elements other than wires...
             else{
                 for(int i = 0; i < e.getNumPoints(); i++){
-                    Point p = e.getPoint(i);
+                    SimplePoint p = e.getPoint(i);
                     CircuitNode cn;
                     if(nodesContainPoint(p)){
                         cn = getNodeWithPoint(p);
@@ -93,7 +93,7 @@ public class CircuitSim {
 
     }
 
-    private boolean nodesContainPoint(Point p){
+    private boolean nodesContainPoint(SimplePoint p){
         for(CircuitNode node: nodes){
             if(node.correspondsToPoint(p))
                 return true;
@@ -106,7 +106,7 @@ public class CircuitSim {
      * @param p
      * @return node corresponding to point, or null if no nodes correspond to point
      */
-    private CircuitNode getNodeWithPoint(Point p){
+    private CircuitNode getNodeWithPoint(SimplePoint p){
         for(CircuitNode node: nodes){
             if(node.correspondsToPoint(p))
                 return node;
@@ -116,7 +116,7 @@ public class CircuitSim {
 
     private CircuitNode mergeNodes(CircuitNode n1, CircuitNode n2){
         //Add all the points corresponding to n2 to n1
-        for(Point p: n2.getPoints()){
+        for(SimplePoint p: n2.getPoints()){
             n1.addPoint(p);
         }
         //Update all elements pointing to n2 to point to n1

@@ -1,8 +1,7 @@
 package com.cpen321.circuitsolver.model.components;
 
-import android.graphics.Point;
-
 import com.cpen321.circuitsolver.model.CircuitNode;
+import com.cpen321.circuitsolver.model.SimplePoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +15,10 @@ public abstract class CircuitElm {
     private CircuitNode n1;
     private CircuitNode n2;
 
-    private Point p1;
-    private Point p2;
+    private SimplePoint p1;
+    private SimplePoint p2;
 
-    public CircuitElm(Point p1, Point p2){
+    public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
         this.p2 = p2;
     }
@@ -95,7 +94,7 @@ public abstract class CircuitElm {
         return 2;
     }
 
-    public Point getPoint(int i){
+    public SimplePoint getPoint(int i){
         if(i == 0)
             return p1;
         if(i == 1)

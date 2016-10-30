@@ -1,8 +1,7 @@
 package com.cpen321.circuitsolver.model.components;
 
 
-import android.graphics.Point;
-
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.util.Constants;
 
 /**
@@ -12,7 +11,7 @@ public class ResistorElm extends CircuitElm {
 
     private double resistance;
 
-    public ResistorElm(Point p1, Point p2, double resistance){
+    public ResistorElm(SimplePoint p1, SimplePoint p2, double resistance){
         super(p1, p2);
         this.resistance = resistance;
     }
