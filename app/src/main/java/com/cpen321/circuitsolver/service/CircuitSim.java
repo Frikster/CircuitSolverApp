@@ -7,6 +7,7 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class CircuitSim {
      * @param elements
      */
     public CircuitSim(List<CircuitElm> elements){
-        this.elements = elements;
+        this.elements = new ArrayList(elements);
     }
 
     /**
@@ -176,6 +177,10 @@ public class CircuitSim {
     }
 
     public List<CircuitNode> getNodes(){
-        return new ArrayList<CircuitNode>(nodes);
+        return Collections.unmodifiableList(nodes);
+    }
+
+    public List<CircuitElm> getElements(){
+        return Collections.unmodifiableList(elements);
     }
 }

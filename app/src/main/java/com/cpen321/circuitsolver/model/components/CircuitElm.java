@@ -46,7 +46,7 @@ public abstract class CircuitElm {
      * @return element type (resistor, wire, etc.)
      */
     public abstract String getType();
-
+    
     /**
      * Returns index of node corresponding to given node, else -1 if element does not correspond to node
      * @param node
