@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,9 @@ public class CameraActivity extends AppCompatActivity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+//                photoFile = createImageFile();
+                photoFile = ImageUtils.createImageFile(getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+                this.mCurrentPhotoPath = "file:" + photoFile.getAbsolutePath();
             } catch (IOException ex) {
                 // Error occurred while creating the File
                 ex.printStackTrace();
@@ -54,22 +57,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,14 +64,6 @@ public class CameraActivity extends AppCompatActivity {
 
         this.checkNecessaryPermissions();
         this.dispatchTakePictureIntent();
-
-//        Button camButton = (Button) findViewById(R.id.take_picture_button);
-//        camButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                CameraActivity.this.dispatchTakePictureIntent();
-//            }
-//        });
     }
 
     @Override

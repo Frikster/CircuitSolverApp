@@ -345,6 +345,8 @@ public class MainOpencv {
         List<Element> everything = new ArrayList<>();
         everything.addAll(cornerObjects);
         everything.addAll(componentObjects);
+        if (cornerObjects.size() == 0)
+            return;
         Corner firstCorner = cornerObjects.get(0);
 
         detectWires(everything, firstCorner);

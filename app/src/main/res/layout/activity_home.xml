@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.cpen321.circuitsolver.ui.HomeActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -31,6 +32,15 @@
         android:layout_gravity="bottom|center"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/cam_icon" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/processing_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|right"
+        app:backgroundTint="@color/processing_green"
+        app:srcCompat="@drawable/arrow_key" />
 
     <!--<Button-->
         <!--android:layout_width="wrap_content"-->
