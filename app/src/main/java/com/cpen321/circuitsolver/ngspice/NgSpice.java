@@ -1,31 +1,35 @@
 package com.cpen321.circuitsolver.ngspice;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 
 /**
  * Created by lotus on 30/10/16.
  */
 
-public final class NgSpice extends AppCompatActivity {
+public final class NgSpice {
     private static final String TAG = "NgSpice";
-    private static final String FILE_NAME = "ngspice";
-    private final String filePath;
+    private static final String EXEC_FILE_NAME = "ngspice";
+    private static final String INPUT_FILE_NAME = "ngspice_input";
+    private final String execFilePath;
+    private final String inputFilePath;
     private static NgSpice ngSpiceSingleton;
 
     private NgSpice(Context context) {
         //TODO: check phone's cpu and create proper executable depending on CPU version
-        filePath = createExecutable(context, R.raw.ngspice_arm);
+        execFilePath = createExecutable(context, R.raw.ngspice_arm);
+        inputFilePath = getPath(context, INPUT_FILE_NAME);
     }
 
     /**
@@ -48,7 +52,7 @@ public final class NgSpice extends AppCompatActivity {
     public String exec(String args) {
         String returnString = null;
         try {
-            String command = filePath + " " + args;
+            String command = execFilePath + " " + args;
             Process process = Runtime.getRuntime().exec(command);
             Log.d(TAG, "exec command: " + command);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -69,6 +73,16 @@ public final class NgSpice extends AppCompatActivity {
         return returnString;
     }
 
+    public void writeToInputFile(String input) {
+        try {
+            PrintWriter writer = new PrintWriter(inputFilePath);
+            writer.println(input);
+            writer.close();
+        } catch (IOException e){
+            Log.e(TAG, "Error writing to input file: " + inputFilePath);
+        }
+    }
+
     /**
      * Creates executable version of the raw executable
      * @param context the current context
@@ -76,13 +90,13 @@ public final class NgSpice extends AppCompatActivity {
      * @return the executable's filepath
      */
     private String createExecutable(Context context, int resourceId) {
-        String filePath = getPath(context, FILE_NAME);
+        String filePath = getPath(context, EXEC_FILE_NAME);
         File file = new File(filePath);
         if(!file.exists()) { //if file already exists, it should be the working executable, unless there is another file with same name
             Log.d(TAG, "createExecutable: file already exists");
             try {
-                copyRawToFile(context, resourceId, FILE_NAME);
-                changeToExecutable(context, FILE_NAME);
+                copyRawToFile(context, resourceId, EXEC_FILE_NAME);
+                changeToExecutable(context, EXEC_FILE_NAME);
             } catch (Exception e) {
                 Log.e(TAG, "Error was thrown while creating executable");
             }
