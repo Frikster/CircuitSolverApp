@@ -22,14 +22,17 @@ public final class NgSpice {
     private static final String TAG = "NgSpice";
     private static final String EXEC_FILE_NAME = "ngspice";
     private static final String INPUT_FILE_NAME = "ngspice_input";
+    private static final String OUTPUT_FILE_NAME = "ngspice_output";
     private final String execFilePath;
     private final String inputFilePath;
+    private final String outputFilePath;
     private static NgSpice ngSpiceSingleton;
 
     private NgSpice(Context context) {
         //TODO: check phone's cpu and create proper executable depending on CPU version
         execFilePath = createExecutable(context, R.raw.ngspice_arm);
         inputFilePath = getPath(context, INPUT_FILE_NAME);
+        outputFilePath = getPath(context, OUTPUT_FILE_NAME);
     }
 
     /**
@@ -45,14 +48,24 @@ public final class NgSpice {
     }
 
     /**
+     * Runs ngspice in batch mode with given input string.  Results from simulation will be returned as a string.
+     * @param input the input the ngspice (will probably contain a netlist and a control section)
+     * @return the simulation results as a string
+     */
+    public String callNgSpice(String input) {
+        writeToInputFile(input);
+        return exec("-b " + inputFilePath);
+    }
+
+    /**
      * Executes ngspice
      * @param args the command line arguments to ngspice
      * @return the program's output to std out
      */
-    public String exec(String args) {
+    private String exec(String args) {
         String returnString = null;
         try {
-            String command = execFilePath + " " + args;
+            String command = execFilePath + " " + "-b " + inputFilePath; //args;
             Process process = Runtime.getRuntime().exec(command);
             Log.d(TAG, "exec command: " + command);
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -73,7 +86,12 @@ public final class NgSpice {
         return returnString;
     }
 
-    public void writeToInputFile(String input) {
+
+    /**
+     * Writes input string to input file to be read my ngspice
+     * @param input
+     */
+    private void writeToInputFile(String input) {
         try {
             PrintWriter writer = new PrintWriter(inputFilePath);
             writer.println(input);
