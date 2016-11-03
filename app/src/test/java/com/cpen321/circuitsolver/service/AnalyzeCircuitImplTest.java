@@ -32,10 +32,10 @@ public class AnalyzeCircuitImplTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(10, 0), 10));
         elements.add(new WireElm(new SimplePoint(0,0), new SimplePoint(0, 10)));
 
-        AnalyzeCircuit analyzeCircuit = new AnalyzeCircuit(elements);
-        analyzeCircuit.init();
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
 
-        List<CircuitNode> result = analyzeCircuit.getNodes();
+        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
         System.out.println(result);
 
         /*
@@ -91,10 +91,10 @@ public class AnalyzeCircuitImplTest {
 
 
 
-        AnalyzeCircuit analyzeCircuit = new AnalyzeCircuit(elements);
-        analyzeCircuit.init();
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
 
-        List<CircuitNode> result = analyzeCircuit.getNodes();
+        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
         System.out.println(result);
 
         //Node 1 should correspond to (0,0), (0,5), (0,10), (0,15)
@@ -139,10 +139,10 @@ public class AnalyzeCircuitImplTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(5, 0), 10));
 
 
-        AnalyzeCircuit analyzeCircuit = new AnalyzeCircuit(elements);
-        analyzeCircuit.init();
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
 
-        List<CircuitNode> result = analyzeCircuit.getNodes();
+        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
         System.out.println(result);
 
         //Node 1 should correspond to (0,0), (0,5)

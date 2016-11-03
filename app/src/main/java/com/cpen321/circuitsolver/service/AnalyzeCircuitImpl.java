@@ -13,16 +13,16 @@ import java.util.List;
 /**
  * Created by jen on 2016-10-13.
  */
-public class AnalyzeCircuit {
+public class AnalyzeCircuitImpl {
 
     private List<CircuitNode> nodes;
     private List<CircuitElm> elements;
 
     /**
-     * Note that list of elements may be modified by AnalyzeCircuit instance in its other methods
+     * Note that list of elements may be modified by AnalyzeCircuitImpl instance in its other methods
      * @param elements
      */
-    public AnalyzeCircuit(List<CircuitElm> elements){
+    public AnalyzeCircuitImpl(List<CircuitElm> elements){
         this.elements = new ArrayList(elements);
     }
 
