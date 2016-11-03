@@ -23,6 +23,14 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
     }
 
+    public ResistorElm(SimplePoint p1, SimplePoint p2){
+        super(p1, p2);
+        this.resistance = 10;
+        this.name = "r" + numResistors;
+        numResistors++;
+
+    }
+
     public double getVoltageDiff() {
         return 0;
     }

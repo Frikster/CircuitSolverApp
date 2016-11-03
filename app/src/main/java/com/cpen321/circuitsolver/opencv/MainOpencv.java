@@ -3,6 +3,13 @@ package com.cpen321.circuitsolver.opencv;
 import android.graphics.Bitmap;
 
 
+import com.cpen321.circuitsolver.model.SimplePoint;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.ResistorElm;
+import com.cpen321.circuitsolver.model.components.VoltageElm;
+import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.util.Constants;
+
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -17,6 +24,8 @@ import java.util.List;
 import java.util.Set;
 
 
+import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
+import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -41,6 +50,7 @@ public class MainOpencv {
 
 
     List<List<Element>> wires = new ArrayList<>();
+    List<List<Element>> separatedComponents = new ArrayList<>();
 
     /**Method to detect the components,main method of this class
      *
@@ -103,7 +113,7 @@ public class MainOpencv {
         System.out.println("Nr of components : "+components.size());
         //eliminer les corners trop près des components
         correctCallToWires(validCorners, components);
-        List<List<Element>> separatedComponents = separateComponents(wires);
+        separatedComponents = separateComponents(wires);
 
         //Prints the found wires
         for(List<Element> wire : separatedComponents){
@@ -119,6 +129,10 @@ public class MainOpencv {
             }
         }
 
+        List<CircuitElm> myelement = getCircuitElements();
+        for(CircuitElm c : myelement){
+            System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
+        }
         //Create and return the final bitmap
         Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(tmp3, bm);
@@ -128,6 +142,38 @@ public class MainOpencv {
         return bm;
     }
 
+    public List<CircuitElm> getCircuitElements(){
+        List<CircuitElm> circuitElements = new ArrayList<>();
+        for(List<Element> circElem : separatedComponents){
+            if(circElem.size() == 2){
+                Corner corner1 = (Corner) circElem.get(0);
+                Corner corner2 = (Corner) circElem.get(1);
+                SimplePoint p1 = new SimplePoint((int)corner1.getX(),(int)corner1.getY());
+                SimplePoint p2 = new SimplePoint((int)corner2.getX(),(int)corner2.getY());
+                WireElm wire = new WireElm(p1,p2);
+                circuitElements.add(wire);
+            }
+            else if (circElem.size() == 3){
+                Component elem = (Component) circElem.get(1);
+                Corner corner1 = (Corner) circElem.get(0);
+                Corner corner2 = (Corner) circElem.get(2);
+                SimplePoint p1 = new SimplePoint((int)corner1.getX(),(int)corner1.getY());
+                SimplePoint p2 = new SimplePoint((int)corner2.getX(),(int)corner2.getY());
+                switch(elem.getType()){
+                    case RESISTOR :
+                        ResistorElm resistor = new ResistorElm(p1,p2);
+                        circuitElements.add(resistor);
+                        break;
+                    case DC_VOLTAGE :
+                        VoltageElm voltage = new VoltageElm(p1,p2);
+                        circuitElements.add(voltage);
+                        break;
+
+                }
+            }
+        }
+        return circuitElements;
+    }
     /**returns corners that are not too near from components
      *
      * @param assignedPoints, the list of points that have been assigned to a cluster
@@ -538,7 +584,7 @@ public class MainOpencv {
 
         List<Component> componentObjects = new ArrayList<>();
         for(double[] component : components){
-            componentObjects.add(new Component(component[0], component[1],"resistor"));
+            componentObjects.add(new Component(component[0], component[1],RESISTOR));
         }
         return componentObjects;
     }
@@ -871,7 +917,8 @@ public class MainOpencv {
                 double x11 = vec1[0];
                 double y11 = vec1[1];
                 double x21 = vec1[2];
-                double y21 = vec1[3];
+                double y21 =
+                        vec1[3];
 
                 double[] vec2 = lineFromLeftToRight.get(x + 1);
                 double x12 = vec2[0];
