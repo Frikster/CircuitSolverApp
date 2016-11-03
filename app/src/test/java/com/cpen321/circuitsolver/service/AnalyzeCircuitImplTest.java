@@ -21,7 +21,7 @@ import static junit.framework.Assert.fail;
 /**
  * Created by Jennifer on 10/13/2016.
  */
-public class CircuitSimImplTest {
+public class AnalyzeCircuitImplTest {
 
     @Test
     public void testInitAndAllocateNodes_twoNodeCircuit(){
@@ -32,10 +32,10 @@ public class CircuitSimImplTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(10, 0), 10));
         elements.add(new WireElm(new SimplePoint(0,0), new SimplePoint(0, 10)));
 
-        CircuitSim circuitSim = new CircuitSim(elements);
-        circuitSim.init();
+        AnalyzeCircuit analyzeCircuit = new AnalyzeCircuit(elements);
+        analyzeCircuit.init();
 
-        List<CircuitNode> result = circuitSim.getNodes();
+        List<CircuitNode> result = analyzeCircuit.getNodes();
         System.out.println(result);
 
         /*
@@ -91,10 +91,10 @@ public class CircuitSimImplTest {
 
 
 
-        CircuitSim circuitSim = new CircuitSim(elements);
-        circuitSim.init();
+        AnalyzeCircuit analyzeCircuit = new AnalyzeCircuit(elements);
+        analyzeCircuit.init();
 
-        List<CircuitNode> result = circuitSim.getNodes();
+        List<CircuitNode> result = analyzeCircuit.getNodes();
         System.out.println(result);
 
         //Node 1 should correspond to (0,0), (0,5), (0,10), (0,15)
@@ -139,10 +139,10 @@ public class CircuitSimImplTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(5, 0), 10));
 
 
-        CircuitSim circuitSim = new CircuitSim(elements);
-        circuitSim.init();
+        AnalyzeCircuit analyzeCircuit = new AnalyzeCircuit(elements);
+        analyzeCircuit.init();
 
-        List<CircuitNode> result = circuitSim.getNodes();
+        List<CircuitNode> result = analyzeCircuit.getNodes();
         System.out.println(result);
 
         //Node 1 should correspond to (0,0), (0,5)
