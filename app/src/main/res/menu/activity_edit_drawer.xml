@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="Component Type">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Resistor" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Inductor" />
+            <item
+                android:id="@+id/capacitor"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Capacitor" />
+        </menu>
+    </item>
+    <item android:title="Component Value">
+        <menu>
+            <item
+                android:id="@+id/component_value"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Resistor" />
+        </menu>
+    </item>
+
+</menu>
