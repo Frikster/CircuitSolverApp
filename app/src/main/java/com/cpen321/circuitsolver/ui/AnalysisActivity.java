@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.util.BaseActivity;
@@ -22,8 +23,6 @@ public class AnalysisActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_analysis);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -35,21 +34,26 @@ public class AnalysisActivity extends BaseActivity {
             dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
         }
 
-        this.loadCircuit(new File(dataLocation));
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_analysis);
+        this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_analysis);
+        layout.addView(this.circuitDisplay);
+
+//        this.loadCircuit(new File(dataLocation));
     }
 
     public void loadCircuit(File circuitDirectory) {
-        this.circuitProject = new CircuitProject(circuitDirectory);
-        this.circuitProject.print();
-
-        ImageView outputImageView = (ImageView) findViewById(R.id.output_image);
-        outputImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        try {
-            outputImageView.setImageBitmap(this.circuitProject.getProcessedImage());
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return;
-        }
+//        this.circuitProject = new CircuitProject(circuitDirectory);
+//        this.circuitProject.print();
+//
+//        ImageView outputImageView = (ImageView) findViewById(R.id.output_image);
+//        outputImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//        try {
+//            outputImageView.setImageBitmap(this.circuitProject.getProcessedImage());
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
 
     }
 
