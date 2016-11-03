@@ -13,6 +13,13 @@ public abstract class Element {
         positionY = y;
     }
 
+    public double getX(){
+        return positionX;
+    }
+    public double getY(){
+        return positionY;
+    }
+
     @Override
     public boolean equals(Object o){
         if(o == null) return false;
