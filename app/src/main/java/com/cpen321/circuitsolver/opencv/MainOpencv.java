@@ -1,7 +1,7 @@
 package com.cpen321.circuitsolver.opencv;
 
 import android.graphics.Bitmap;
-import android.util.Log;
+
 
 import org.opencv.android.Utils;
 import org.opencv.core.CvType;
@@ -16,14 +16,28 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
+
 
 /**Main opencv class
  * Created by Simon on 27.10.2016.
  */
 
 public class MainOpencv {
+
+    //########MODIFIED ###############
+    //MainOpenCV
+    //##############ADDED################
+    //PointDB, DBSCAN
+    //###########TO REMOVE################
+    // MainOpenCvOld, PointK, Cluster, Kmeans
+    //##############TODO :#################
+    //Control that there exists at least a line between two same-width or same-height corners before adding
+    //Add comments
+    //Integrate with Jenny and Tenserflow
+    //##########################################
 
 
     List<List<Element>> wires = new ArrayList<>();
@@ -35,7 +49,7 @@ public class MainOpencv {
     public Bitmap houghLines(Bitmap bMap){
 
         //Convert to a canny edge detector grayscale mat
-        boolean aLotOfComponents = true;
+        System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
@@ -45,7 +59,7 @@ public class MainOpencv {
 
         //Execute the hough transform on the canny edge detector
         Mat lines = new Mat();
-        Imgproc.HoughLinesP(tmp2,lines,1, Math.PI/180,0);
+        Imgproc.HoughLinesP(tmp2,lines,1,Math.PI/180,0);
 
         cvtColor(tmp2, tmp3, COLOR_GRAY2BGR);
 
@@ -53,43 +67,40 @@ public class MainOpencv {
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
 
-        int maxVote,minVote,radiusInComponent,distCompCorner,maxLinesToBeChunk;
+        int maxLinesToBeChunk = 2;
+        int radius = 5;
+        int minPoints = 10;
 
 
-        if(aLotOfComponents){
-            maxVote = 35;
-            minVote = 8;
-            radiusInComponent = 9;
-            distCompCorner = 10;
-            maxLinesToBeChunk = 2;
-        }
-        else{
-            //maxVote = 40;
-            maxVote = 36;
-            minVote = 12;
-            radiusInComponent = 10;
-            distCompCorner = 15;
-            maxLinesToBeChunk = 3;
-        }
+        List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
+        List<PointDB> assignedPoints = assignedPoints(assPoints);
+        TuplePoints residAssigned = dbToArray(assignedPoints , smoothedLines, maxLinesToBeChunk);
+        List<double[]> residualLines = residAssigned.getFirst();
+        List<double[]> components = residAssigned.getSecond();
 
 
-        TuplePoints resLinesAndComponents = circlesAroundComponentsByVote(smoothedLines,tmp3, minVote, maxVote,radiusInComponent,maxLinesToBeChunk);
-        List<double[]> residualLines = resLinesAndComponents.getFirst();
-        List<double[]> components = resLinesAndComponents.getSecond();
 
         List<double[]> residualLinesWithoutChunk= removeChunks(residualLines, maxLinesToBeChunk);
         List<double[]> withoutBorders = removeImageBorder(residualLinesWithoutChunk);
         List<double[]> verticalLines = verticalLines(withoutBorders);
         List<double[]> horizontalLines = horizontalLines(withoutBorders);
-
         List<double[]> corners = findCorners(verticalLines,horizontalLines,10);
 
-        List<double[]> singleCorners = singleCorners(corners,8);
-        List<double[]> validCorners = removeCornersTooNearFromComponent(singleCorners, components, distCompCorner);
-        drawCircles(tmp3,validCorners, new Scalar(0,255,0));
-        drawCircles(tmp3,components, new Scalar(255,0,0));
+
+
+        int twoCornersTooNear = 8;
+        List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
+        int tooNearFromComponent = 4;
+        List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
+
+        if(validCorners.size() == 0){
+            validCorners = new ArrayList<>(singleCorners);
+        }
+        drawCircles(tmp3,validCorners, new Scalar(0,255,0),10);
+        drawCircles(tmp3,components, new Scalar(255,0,0),10);
 
         System.out.println("Nr of corners : "+validCorners.size());
+        System.out.println("Nr of components : "+components.size());
         //eliminer les corners trop près des components
         correctCallToWires(validCorners, components);
         List<List<Element>> separatedComponents = separateComponents(wires);
@@ -99,42 +110,17 @@ public class MainOpencv {
             System.out.println("New wire : ");
             for(Element e : wire){
                 if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.positionX+", y: "+e.positionY);
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
                 }
                 else{
-                    System.out.println("Component, x : "+e.positionX+", y: "+e.positionY);
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
                 }
 
             }
         }
 
-        //Draw the found lines
-        for (int x = 0; x < withoutBorders.size(); x++)
-        {
-            double[] vec = withoutBorders.get(x);
-            double x1 = vec[0],
-                    y1 = vec[1],
-                    x2 = vec[2],
-                    y2 = vec[3];
-            Point start = new Point(x1, y1);
-            Point end = new Point(x2, y2);
-            //System.out.println("line :("+x1+" : "+y1+") , ("+x2+" : "+y2+")");
-            if(x%3 == 0){
-                Imgproc.line(tmp3, start, end, new Scalar(255,0,0), 1);
-            }
-            else if(x% 3 == 1){
-                Imgproc.line(tmp3, start, end, new Scalar(0,255,0), 1);
-            }
-            else{
-                Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
-            }
-
-
-        }
-
-
         //Create and return the final bitmap
-        Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(), Bitmap.Config.ARGB_8888);
+        Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(tmp3, bm);
         tmp.release();
         tmp2.release();
@@ -142,7 +128,178 @@ public class MainOpencv {
         return bm;
     }
 
+    /**returns corners that are not too near from components
+     *
+     * @param assignedPoints, the list of points that have been assigned to a cluster
+     * @param corners The foubd corners
+     * @return The corners that are not too near from the components
+     */
+    private List<double[]> goodCorners(List<PointDB> assignedPoints, List<double[]> corners, int minDistance){
+        List<double[]> acceptableCorners = new ArrayList<>();
+        for(double[] corner: corners){
+            double x = corner[0];
+            double y = corner[1];
+            //find closest component point
+            double minDis = Double.POSITIVE_INFINITY;
+            for(PointDB assPoint : assignedPoints){
+                if(Math.sqrt(Math.pow(assPoint.getX()-x,2)+Math.pow(assPoint.getY()-y,2))<minDis){
+                    minDis = Math.sqrt(Math.pow(assPoint.getX()-x,2)+Math.pow(assPoint.getY()-y,2));
+                }
+            }
+            if(minDis>minDistance){
+                acceptableCorners.add(corner);
+            }
+        }
+        return acceptableCorners;
+    }
 
+    /**Function that retains all the PointDB that have been assigned to a cluster
+     *
+     * @param points All the points
+     * @return The points that are assigned to a cluster
+     */
+    private List<PointDB> assignedPoints(List<PointDB> points){
+        List<PointDB> residual = new ArrayList<>();
+        for(PointDB point : points){
+            if(point.getCluster() != 0){
+                residual.add(point);
+            }
+        }
+        return residual;
+    }
+
+
+    /**Takes the clustered points from dbscan and matches the lines with his points
+     * Returns all the lines that have not been assigned in the first, all the assigned in the second
+     *
+     * @param Assignedpoints The points that have been assigned to a cluster
+     * @param originalLines The smoothed lines found from the hough transform
+     * @param maxTobeChunk The integer that defines the lmay length of a line to be considered as a chunk
+     * @return A tuple of List<double[]>
+     *     First variable : A list of lines (double[] with length 4) representing the lines that haven't been assigned to a cluster
+     *     Second variable : A list of points representing the coordinates of the found components
+     */
+
+    private TuplePoints dbToArray(List<PointDB> Assignedpoints, List<double[]> originalLines, int maxTobeChunk){
+        List<double[]> filteredLines = new ArrayList<>();
+        for(int i =0; i<originalLines.size();i++){
+            double[] line = originalLines.get(i);
+            boolean hasBeenAssigned = false;
+            for(PointDB point : Assignedpoints){
+                if(((point.getX() == line[0] && point.getY() == line[1]) || (point.getX() == line[2] || point.getY() == line[3])) && lineIsChunk(line,maxTobeChunk)){
+                    hasBeenAssigned = true;
+
+                    break;
+
+
+                }
+            }
+
+            if(!hasBeenAssigned){
+                filteredLines.add(line);
+            }
+        }
+        List<double[]> means = findCenters(Assignedpoints);
+        return new TuplePoints(filteredLines,means);
+    }
+
+    /**From all the points Db that have been assigned, finds the centers of the cluster by doing the means
+     *
+     * @param assigned the assigned points to clusters
+     * @return The means of these clusters
+     */
+
+    private List<double[]> findCenters(List<PointDB> assigned){
+        List<PointDB> assignedCopy = new ArrayList<>(assigned);
+        List<double[]> means = new ArrayList<>();
+        while(!assignedCopy.isEmpty()){
+            double xmean = assignedCopy.get(0).getX();
+            double ymean = assignedCopy.get(0).getY();
+            int nrPoints = 1;
+            Set<PointDB> toThisCluster = new HashSet<>();
+            int currCluster = assignedCopy.get(0).getCluster();
+
+            toThisCluster.add(assignedCopy.get(0));
+            for(int i=1; i< assignedCopy.size();i++){
+                if(assignedCopy.get(i).getCluster()==currCluster){
+                    nrPoints++;
+                    xmean += assignedCopy.get(i).getX();
+                    ymean += assignedCopy.get(i).getY();
+                    toThisCluster.add(assignedCopy.get(i));
+                }
+            }
+            double[] mean = new double[2];
+            mean[0] = xmean/nrPoints;
+            mean[1] = ymean/nrPoints;
+            means.add(mean);
+            assignedCopy.removeAll(toThisCluster);
+        }
+        return means;
+    }
+
+    /**Performs the DBSCAN algorithm and colors the different points in a certain colour according to their cluster
+     *
+     * @param pts The points to be clustered
+     * @param toDraw The matrix where to draw the result of the algorithm
+     * @param radius Param1 of the dbscan algo
+     * @param minPoints Param2 of the dbscan algo
+     * @return The points with their cluster (that can be accessed by point.getCluster())
+     */
+    private List<PointDB> dbscan(List<double[]> pts, Mat toDraw, int radius, int minPoints){
+
+        DBSCAN db=new DBSCAN();
+        List<PointDB> points = db.dbscanAlgo(objectizePointsForDB(pts),radius,minPoints);
+
+        for(PointDB point : points){
+            if(point.getCluster() == 0){
+                Imgproc.circle(toDraw,new Point(point.getX(),point.getY()),2,new Scalar(0, 0 , 0), 1,8,0);
+            }
+            else if(point.getCluster()%3 == 0){
+                Imgproc.circle(toDraw,new Point(point.getX(),point.getY()),2,new Scalar(255, 0 , 0), 1,8,0);
+            }
+            else if(point.getCluster()%3 == 1){
+                Imgproc.circle(toDraw,new Point(point.getX(),point.getY()),2,new Scalar(0, 255 , 0), 1,8,0);
+            }
+            else if(point.getCluster()%3 == 2){
+                Imgproc.circle(toDraw,new Point(point.getX(),point.getY()),2,new Scalar(0, 0 , 255), 1,8,0);
+            }
+        }
+        return points;
+    }
+
+    /**Keeps only the chunks from given lines
+     *
+     * @param lines The lines where to keep the chinks
+     * @param maxToBeChunk Maximum length of a line to be considered as a chunk
+     * @return The lines that are chunk
+     */
+    private List<double[]> keepChunks(List<double[]> lines, int maxToBeChunk){
+        List<double[]> chunks = new ArrayList<>();
+        for(double[] line : lines){
+            if(lineIsChunk(line,maxToBeChunk)){
+                chunks.add(line);
+            }
+        }
+        return chunks;
+    }
+
+    /** Transforms all the lines into points usable by the dbscan algorithm
+     *
+     * @param lines The lines where to perform the transformation
+     * @return A list of pointDB
+     */
+    private List<PointDB> objectizePointsForDB(List<double[]> lines){
+        List<PointDB> dbPoints = new ArrayList<>();
+        for(double[] line : lines){
+            double x1 = line[0];
+            double y1 = line[1];
+            double x2 = line[2];
+            double y2 = line[3];
+            dbPoints.add(new PointDB(x1,y1));
+            dbPoints.add(new PointDB(x2,y2));
+        }
+        return dbPoints;
+    }
 
     /**Function to make from [Corner, Component1, Component2,...., ComponentN, Corner] => [Corner, Component1, Corner] , [Corner, Component2, Corner],... [Corner, ComponentN, Corner]
      *
@@ -163,7 +320,7 @@ public class MainOpencv {
                             List<Element> newWire1 = new ArrayList<>();
                             newWire1.add(wire.get(i-1));
                             newWire1.add(wire.get(i));
-                            Corner newCorner = new Corner((wire.get(i).positionX+wire.get(i+1).positionX)/2,(wire.get(i).positionY+wire.get(i+1).positionY)/2 );
+                            Corner newCorner = new Corner((wire.get(i).getX()+wire.get(i+1).getX())/2,(wire.get(i).getY()+wire.get(i+1).getY())/2 );
                             newWire1.add(newCorner);
 
                             List<Element> newWire2 = new ArrayList<>();
@@ -210,7 +367,7 @@ public class MainOpencv {
      */
     private void detectWires(List<Element> elements, Corner currCorner){
         int threshold = 7;
-        if(!currCorner.exploredDirections.isEmpty()){
+        if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
 
             //get same horizontal and vertical components
             List<Element> sameY = getSameYElements(elements,currCorner,threshold);
@@ -223,7 +380,7 @@ public class MainOpencv {
             int i=0;
             for(int e = 0; e<sameX.size();e++){
                 Element elem = sameX.get(e);
-                if(elem.positionX == currCorner.positionX && elem.positionY == currCorner.positionY){
+                if(elem.getX() == currCorner.getX() && elem.getY() == currCorner.getY()){
                     i = e;
                     break;
                 }
@@ -233,7 +390,7 @@ public class MainOpencv {
             for(int e = 0; e<sameY.size();e++){
                 Element elem = sameY.get(e);
 
-                if(elem.positionX == currCorner.positionX && elem.positionY == currCorner.positionY){
+                if(elem.getX() == currCorner.getX() && elem.getY() == currCorner.getY()){
                     j = e;
                     break;
                 }
@@ -345,8 +502,10 @@ public class MainOpencv {
         List<Element> everything = new ArrayList<>();
         everything.addAll(cornerObjects);
         everything.addAll(componentObjects);
-        Corner firstCorner = cornerObjects.get(0);
-
+        Corner firstCorner = null;
+        if(cornerObjects.size() != 0) {
+            firstCorner = cornerObjects.get(0);
+        }
         detectWires(everything, firstCorner);
     }
 
@@ -395,7 +554,7 @@ public class MainOpencv {
         List<Element> result = new ArrayList<>();
         for(Element element : elements){
 
-            if (Math.abs(element.positionX - currentCorner.positionX)<threshold) {
+            if (Math.abs(element.getX() - currentCorner.getX())<threshold) {
                 result.add(element);
             }
 
@@ -414,46 +573,12 @@ public class MainOpencv {
         List<Element> result = new ArrayList<>();
         for(Element element : elements){
 
-            if (Math.abs(element.positionY - currentCorner.positionY)<threshold) {
+            if (Math.abs(element.getY() - currentCorner.getY())<threshold) {
                 result.add(element);
             }
 
         }
         return result;
-    }
-
-
-
-    /** Remove the parasite corners that could have been detected, that are too near of the components
-     * (Sometimes when the radius to find a component is not perfectly defined, it happens that a component is detected
-     * not using all the lines belonging to the component. In this case it can happen that corners are detected with these
-     * superfluous lines that in fact belong to the component).
-     *
-     * @param corners The found corners
-     * @param components The found components
-     * @param minDistance The min distance there has to be between a component and a corner
-     * @return The purified corner lists
-     */
-
-    private List<double[]> removeCornersTooNearFromComponent(List<double[]> corners, List<double[]> components, int minDistance){
-        List<double[]> validCorners = new ArrayList<>();
-        for(double[] corner: corners){
-            double x1= corner[0];
-            double y1 = corner[1];
-            boolean isTooNear = false;
-            for(double[] component:components){
-                double x2 = component[0];
-                double y2 = component[1];
-                if(Math.sqrt(Math.pow(x1-x2,2)+ Math.pow(y1-y2,2))<= minDistance){
-                    isTooNear = true;
-                    break;
-                }
-            }
-            if(!isTooNear){
-                validCorners.add(corner);
-            }
-        }
-        return validCorners;
     }
 
     /**Removes the superfluous corners that could have been detected by the corner detection
@@ -466,10 +591,8 @@ public class MainOpencv {
      */
 
     private List<double[]> singleCorners(List<double[]> corners, int minDistance){
-        //System.out.println(corners.size());
         List<double[]> singleCorners = new ArrayList<>();
         for(int i = 0; i< corners.size();i++){
-            //System.out.println("Corner : x :"+corners.get(i)[0]+" , y : "+corners.get(i)[1]);
             boolean hasEquivalent = false;
             double[] corner1 = corners.get(i);
             double x1 = corner1[0];
@@ -481,20 +604,16 @@ public class MainOpencv {
 
                     double x2 = corner2[0];
                     double y2 = corner2[1];
-                    //System.out.println ("Considered : x1 : "+x1+" , y1 : "+y1+" ; x2 : "+x2+" , y2 : "+y2+" , distance : "+ Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2)));
-                    if(Math.sqrt(Math.pow(x1-x2,2)+ Math.pow(y1-y2,2))<= minDistance){
-                        //System.out.println("hello bitch");
+                    if(Math.sqrt(Math.pow(x1-x2,2)+Math.pow(y1-y2,2))<= minDistance){
                         hasEquivalent = true;
                         break;
                     }
                 }
             }
             if(!hasEquivalent){
-                //System.out.println("added : x1 :"+x1+" , y1:"+y1);
                 singleCorners.add(corner1);
             }
         }
-        //System.out.println(singleCorners.size());
         return singleCorners;
     }
 
@@ -507,30 +626,10 @@ public class MainOpencv {
     private List<double[]> removeImageBorder(List<double[]> lines){
         List<double[]> line = new ArrayList<>(lines);
         Collections.sort(line,new LinesComparatorYX());
-        /*for(int j = 0 ; j<line.size();j++){
-            double[] linee = line.get(j);
-            double x1 = linee[0];
-            double y1 = linee[1];
-            double x2 = linee[2];
-            double y2 = linee[3];
-
-            System.out.println("First round :( " + x1 + " , " + y1 + " ) ; (" + x2 + " , " + y2 + " ) ");
-
-        }*/
         line.remove(0);
         line.remove(line.size()-1);
 
         Collections.sort(line,new LinesComparatorXY());
-        /*for(int j = 0 ; j<line.size();j++){
-            double[] linee = line.get(j);
-            double x1 = linee[0];
-            double y1 = linee[1];
-            double x2 = linee[2];
-            double y2 = linee[3];
-
-            System.out.println("First round :( " + x1 + " , " + y1 + " ) ; (" + x2 + " , " + y2 + " ) ");
-
-        }*/
         line.remove(0);
         line.remove(line.size()-1);
 
@@ -661,7 +760,7 @@ public class MainOpencv {
         circle[2]=radius;
         List<double[]> circles = new ArrayList<>();
         circles.add(circle);
-        drawCircles(toDraw, circles, new Scalar(0,255,0));
+        drawCircles(toDraw, circles, new Scalar(0,0,255), 15);
     }
 
     /**
@@ -679,67 +778,6 @@ public class MainOpencv {
 
         return Math.abs(x1-x2)<=maxToBeChunk && Math.abs(y1-y2)<=maxToBeChunk;
     }
-    /**
-     *
-     * @param lines containing all the lines
-     * @param imageToWriteOn the opencv.Mat to wdraw the circles on
-     * @param minLinesVote The min nr of lines a component must have to be recognized as a component
-     * @param maxLinesVote The max nr of lines a component must have to be recognized as a component
-     * @param radius has to be set to smaller if the components are small and close
-     * @param maxToBeChunk all lines bigger than this are real lines
-     */
-    private TuplePoints circlesAroundComponentsByVote(List<double[]> lines, Mat imageToWriteOn, int minLinesVote, int maxLinesVote, int radius, int maxToBeChunk){
-        List<double[]> linesCopy = new ArrayList<>(lines);
-        List<double[]> componentsFound = new ArrayList<>();
-
-        //For all votes starting from the biggest number of lines
-        for(int nrLine = maxLinesVote; nrLine >= minLinesVote; nrLine--){
-            for (int i = 0; i < imageToWriteOn.cols(); i++) {
-                for (int j = 0; j < imageToWriteOn.rows(); j++) {
-                    int vote = 0;
-                    Set<double[]> potentialLinesInComponent = new HashSet<>();
-                    //Find the nr of lines from around a given position
-                    for (double[] line : linesCopy) {
-                        if (Math.sqrt(Math.pow(i - line[0], 2) + Math.pow(j - line[1], 2)) < radius) {
-                            vote++;
-                            if(lineIsChunk(line, maxToBeChunk)) {
-                                potentialLinesInComponent.add(line);
-                            }
-                        }
-                    }
-                    //if the nr of lines around is sufficent, add the component to the found component and delete it from the found lines
-                    if (vote >= nrLine) {
-                        double[] circle = new double[3];
-                        circle[0] = i;
-                        circle[1] = j;
-                        circle[2] = radius;
-                        componentsFound.add(circle);
-                        linesCopy.removeAll(potentialLinesInComponent);
-                    }
-                }
-            }
-            //Print to give an approximation of time (Takes roughly 0.5 seconds per iteration)
-            System.out.println("Try to find components with "+nrLine+" lines");
-        }
-
-        //Print last lines without the components
-        /*Collections.sort(linesCopy,new LinesComparator());
-        for(int j = 0 ; j<linesCopy.size();j++){
-            double[] line = linesCopy.get(j);
-            double x1 = line[0];
-            double y1 = line[1];
-            double x2 = line[2];
-            double y2 = line[3];
-            if(x1 != x2 || y1 != y2) {
-                System.out.println("( " + x1 + " , " + y1 + " ) ; (" + x2 + " , " + y2 + " ) ");
-            }
-        }*/
-
-        System.out.println("Number of components found : "+componentsFound.size());
-
-        return new TuplePoints(linesCopy,componentsFound);
-
-    }
 
     /**
      *
@@ -747,7 +785,7 @@ public class MainOpencv {
      * @param circlesToDraw The list containing the circles
      * @return the mat with the drawn circles on it
      */
-    private Mat drawCircles(Mat dst, List<double[]> circlesToDraw, Scalar color){
+    private Mat drawCircles(Mat dst, List<double[]> circlesToDraw, Scalar color, int radius){
         double xi = 0.0;
         double yi = 0.0;
         int ri = 0;
@@ -758,7 +796,7 @@ public class MainOpencv {
             for(int j = 0 ; j < data.length ; j++){
                 xi = data[0];
                 yi = data[1];
-                ri = (int) data[2];
+                ri = radius;
             }
 
             Point center = new Point(Math.round(xi), Math.round(yi));
@@ -769,7 +807,6 @@ public class MainOpencv {
         }
         return dst;
     }
-
     /**
      *
      * @param lines Mat of lines
@@ -829,7 +866,6 @@ public class MainOpencv {
 
             for (int x = 0; x < lineFromLeftToRight.size() - 1; x +=2 ) {
 
-                //System.out.println("x : "+x);
 
                 double[] vec1 = lineFromLeftToRight.get(x);
                 double x11 = vec1[0];
@@ -880,3 +916,4 @@ public class MainOpencv {
         return lineTwoRound;
     }
 }
+

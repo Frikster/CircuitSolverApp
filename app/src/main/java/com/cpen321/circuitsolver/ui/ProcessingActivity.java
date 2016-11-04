@@ -1,62 +1,82 @@
 package com.cpen321.circuitsolver.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.opencv.MainOpencv;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
-public class ProcessingActivity extends AppCompatActivity implements View.OnTouchListener {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
-    private Uri dataLocation;
+public class ProcessingActivity extends AppCompatActivity {
+
+    private String dataLocation;
     private ProgressBar progressBar;
+
+    private Bitmap outputImage;
+
+    private CircuitProject circuitProject;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_processing);
 
         Bundle extras = getIntent().getExtras();
 
         if (extras != null) {
-            this.dataLocation = (Uri) extras.get(Constants.PROCESSING_DATA_LOCATION_KEY);
+            this.dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
         }
 
-        this.progressBar = (ProgressBar) findViewById(R.id.image_process_status);
+        this.circuitProject = new CircuitProject(new File(this.dataLocation));
 
-        this.progressBar.setOnClickListener(new View.OnClickListener() {
+        Thread tmp = new Thread() {
             @Override
-            public void onClick(View view) {
-                Intent showAnalysis = new Intent(getApplicationContext(), AnalysisActivity.class);
-                showAnalysis.putExtra(Constants.PROCESSING_DATA_LOCATION_KEY,
-                        ProcessingActivity.this.dataLocation);
+            public void run() {
+                Bitmap bMap = null;
+                try{
+                    ProcessingActivity.this.circuitProject.print();
+                    ProcessingActivity.this.circuitProject.convertOriginalToDownsized();
+                    bMap = ProcessingActivity.this.circuitProject.getDownsizedImage();
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                    return;
+                }
 
-                startActivity(showAnalysis);
+                System.out.println("right before processing");
+                MainOpencv main = new MainOpencv();
+                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap));
+                ProcessingActivity.this.circuitProject.print();
+                System.out.println("out of processing");
+                ProcessingActivity.this.displayOutputImage();
+
             }
-        });
+        };
+
+        tmp.run();
 
     }
 
-    public boolean onTouch(View view, MotionEvent event) {
-        System.out.println(event.toString());
+    private void displayOutputImage() {
 
+        Intent displayIntent = new Intent(getApplicationContext(), AnalysisActivity.class);
+        displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            System.out.println("tapped the screen");
+        startActivity(displayIntent);
 
-            Intent showAnalysis = new Intent(getApplicationContext(), AnalysisActivity.class);
-            showAnalysis.putExtra(Constants.PROCESSING_DATA_LOCATION_KEY, this.dataLocation);
-
-            startActivity(showAnalysis);
-        }
-
-        return false;
     }
 
 }

@@ -11,25 +11,21 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
-import com.cpen321.circuitsolver.opencv.MainOpencv;
 import com.cpen321.circuitsolver.util.BaseActivity;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 
 public class HomeActivity extends BaseActivity {
     private static final String APP_NAME = "com.cpen321.circuitsolver";
@@ -37,58 +33,30 @@ public class HomeActivity extends BaseActivity {
     String mCurrentPhotoPath;
 
     static final int REQUEST_TAKE_PHOTO = 1;
-
     private LinearLayout savedCircuitsScroll;
-    private LinearLayout exampleCircuitsScroll;
 
-    private Uri tmpImageLocation;
+    private ArrayList<CircuitProject> circuitProjects = new ArrayList<>();
+    private CircuitProject candidateProject;
 
-    /*Button loadBtn;
-    ImageView myIm;
+    public static String selectedTag = null;
 
-    TextView loadingMsg;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MainOpencv main = new MainOpencv();
-        Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.mipmap.circuittest2);
-        Bitmap m = main.houghLines(bMap);
-
-        /*super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-
-        loadBtn = (Button) findViewById(R.id.button);
-        myIm = (ImageView) findViewById(R.id.myImage);
-        loadingMsg = (TextView) findViewById(R.id.textView);*/
-
-
-        /*loadBtn.setOnClickListener(new View.OnClickListener() {
-
-
-            @Override
-            public void onClick(View v) {
-                MainOpencv main = new MainOpencv();
-                loadBtn.setEnabled(false);
-                Bitmap bMap = BitmapFactory.decodeResource(getResources(), R.mipmap.circuittest2);
-                Bitmap m = main.houghLines(bMap);
-                myIm.setImageBitmap(m);
-                loadingMsg.setVisibility(View.INVISIBLE);
-            }
-        });*/
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton process_fab = (FloatingActionButton) findViewById(R.id.processing_fab);
 
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-        this.exampleCircuitsScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
+//        this.deleteSavedCircuits();
         this.updateSavedCircuits();
 
-//        this.deleteSavedCircuits();
+
+        this.checkNecessaryPermissions();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,132 +68,99 @@ public class HomeActivity extends BaseActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        process_fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (HomeActivity.selectedTag == null)
+                    return;
+                Intent displayIntent = new Intent(HomeActivity.this, AnalysisActivity.class);
+                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
+                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                startActivity(displayIntent);
+            }
+        });
     }
-
-
 
     // TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE (NOT MY OWN CODE)
 
     private void dispatchTakePictureIntent() {
+        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            System.out.println("BLBASDFLHJASGDKJLHKLAJSDH");
-
             // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                ex.printStackTrace();
-            }
+            File photoFile = this.candidateProject.generateOriginalImageFile();
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         APP_NAME,
                         photoFile);
-                this.tmpImageLocation = photoURI;
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+            else {
+                System.out.println("photo file is null");
             }
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory*/
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        this.updateSavedCircuits();
         super.onActivityResult(requestCode, resultCode, data);
-
-        System.out.println(this.tmpImageLocation.toString());
-
-        Snackbar.make(this.findViewById(R.id.content_home), "Returned from camera", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-
         Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
-        analysisIntent.putExtra(Constants.PROCESSING_DATA_LOCATION_KEY, this.tmpImageLocation);
+        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
         startActivity(analysisIntent);
     }
 
 
     private void deleteSavedCircuits() {
         File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File[] images = imageStorageDir.listFiles();
-        for (File image : images) {
-            image.delete();
+        for (File dir : imageStorageDir.listFiles())
+            this.deleteFolderOrFile(imageStorageDir);
+    }
+
+    private void deleteFolderOrFile(File file) {
+        if (file.isDirectory()) {
+            for (File child : file.listFiles())
+                this.deleteFolderOrFile(child);
+            file.delete();
+        } else {
+            file.delete();
         }
     }
 
     protected void updateSavedCircuits(){
-        System.out.println("CHECKING saved images");
-        try {
-            File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            File[] images = imageStorageDir.listFiles();
-            this.savedCircuitsScroll.removeAllViews();
+        File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File[] circuitProjects = imageStorageDir.listFiles();
+        this.savedCircuitsScroll.removeAllViews();
+        this.circuitProjects.clear();
 
-            ArrayList<Bitmap> thumbnails = this.getThumbnails(images);
-
-            for (Bitmap image : thumbnails) {
-                ImageView newImage = new ImageView(getApplicationContext());
-                newImage.setPadding(10, 10, 10, 10);
-
-                newImage.setImageBitmap(image);
-                this.savedCircuitsScroll.addView(newImage);
-            }
-        } catch (NullPointerException ex) {
-            System.out.println("No files found");
-        }
-    }
-
-    public ArrayList<Bitmap> getThumbnails(File[] images){
-        ArrayList<Bitmap> thumbnails = new ArrayList<>();
-
-        for (File image : images){
-            try{
-                FileInputStream inStream = new FileInputStream(image);
-                Bitmap thumbnail = BitmapFactory.decodeStream(inStream);
-                if (thumbnail == null)
-                    continue;
-                int width = thumbnail.getWidth();
-                int height = thumbnail.getHeight();
-                final int scaleToHeight = 600;
-                float heightScale = height / scaleToHeight;
-                float newWidth = width / heightScale;
-
-                thumbnail = Bitmap.createScaledBitmap(thumbnail, (int) newWidth,
-                        scaleToHeight, false);
-
-                thumbnails.add(thumbnail);
-
-            } catch(Exception ex) {
-                ex.printStackTrace();
+        for (File project : circuitProjects) {
+            if (project.isDirectory()){
+                if (project.listFiles().length == 0)
+                    this.deleteFolderOrFile(project);
+                else {
+                    this.circuitProjects.add(new CircuitProject(project));
+                }
             }
         }
 
-        Collections.reverse(thumbnails);
-
-        return thumbnails;
+        for (CircuitProject circuitProject : this.circuitProjects) {
+            ImageView newImage = new ImageView(getApplicationContext());
+            newImage.setTag(circuitProject.getFolderID());
+            newImage.setPadding(10, 10, 10, 10);
+            newImage.setImageBitmap(circuitProject.getThumbnail());
+            newImage.setOnClickListener(new ThumbnailListener());
+            this.savedCircuitsScroll.addView(newImage);
+        }
     }
-
-
 
 
 }

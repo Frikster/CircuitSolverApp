@@ -7,23 +7,19 @@ import java.util.List;
 /**
  * Created by Jennifer on 10/10/2016.
  */
-public class CircuitNode {
+public class CircuitNode implements SpiceLabel{
+
+    private static int numNodes;
 
     private List<SimplePoint> points = new ArrayList<SimplePoint>();
     private boolean isValidVoltage;
     private double voltage;
+    private String label;
 
     public CircuitNode(){
-        isValidVoltage = false;
-    }
-
-    /*
-    TODO: Can't think of a scenario where we might use this constructor.
-    We would probably know points before voltage.
-     */
-    public CircuitNode(double voltage){
-        isValidVoltage = true;
-        this.voltage = voltage;
+        this.isValidVoltage = false;
+        this.label = "" + numNodes; //possible that nodes may be deleted but numNodes won't be decremented. This shouldn't matter for SPICE...
+        numNodes++;
     }
 
     public double getVoltage(){
@@ -88,5 +84,10 @@ public class CircuitNode {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String getSpiceLabel() {
+        return this.label;
     }
 }
