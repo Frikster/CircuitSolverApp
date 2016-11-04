@@ -54,4 +54,9 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     public String constructSpiceLine() {
         return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + "dc" + " " + voltage;
     }
+
+    @Override
+    public String toString(){
+        return "VoltageElm: " + super.toString();
+    }
 }

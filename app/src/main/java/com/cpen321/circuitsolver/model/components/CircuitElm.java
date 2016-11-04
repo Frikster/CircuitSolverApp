@@ -109,4 +109,9 @@ public abstract class CircuitElm {
         return nodes;
     }
 
+    @Override
+    public String toString(){
+        return p1 + ", " + p2;
+    }
+
 }
