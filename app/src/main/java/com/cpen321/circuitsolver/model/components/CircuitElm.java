@@ -112,7 +112,7 @@ public abstract class CircuitElm {
         return nodes;
     }
 
-    public void onDraw(Canvas canvas, boolean horizontal, Paint paint, int yDisp) {
+    public void onDraw(Canvas canvas, Paint paint, int yDisp) {
 
     }
 

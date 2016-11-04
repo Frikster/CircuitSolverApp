@@ -60,8 +60,7 @@ public class CircuitDisplay extends View {
                 new SimplePoint(700, 500)));
         this.components.add(new ResistorElm(new SimplePoint(700, 500),
                 new SimplePoint(700, 700), 5));
-        this.components.add(new WireElm(new SimplePoint(700, 700),
-                new SimplePoint(500, 900)));
+        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
                 new SimplePoint(300, 900), 5));
         this.components.add(new WireElm(new SimplePoint(300, 900),
@@ -75,12 +74,8 @@ public class CircuitDisplay extends View {
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(this.tmpColor);
-//        this.drawResistor(canvas, new Point(1000, 600), new Point(1300, 600), true);
-//        this.drawInductor(canvas, new Point(1000, 800), new Point(1300, 800), true);
-//        this.drawCapacitor(canvas, new Point(1000, 1000), new Point(1300, 1000), true);
-        System.out.println("in onDraw of CircuitDisplay");
         for (CircuitElm circuitElm : this.components) {
-            circuitElm.onDraw(canvas,  true, this.circuitPaint, 50);
+            circuitElm.onDraw(canvas, this.circuitPaint, 50);
         }
 
     }
