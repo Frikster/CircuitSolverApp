@@ -72,24 +72,16 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
             SimplePoint spikeStart = new SimplePoint(p1.getX(), (int) (p1.getY() + quarterLength));
 
-            int startY = p1.getY();
-
             for (int i=0; i < numSpikes; i++) {
                 if (i == 0) {
                     canvas.drawLine(spikeStart.getX(), spikeStart.getY() + (interval * i), spikeStart.getX() + (disp * (-1)^i), spikeStart.getY() + (interval * (i+1)), paint);
-//                    canvas.drawLine(spikeStart.getX() + (interval * i), spikeStart.getY(), spikeStart.getX() + (interval * (i+1)), spikeStart.getY() + (disp * (-1)^i), paint);
                 } else if (i == (numSpikes - 1)) {
                     canvas.drawLine(spikeStart.getX() + disp, spikeStart.getY() + (interval * i), spikeStart.getX(), spikeStart.getY() + (interval * (i+1)), paint);
-//                    canvas.drawLine(spikeStart.getX() + (interval * i), spikeStart.getY() + disp, spikeStart.getX() + (interval * (i+1)), spikeStart.getY(), paint);
                 } else if (i % 2 == 0) {
                     canvas.drawLine(spikeStart.getX() + (disp * (-1)^i), spikeStart.getY() + (interval * (i+1)),
                             spikeStart.getX()- (disp * (-1)^(i+1)), spikeStart.getY() + (interval * (i)), paint);
-//                    canvas.drawLine(spikeStart.getX() + (interval * (i+1)), spikeStart.getY() + (disp * (-1)^i),
-//                            spikeStart.getX() + (interval * (i)), spikeStart.getY() - (disp * (-1)^(i+1)),
-//                            paint);
                 } else {
                     canvas.drawLine(spikeStart.getX() + (disp * (-1)^i), spikeStart.getY()  + (interval * i), spikeStart.getX() - (disp * (-1)^(i+1)), spikeStart.getY()  + (interval * (i+1)), paint);
-//                    canvas.drawLine(spikeStart.getX() + (interval * i), spikeStart.getY() + (disp * (-1)^i) , spikeStart.getX() + (interval * (i+1)), spikeStart.getY() - (disp * (-1)^(i+1)), paint);
                 }
             }
         } else {

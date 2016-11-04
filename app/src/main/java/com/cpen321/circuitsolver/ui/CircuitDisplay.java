@@ -13,6 +13,7 @@ import android.view.View;
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
@@ -54,11 +55,11 @@ public class CircuitDisplay extends View {
     }
 
     private void init() {
-        this.components.add(new ResistorElm(new SimplePoint(300, 300),
+        this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
                 new SimplePoint(700, 500)));
-        this.components.add(new ResistorElm(new SimplePoint(700, 500),
+        this.components.add(new InductorElm(new SimplePoint(700, 500),
                 new SimplePoint(700, 700), 5));
         this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
