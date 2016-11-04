@@ -18,6 +18,8 @@ import com.cpen321.circuitsolver.R;
 public class EditActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private CircuitDisplay circuitDisplay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +35,9 @@ public class EditActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+        this.circuitDisplay = new CircuitDisplay(getApplicationContext());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.addView(this.circuitDisplay);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);

@@ -55,33 +55,6 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
 
     public void onDraw(Canvas canvas, Point start, Point end, boolean horizontal, Paint circuitPaint,
                        int yDisp) {
-        int fullLength = horizontal ? (end.x - start.x) : (end.y - start.y);
-        float quarterLength = ((float) fullLength) / 4f;
-        canvas.drawLine(start.x, start.y, start.x + quarterLength, start.y, circuitPaint);
-        canvas.drawLine(end.x - quarterLength, end.y, end.x, end.y, circuitPaint);
-
-        float halfLength = quarterLength * 2f;
-        int numSpikes = 7;
-        float xInterval = halfLength / ((float) numSpikes);
-
-        Point spikeStart = new Point((int) (start.x + quarterLength), start.y);
-
-        int startY = start.y;
-
-        for (int i=0; i < numSpikes; i++) {
-            if (i == 0) {
-                canvas.drawLine(spikeStart.x + (xInterval * i), startY, spikeStart.x + (xInterval * (i+1)), startY + (yDisp * (-1)^i), circuitPaint);
-            } else if (i == (numSpikes - 1)) {
-                canvas.drawLine(spikeStart.x + (xInterval * i), startY + yDisp, spikeStart.x + (xInterval * (i+1)), startY, circuitPaint);
-            } else if (i % 2 == 0) {
-                canvas.drawLine(spikeStart.x + (xInterval * (i+1)), startY + (yDisp * (-1)^i),
-                        spikeStart.x + (xInterval * (i)), startY - (yDisp * (-1)^(i+1)),
-                        circuitPaint);
-            } else {
-                canvas.drawLine(spikeStart.x + (xInterval * i), startY + (yDisp * (-1)^i) , spikeStart.x + (xInterval * (i+1)), startY - (yDisp * (-1)^(i+1)), circuitPaint);
-            }
-        }
-
 
     }
 }

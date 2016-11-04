@@ -11,6 +11,11 @@ import android.graphics.RectF;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.SimplePoint;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.ResistorElm;
+import com.cpen321.circuitsolver.model.components.VoltageElm;
+import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.opencv.Component;
 import com.cpen321.circuitsolver.util.CircuitProject;
 
@@ -29,7 +34,7 @@ public class CircuitDisplay extends View {
     private int tmpColor = res.getColor(R.color.circuitBackground);
 
     private CircuitProject circuitProject;
-    private ArrayList<Component> components = new ArrayList<>();
+    private ArrayList<CircuitElm> components = new ArrayList<>();
 
     public CircuitDisplay(Context context) {
         super(context);
@@ -37,6 +42,7 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.rectF = new RectF(200, 100, 300, 200);
         this.circuitPaint.setStrokeWidth(2.5f);
+        this.init();
     }
     public CircuitDisplay(Context context, CircuitProject project) {
         super(context);
@@ -47,12 +53,35 @@ public class CircuitDisplay extends View {
         this.rectF = new RectF(200, 100, 300, 200);
     }
 
+    private void init() {
+        this.components.add(new ResistorElm(new SimplePoint(300, 300),
+                new SimplePoint(500, 300), 5));
+        this.components.add(new WireElm(new SimplePoint(500, 300),
+                new SimplePoint(700, 500)));
+        this.components.add(new ResistorElm(new SimplePoint(700, 500),
+                new SimplePoint(700, 700), 5));
+        this.components.add(new WireElm(new SimplePoint(700, 700),
+                new SimplePoint(500, 900)));
+        this.components.add(new ResistorElm(new SimplePoint(500, 900),
+                new SimplePoint(300, 900), 5));
+        this.components.add(new WireElm(new SimplePoint(300, 900),
+                new SimplePoint(300, 700)));
+        this.components.add(new VoltageElm(new SimplePoint(300, 700),
+                new SimplePoint(300, 500), 5));
+        this.components.add(new WireElm(new SimplePoint(300, 500),
+                new SimplePoint(300, 300)));
+    }
+
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(this.tmpColor);
-        this.drawResistor(canvas, new Point(1000, 600), new Point(1300, 600), true);
-        this.drawInductor(canvas, new Point(1000, 800), new Point(1300, 800), true);
-        this.drawCapacitor(canvas, new Point(1000, 1000), new Point(1300, 1000), true);
+//        this.drawResistor(canvas, new Point(1000, 600), new Point(1300, 600), true);
+//        this.drawInductor(canvas, new Point(1000, 800), new Point(1300, 800), true);
+//        this.drawCapacitor(canvas, new Point(1000, 1000), new Point(1300, 1000), true);
+        System.out.println("in onDraw of CircuitDisplay");
+        for (CircuitElm circuitElm : this.components) {
+            circuitElm.onDraw(canvas,  true, this.circuitPaint, 50);
+        }
 
     }
 
