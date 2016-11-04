@@ -7,7 +7,6 @@ import com.cpen321.circuitsolver.R;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,7 +29,7 @@ public final class NgSpice {
 
     private NgSpice(Context context) {
         //TODO: check phone's cpu and create proper executable depending on CPU version
-        execFilePath = createExecutable(context, R.raw.ngspice_arm);
+        execFilePath = createExecutable(context, R.raw.ngspice);
         inputFilePath = getPath(context, INPUT_FILE_NAME);
         outputFilePath = getPath(context, OUTPUT_FILE_NAME);
     }
@@ -56,7 +55,6 @@ public final class NgSpice {
         writeToInputFile(input);
         return exec("-b " + inputFilePath);
     }
-
     /**
      * Executes ngspice
      * @param args the command line arguments to ngspice
@@ -65,9 +63,9 @@ public final class NgSpice {
     private String exec(String args) {
         String returnString = null;
         try {
-            String command = execFilePath + " " + "-b " + inputFilePath; //args;
-            Process process = Runtime.getRuntime().exec(command);
-            Log.d(TAG, "exec command: " + command);
+            String command = execFilePath + " " + "-b " + inputFilePath;
+            Log.d(TAG, "exec command: " + "./ngspice -o " + OUTPUT_FILE_NAME + " -z " + "/data/data/com.cpen321.circuitsolver/files" + " -b " + INPUT_FILE_NAME);
+            Process process = Runtime.getRuntime().exec("./ngspice " + " -z " + "/data/data/com.cpen321.circuitsolver/files" + " -b " + INPUT_FILE_NAME, null, new File("/data/data/com.cpen321.circuitsolver/files"));
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             StringBuilder output = new StringBuilder();
             char[] buffer = new char[4096];
@@ -85,7 +83,6 @@ public final class NgSpice {
 
         return returnString;
     }
-
 
     /**
      * Writes input string to input file to be read my ngspice
@@ -110,14 +107,17 @@ public final class NgSpice {
     private String createExecutable(Context context, int resourceId) {
         String filePath = getPath(context, EXEC_FILE_NAME);
         File file = new File(filePath);
+
         if(!file.exists()) { //if file already exists, it should be the working executable, unless there is another file with same name
-            Log.d(TAG, "createExecutable: file already exists");
+            Log.d(TAG, "createExecutable: ngspice file does not already exists");
             try {
                 copyRawToFile(context, resourceId, EXEC_FILE_NAME);
                 changeToExecutable(context, EXEC_FILE_NAME);
             } catch (Exception e) {
                 Log.e(TAG, "Error was thrown while creating executable");
             }
+        } else {
+            Log.d(TAG, "createExecutable: ngspice file already exists");
         }
         return filePath;
     }
