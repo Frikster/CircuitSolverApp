@@ -1,5 +1,7 @@
 package com.cpen321.circuitsolver.model.components;
 
+import android.os.Parcelable;
+
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
 
@@ -9,7 +11,9 @@ import java.util.List;
 /**
  * Created by Jennifer on 10/10/2016.
  */
-public abstract class CircuitElm {
+public abstract class CircuitElm{
+
+
 
     //protected CircuitNode[] nodes;
     private CircuitNode n1;

@@ -26,6 +26,7 @@ import java.util.Set;
 
 import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
+import static com.cpen321.circuitsolver.util.Constants.WIRE;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -129,10 +130,6 @@ public class MainOpencv {
             }
         }
 
-        List<CircuitElm> myelement = getCircuitElements();
-        for(CircuitElm c : myelement){
-            System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
-        }
         //Create and return the final bitmap
         Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(tmp3, bm);
@@ -142,16 +139,16 @@ public class MainOpencv {
         return bm;
     }
 
-    public List<CircuitElm> getCircuitElements(){
-        List<CircuitElm> circuitElements = new ArrayList<>();
+    public String getCircuitText(){
+        StringBuilder sb = new StringBuilder();
         for(List<Element> circElem : separatedComponents){
             if(circElem.size() == 2){
                 Corner corner1 = (Corner) circElem.get(0);
                 Corner corner2 = (Corner) circElem.get(1);
                 SimplePoint p1 = new SimplePoint((int)corner1.getX(),(int)corner1.getY());
                 SimplePoint p2 = new SimplePoint((int)corner2.getX(),(int)corner2.getY());
-                WireElm wire = new WireElm(p1,p2);
-                circuitElements.add(wire);
+
+                sb.append(WIRE + " " + p1.getX() + " " + p1.getY() + " " + p2.getX() + " " + p2.getY());
             }
             else if (circElem.size() == 3){
                 Component elem = (Component) circElem.get(1);
@@ -162,18 +159,20 @@ public class MainOpencv {
                 switch(elem.getType()){
                     case RESISTOR :
                         ResistorElm resistor = new ResistorElm(p1,p2);
-                        circuitElements.add(resistor);
+                        sb.append(RESISTOR + " " + p1.getX() + " " + p1.getY() + " " + p2.getX() + " " + p2.getY());
                         break;
                     case DC_VOLTAGE :
                         VoltageElm voltage = new VoltageElm(p1,p2);
-                        circuitElements.add(voltage);
+                        sb.append(DC_VOLTAGE + " " + p1.getX() + " " + p1.getY() + " " + p2.getX() + " " + p2.getY());
                         break;
 
                 }
             }
+            sb.append("\n");
         }
-        return circuitElements;
+        return sb.toString();
     }
+
     /**returns corners that are not too near from components
      *
      * @param assignedPoints, the list of points that have been assigned to a cluster
