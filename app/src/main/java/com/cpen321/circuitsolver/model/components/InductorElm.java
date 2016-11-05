@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
@@ -18,6 +19,7 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
     private double inductance;
     private String name;
+    private boolean isSelected;
 
     public InductorElm(SimplePoint p1, SimplePoint p2, double inductance){
         super(p1, p2);
@@ -59,6 +61,13 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
+    public void toggleIsSelected(){
+        Log.i("RECT", "CORRECT");
+        Log.i("RECT", this.getType());
+        isSelected = !isSelected;
+    }
+
+    @Override
     public void onDraw(Canvas canvas, Paint paint,
                        int disp) {
         SimplePoint p1 = this.getPoint(0);
@@ -68,6 +77,21 @@ public class InductorElm extends CircuitElm implements SpiceElm {
         if (p1.getX() == p2.getX()) {
             int fullLength = Math.abs(p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
+            paint.setStyle(Paint.Style.STROKE);
+
+            // Draw a rectangle as required
+            if (isSelected){
+                float left = p1.getX() - quarterLength;
+                float top = p1.getY();
+                float right = p1.getX() + quarterLength;
+                float bottom = p2.getY();
+                if (top > bottom){
+                    top = p2.getY();
+                    bottom = p1.getY();
+                }
+                canvas.drawRect(left, top, right, bottom, paint);
+            }
+
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() + quarterLength, paint);
             canvas.drawLine(p2.getX(), p2.getY() - quarterLength, p2.getX(), p2.getY(), paint);
 
@@ -90,6 +114,21 @@ public class InductorElm extends CircuitElm implements SpiceElm {
         } else {
             int fullLength = Math.abs(p2.getX() - p1.getX());
             float quarterLength = ((float) fullLength) / 4f;
+            paint.setStyle(Paint.Style.STROKE);
+
+            // Draw a rectangle as required
+            if (isSelected){
+                float left = p1.getX();
+                float top = p1.getY() - quarterLength;
+                float right = p2.getX();
+                float bottom = p1.getY() + quarterLength;
+                if (left > right){
+                    left = p2.getX();
+                    right = p1.getX();
+                }
+                canvas.drawRect(left, top, right, bottom, paint);
+            }
+
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + quarterLength, p1.getY(), paint);
             canvas.drawLine(p2.getX(), p2.getY(), p2.getX() - quarterLength, p2.getY(), paint);
 

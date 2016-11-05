@@ -63,7 +63,6 @@ public class CircuitDisplay extends View {
     }
 
     private void init() { // simply a test while we wait to get actual values from the processing
-        Log.i("RECT", "int");
         this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
@@ -99,7 +98,6 @@ public class CircuitDisplay extends View {
         for (CircuitElm circuitElm : this.components) {
             circuitElm.onDraw(canvas, this.circuitPaint, 50);
         }
-
     }
 
     /**
