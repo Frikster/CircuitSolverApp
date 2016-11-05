@@ -109,8 +109,6 @@
             android:shadowColor="@color/circuitBackground"
             android:textColor="@color/circuitBackground"
             android:id="@+id/component_value"
-            android:clickable="false"
-            android:focusable="false"
             android:backgroundTint="@color/backgroundGray" />
         <TextView
             android:text="ohms"

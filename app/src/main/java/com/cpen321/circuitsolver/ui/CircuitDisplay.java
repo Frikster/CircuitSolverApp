@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
@@ -41,6 +42,8 @@ public class CircuitDisplay extends View {
     private CircuitProject circuitProject;
     private ArrayList<CircuitElm> components = new ArrayList<>();
 
+    Paint paint = new Paint();
+
     public CircuitDisplay(Context context) {
         super(context);
         this.circuitPaint = new Paint();
@@ -49,6 +52,7 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setStrokeWidth(2.5f);
         this.init();
     }
+
     public CircuitDisplay(Context context, CircuitProject project) {
         super(context);
         this.circuitProject = project;
@@ -59,38 +63,28 @@ public class CircuitDisplay extends View {
     }
 
     private void init() { // simply a test while we wait to get actual values from the processing
+        Log.i("RECT", "int");
         this.components.add(new InductorElm(new SimplePoint(300, 300),
-                new SimplePoint(500, 300), 5));
+                new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
                 new SimplePoint(700, 500)));
         this.components.add(new CapacitorElm(new SimplePoint(700, 500),
-                new SimplePoint(700, 700), 5));
+                new SimplePoint(700, 700), 77));
         this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
-                new SimplePoint(300, 900), 5));
+                new SimplePoint(300, 900), 10));
         this.components.add(new WireElm(new SimplePoint(300, 900),
                 new SimplePoint(300, 700)));
         this.components.add(new VoltageElm(new SimplePoint(300, 700),
-                new SimplePoint(300, 500), 5));
+                new SimplePoint(300, 500), 12));
         this.components.add(new WireElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300)));
 
-//      test stuff for the rectangle
-//        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        mTextPaint.setColor(mTextColor);
-//        if (mTextHeight == 0) {
-//            mTextHeight = mTextPaint.getTextSize();
-//        } else {
-//            mTextPaint.setTextSize(mTextHeight);
-//        }
-//
-//        mPiePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        mPiePaint.setStyle(Paint.Style.FILL);
-//        mPiePaint.setTextSize(mTextHeight);
-//
-//        mShadowPaint = new Paint(0);
-//        mShadowPaint.setColor(0xff101010);
-//        mShadowPaint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
+        //test stuff for the rectangle
+//        Paint myPaint = new Paint();
+//        myPaint.setColor(Color.rgb(0, 0, 0));
+//        myPaint.setStrokeWidth(10);
+//        c.drawRect(100, 100, 200, 200, myPaint);
 
 
     }
@@ -113,7 +107,7 @@ public class CircuitDisplay extends View {
      */
     public CircuitElm getCircuitElemTouched(int x, int y){
         CircuitElm candidate = null;
-        double candidate_distance = Double.POSITIVE_INFINITY;
+        double candidate_distance = 50;
         for(CircuitElm circuitElm : components ){
             int x1 = circuitElm.getPoint(0).getX();
             int y1 = circuitElm.getPoint(0).getY();
@@ -127,25 +121,31 @@ public class CircuitDisplay extends View {
                 candidate = circuitElm;
             }
         }
+        //(candidate.getType()) candidateConverted = ;
+        if (candidate != null){
+            candidate.toggleIsSelected();
+            this.invalidate();
+        }
+        return candidate;
 
-        if(candidate == null){
-            return candidate;
-        }
+//        if(candidate == null){
+//            return candidate;
+//        }
         // Find bounding rect defining
-        int x1 = candidate.getPoint(0).getX();
-        int y1 = candidate.getPoint(0).getY();
-        int x2 = candidate.getPoint(1).getX();
-        int y2 = candidate.getPoint(1).getY();
-        int touchThreshold = 50;
-        assert(x1==x2 || y1==y2);
-        if (x1 == x2){
-            int bound_rect_x1 = x1 - touchThreshold;
-            int bound_rect_x2 = x1 + touchThreshold;
-        }
-        else{
-            int bound_rect_y1 = y1 - touchThreshold;
-            int bound_rect_y2 = y1 + touchThreshold;
-        }
+//        int x1 = candidate.getPoint(0).getX();
+//        int y1 = candidate.getPoint(0).getY();
+//        int x2 = candidate.getPoint(1).getX();
+//        int y2 = candidate.getPoint(1).getY();
+//        int touchThreshold = 50;
+//        assert(x1==x2 || y1==y2);
+//        if (x1 == x2){
+//            int bound_rect_x1 = x1 - touchThreshold;
+//            int bound_rect_x2 = x1 + touchThreshold;
+//        }
+//        else{
+//            int bound_rect_y1 = y1 - touchThreshold;
+//            int bound_rect_y2 = y1 + touchThreshold;
+//        }
 
 //        int touchThreshold = 50;
 //
@@ -170,9 +170,6 @@ public class CircuitDisplay extends View {
 //            }
 //        }
 
-
-
-
-        return candidate;
+//        return candidate;
     }
 }
