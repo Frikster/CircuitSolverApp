@@ -41,6 +41,8 @@ public class CircuitDisplay extends View {
     private CircuitProject circuitProject;
     private ArrayList<CircuitElm> components = new ArrayList<>();
 
+    Paint paint = new Paint();
+
     public CircuitDisplay(Context context) {
         super(context);
         this.circuitPaint = new Paint();
@@ -49,6 +51,7 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setStrokeWidth(2.5f);
         this.init();
     }
+
     public CircuitDisplay(Context context, CircuitProject project) {
         super(context);
         this.circuitProject = project;
@@ -75,22 +78,11 @@ public class CircuitDisplay extends View {
         this.components.add(new WireElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300)));
 
-//      test stuff for the rectangle
-//        mTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        mTextPaint.setColor(mTextColor);
-//        if (mTextHeight == 0) {
-//            mTextHeight = mTextPaint.getTextSize();
-//        } else {
-//            mTextPaint.setTextSize(mTextHeight);
-//        }
-//
-//        mPiePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        mPiePaint.setStyle(Paint.Style.FILL);
-//        mPiePaint.setTextSize(mTextHeight);
-//
-//        mShadowPaint = new Paint(0);
-//        mShadowPaint.setColor(0xff101010);
-//        mShadowPaint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
+        //test stuff for the rectangle
+//        Paint myPaint = new Paint();
+//        myPaint.setColor(Color.rgb(0, 0, 0));
+//        myPaint.setStrokeWidth(10);
+//        c.drawRect(100, 100, 200, 200, myPaint);
 
 
     }
@@ -127,6 +119,9 @@ public class CircuitDisplay extends View {
                 candidate = circuitElm;
             }
         }
+        // goes to super method so wrong
+        //candidate.setIsSelected();
+        //init();
         return candidate;
 
 //        if(candidate == null){

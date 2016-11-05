@@ -53,8 +53,12 @@ public class EditActivity extends AppCompatActivity {
                     Log.i("TAG", "touched up");
                     break;
             }
-            EditActivity.this.tappedElement = null;
+            //EditActivity.this.tappedElement = null;
             EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
+            Log.i("TOUCH", "setIsSelected");
+            tappedElement.setIsSelected();
+
+
             EditActivity.this.displayElement();
 
             return true;

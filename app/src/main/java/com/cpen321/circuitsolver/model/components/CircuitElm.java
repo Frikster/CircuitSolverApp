@@ -1,6 +1,7 @@
 package com.cpen321.circuitsolver.model.components;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.cpen321.circuitsolver.model.CircuitNode;
@@ -20,6 +21,8 @@ public abstract class CircuitElm {
 
     private SimplePoint p1;
     private SimplePoint p2;
+
+
 
     public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
@@ -113,6 +116,10 @@ public abstract class CircuitElm {
     }
 
     public void onDraw(Canvas canvas, Paint paint, int yDisp) {
+
+    }
+
+    public void setIsSelected(){
 
     }
 
