@@ -23,9 +23,8 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     public InductorElm(SimplePoint p1, SimplePoint p2, double resistance){
         super(p1, p2);
         this.resistance = resistance;
-        this.name = "r" + numResistors;
+        this.name = "l" + numResistors;
         numResistors++;
-
     }
 
     public double getVoltageDiff() {
@@ -63,7 +62,7 @@ public class InductorElm extends CircuitElm implements SpiceElm {
         RectF rectF = new RectF(p1.getY(), p1.getX(), p1.getX() + disp, p2.getY());
 
         if (p1.getX() == p2.getX()) {
-            int fullLength = (p2.getY() - p1.getY());
+            int fullLength = Math.abs(p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() + quarterLength, paint);
             canvas.drawLine(p2.getX(), p2.getY() - quarterLength, p2.getX(), p2.getY(), paint);
@@ -85,7 +84,7 @@ public class InductorElm extends CircuitElm implements SpiceElm {
             }
             paint.setStyle(tmp);
         } else {
-            int fullLength = (p2.getX() - p1.getX());
+            int fullLength = Math.abs(p2.getX() - p1.getX());
             float quarterLength = ((float) fullLength) / 4f;
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + quarterLength, p1.getY(), paint);
             canvas.drawLine(p2.getX(), p2.getY(), p2.getX() - quarterLength, p2.getY(), paint);

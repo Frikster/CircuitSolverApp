@@ -22,7 +22,8 @@
             <item
                 android:id="@+id/component_value"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Resistor"> </item>
+                android:title="Resistor">
+            </item>
         </menu>
     </item>
 

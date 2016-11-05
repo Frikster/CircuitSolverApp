@@ -13,4 +13,44 @@
     tools:context="com.cpen321.circuitsolver.ui.EditActivity"
     tools:showIn="@layout/app_bar_edit">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentStart="true">
+
+        <Button
+            android:text="Resistor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/button" />
+
+        <Button
+            android:text="Capacitor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/button2" />
+
+        <Button
+            android:text="Inductor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/button3" />
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button2"
+            android:layout_centerHorizontal="true"
+            android:hint="Component Value"
+            android:inputType="numberDecimal"
+            android:ems="10"
+            android:id="@+id/editText" />
+    </RelativeLayout>
 </RelativeLayout>
