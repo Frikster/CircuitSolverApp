@@ -43,37 +43,37 @@ public class ProcessingActivity extends AppCompatActivity {
 
         this.circuitProject = new CircuitProject(new File(this.dataLocation));
         this.displayOutputImage();
-//
-//        Thread tmp = new Thread() {
-//            @Override
-//            public void run() {
-//                Bitmap bMap = null;
-//                try{
-//                    ProcessingActivity.this.circuitProject.print();
-//                    ProcessingActivity.this.circuitProject.convertOriginalToDownsized();
-//                    bMap = ProcessingActivity.this.circuitProject.getDownsizedImage();
-//                } catch(Exception ex) {
-//                    ex.printStackTrace();
-//                    return;
-//                }
-//
-//                System.out.println("right before processing");
-//                MainOpencv main = new MainOpencv();
-//                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap));
-//                ProcessingActivity.this.circuitProject.print();
-//                System.out.println("out of processing");
-//                ProcessingActivity.this.displayOutputImage();
-//
-//            }
-//        };
-//
-//        tmp.run();
+
+        Thread tmp = new Thread() {
+            @Override
+            public void run() {
+                Bitmap bMap = null;
+                try{
+                    ProcessingActivity.this.circuitProject.print();
+                    ProcessingActivity.this.circuitProject.convertOriginalToDownsized();
+                    bMap = ProcessingActivity.this.circuitProject.getDownsizedImage();
+                } catch(Exception ex) {
+                    ex.printStackTrace();
+                    return;
+                }
+
+                System.out.println("right before processing");
+                MainOpencv main = new MainOpencv();
+                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap));
+                ProcessingActivity.this.circuitProject.print();
+                System.out.println("out of processing");
+                ProcessingActivity.this.displayOutputImage();
+
+            }
+        };
+
+        tmp.run();
 
     }
 
     private void displayOutputImage() {
 
-        Intent displayIntent = new Intent(getApplicationContext(), AnalysisActivity.class);
+        Intent displayIntent = new Intent(getApplicationContext(), EditActivity.class);
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
 
         startActivity(displayIntent);

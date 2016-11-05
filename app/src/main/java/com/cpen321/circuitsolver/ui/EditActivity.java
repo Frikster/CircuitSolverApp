@@ -3,30 +3,22 @@ package com.cpen321.circuitsolver.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
-
-import java.text.AttributedCharacterIterator;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -39,6 +31,7 @@ public class EditActivity extends AppCompatActivity {
     private EditText componentValue;
 
     private CircuitElm tappedElement;
+    private boolean valueChanged = false;
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
@@ -47,13 +40,11 @@ public class EditActivity extends AppCompatActivity {
             int x = (int) event.getX();
             int y = (int) event.getY();
             Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     Log.i("TAG", "touched down");
                     CharSequence text = "Touched (" + x + "," + y + ")";
-                    Toast.makeText(context, text, duration).show();
                     break;
                 case MotionEvent.ACTION_MOVE:
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
@@ -62,15 +53,10 @@ public class EditActivity extends AppCompatActivity {
                     Log.i("TAG", "touched up");
                     break;
             }
+            EditActivity.this.tappedElement = null;
             EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
+            EditActivity.this.displayElement();
 
-            if (EditActivity.this.tappedElement != null){
-                Toast.makeText(context, EditActivity.this.tappedElement.getType(),duration).show();
-                EditActivity.this.displayElement();
-            }
-            else{
-                Toast.makeText(context, "Nothing nearby :(",duration).show();
-            }
             return true;
         }
     };
@@ -90,11 +76,11 @@ public class EditActivity extends AppCompatActivity {
 
         this.resistorButton = (Button) findViewById(R.id.resistorButton);
         this.capacitorButton = (Button) findViewById(R.id.capacitor_button);
-        this.resistorButton = (Button) findViewById(R.id.inductorButton);
+        this.inductorButton = (Button) findViewById(R.id.inductorButton);
         this.voltageSourceButton = (Button) findViewById(R.id.voltage_source);
         this.valueUnits = (TextView) findViewById(R.id.units_display);
         this.componentValue = (EditText) findViewById(R.id.component_value);
-        this.initButtons();
+        this.initElements();
         this.tappedElement = this.circuitDisplay.getRandomElement();
         this.displayElement();
     }
@@ -124,8 +110,8 @@ public class EditActivity extends AppCompatActivity {
     private void enableAllButtons() {
         this.resistorButton.setEnabled(true);
         this.capacitorButton.setEnabled(true);
-//        this.inductorButton.setEnabled(true);
-//        this.voltageSourceButton.setEnabled(true);
+        this.inductorButton.setEnabled(true);
+        this.voltageSourceButton.setEnabled(true);
         this.componentValue.setEnabled(true);
         this.componentValue.setFocusable(true);
         this.componentValue.setClickable(true);
@@ -133,6 +119,13 @@ public class EditActivity extends AppCompatActivity {
 
     private void displayElement() {
         this.enableAllButtons();
+
+        if (this.tappedElement == null) {
+            this.valueUnits.setText(Constants.NOTHING_SELECTED);
+            this.componentValue.setText("--");
+            return;
+        }
+
         switch (this.tappedElement.getType()) {
             case Constants.CAPACITOR: {
                 this.capacitorButton.setEnabled(false);
@@ -161,37 +154,54 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void changeElementType(String newElementType) {
-
+        System.out.println("changing element type to: " + newElementType);
     }
 
-    private void initButtons() {
-//        this.resistorButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EditActivity.this.changeElementType(Constants.RESISTOR);
-//            }
-//        });
-//
-//        this.capacitorButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EditActivity.this.changeElementType(Constants.CAPACITOR);
-//            }
-//        });
-//
-//        this.inductorButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EditActivity.this.changeElementType(Constants.INDUCTOR);
-//            }
-//        });
-//
-//        this.voltageSourceButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                EditActivity.this.changeElementType(Constants.DC_VOLTAGE);
-//            }
-//        });
+    private void initElements() {
+        this.resistorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditActivity.this.changeElementType(Constants.RESISTOR);
+            }
+        });
+
+        this.capacitorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditActivity.this.changeElementType(Constants.CAPACITOR);
+            }
+        });
+
+        this.inductorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditActivity.this.changeElementType(Constants.INDUCTOR);
+            }
+        });
+
+        this.voltageSourceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditActivity.this.changeElementType(Constants.DC_VOLTAGE);
+            }
+        });
+
+        this.componentValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
     }
 

@@ -60,18 +60,18 @@ public class CircuitDisplay extends View {
 
     private void init() { // simply a test while we wait to get actual values from the processing
         this.components.add(new InductorElm(new SimplePoint(300, 300),
-                new SimplePoint(500, 300), 5));
+                new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
                 new SimplePoint(700, 500)));
         this.components.add(new CapacitorElm(new SimplePoint(700, 500),
-                new SimplePoint(700, 700), 5));
+                new SimplePoint(700, 700), 77));
         this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
-                new SimplePoint(300, 900), 5));
+                new SimplePoint(300, 900), 10));
         this.components.add(new WireElm(new SimplePoint(300, 900),
                 new SimplePoint(300, 700)));
         this.components.add(new VoltageElm(new SimplePoint(300, 700),
-                new SimplePoint(300, 500), 5));
+                new SimplePoint(300, 500), 12));
         this.components.add(new WireElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300)));
 
@@ -113,7 +113,7 @@ public class CircuitDisplay extends View {
      */
     public CircuitElm getCircuitElemTouched(int x, int y){
         CircuitElm candidate = null;
-        double candidate_distance = Double.POSITIVE_INFINITY;
+        double candidate_distance = 50;
         for(CircuitElm circuitElm : components ){
             int x1 = circuitElm.getPoint(0).getX();
             int y1 = circuitElm.getPoint(0).getY();
@@ -127,25 +127,26 @@ public class CircuitDisplay extends View {
                 candidate = circuitElm;
             }
         }
+        return candidate;
 
-        if(candidate == null){
-            return candidate;
-        }
+//        if(candidate == null){
+//            return candidate;
+//        }
         // Find bounding rect defining
-        int x1 = candidate.getPoint(0).getX();
-        int y1 = candidate.getPoint(0).getY();
-        int x2 = candidate.getPoint(1).getX();
-        int y2 = candidate.getPoint(1).getY();
-        int touchThreshold = 50;
-        assert(x1==x2 || y1==y2);
-        if (x1 == x2){
-            int bound_rect_x1 = x1 - touchThreshold;
-            int bound_rect_x2 = x1 + touchThreshold;
-        }
-        else{
-            int bound_rect_y1 = y1 - touchThreshold;
-            int bound_rect_y2 = y1 + touchThreshold;
-        }
+//        int x1 = candidate.getPoint(0).getX();
+//        int y1 = candidate.getPoint(0).getY();
+//        int x2 = candidate.getPoint(1).getX();
+//        int y2 = candidate.getPoint(1).getY();
+//        int touchThreshold = 50;
+//        assert(x1==x2 || y1==y2);
+//        if (x1 == x2){
+//            int bound_rect_x1 = x1 - touchThreshold;
+//            int bound_rect_x2 = x1 + touchThreshold;
+//        }
+//        else{
+//            int bound_rect_y1 = y1 - touchThreshold;
+//            int bound_rect_y2 = y1 + touchThreshold;
+//        }
 
 //        int touchThreshold = 50;
 //
@@ -170,9 +171,6 @@ public class CircuitDisplay extends View {
 //            }
 //        }
 
-
-
-
-        return candidate;
+//        return candidate;
     }
 }
