@@ -3,6 +3,7 @@ package com.cpen321.circuitsolver.model.components;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
@@ -119,8 +120,8 @@ public abstract class CircuitElm {
 
     }
 
-    public void setIsSelected(){
-
+    public void toggleIsSelected(){
+        Log.i("RECT", "WRONG");
     }
 
     public double getValue() {

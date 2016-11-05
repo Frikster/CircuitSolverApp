@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
@@ -62,6 +63,7 @@ public class CircuitDisplay extends View {
     }
 
     private void init() { // simply a test while we wait to get actual values from the processing
+        Log.i("RECT", "int");
         this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
@@ -119,9 +121,9 @@ public class CircuitDisplay extends View {
                 candidate = circuitElm;
             }
         }
-        // goes to super method so wrong
-        //candidate.setIsSelected();
-        //init();
+        //(candidate.getType()) candidateConverted = ;
+        candidate.toggleIsSelected();
+        this.invalidate();
         return candidate;
 
 //        if(candidate == null){

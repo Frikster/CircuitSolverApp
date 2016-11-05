@@ -55,8 +55,6 @@ public class EditActivity extends AppCompatActivity {
             }
             //EditActivity.this.tappedElement = null;
             EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
-            Log.i("TOUCH", "setIsSelected");
-            tappedElement.setIsSelected();
 
 
             EditActivity.this.displayElement();

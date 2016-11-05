@@ -60,18 +60,19 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
-    public void setIsSelected(){
+    public void toggleIsSelected(){
+        Log.i("RECT", "CORRECT");
         isSelected = !isSelected;
     }
 
     @Override
     public void onDraw(Canvas canvas, Paint paint,
                        int disp) {
-        //super.onDraw(canvas, paint, disp);
+        // super.onDraw(canvas, paint, disp);
         SimplePoint p1 = this.getPoint(0);
         SimplePoint p2 = this.getPoint(1);
 
-
+        Log.i("RECT", "onDraw");
         if (p1.getX() == p2.getX()) {
             int fullLength = (p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
@@ -113,10 +114,10 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
             Log.i("RECT", Float.toString(top));
             Log.i("RECT", Float.toString(right));
             Log.i("RECT", Float.toString(bottom));
-            canvas.drawRect(left, top, right, bottom, paint);
-//            if (isSelected){
-//                canvas.drawRect(left, top, right, bottom, paint);
-//            }
+            //canvas.drawRect(left, top, right, bottom, paint);
+            if (isSelected){
+                canvas.drawRect(left, top, right, bottom, paint);
+            }
 
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + quarterLength, p1.getY(), paint);
             canvas.drawLine(p2.getX() - quarterLength, p2.getY(), p2.getX(), p2.getY(), paint);
