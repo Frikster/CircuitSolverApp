@@ -8,7 +8,6 @@ import android.graphics.RectF;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
-import com.cpen321.circuitsolver.model.SpiceLabel;
 import com.cpen321.circuitsolver.util.Constants;
 
 /**
@@ -17,12 +16,12 @@ import com.cpen321.circuitsolver.util.Constants;
 public class InductorElm extends CircuitElm implements SpiceElm {
     private static int numResistors = 1;
 
-    private double resistance;
+    private double inductance;
     private String name;
 
-    public InductorElm(SimplePoint p1, SimplePoint p2, double resistance){
+    public InductorElm(SimplePoint p1, SimplePoint p2, double inductance){
         super(p1, p2);
-        this.resistance = resistance;
+        this.inductance = inductance;
         this.name = "l" + numResistors;
         numResistors++;
     }
@@ -36,12 +35,12 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     }
 
     public void setValue(double value) {
-        this.resistance = value;
+        this.inductance = value;
     }
 
     @Override
     public String getType() {
-        return Constants.RESISTOR;
+        return Constants.INDUCTOR;
     }
 
     @Override
@@ -51,7 +50,12 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
     @Override
     public String constructSpiceLine() {
-        return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + resistance;
+        return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + inductance;
+    }
+
+    @Override
+    public double getValue() {
+        return this.inductance;
     }
 
     @Override

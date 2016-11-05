@@ -54,6 +54,11 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
+    public double getValue() {
+        return this.voltage;
+    }
+
+    @Override
     public void onDraw(Canvas canvas, Paint paint, int disp) {
         SimplePoint p1 = this.getPoint(0);
         SimplePoint p2 = this.getPoint(1);

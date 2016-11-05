@@ -116,4 +116,8 @@ public abstract class CircuitElm {
 
     }
 
+    public double getValue() {
+        return 0;
+    }
+
 }

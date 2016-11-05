@@ -58,7 +58,7 @@ public class CircuitDisplay extends View {
         this.rectF = new RectF(200, 100, 300, 200);
     }
 
-    private void init() {
+    private void init() { // simply a test while we wait to get actual values from the processing
         this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
@@ -93,6 +93,10 @@ public class CircuitDisplay extends View {
 //        mShadowPaint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
 
 
+    }
+
+    public CircuitElm getRandomElement() {
+        return this.components.get(4);
     }
 
     public void onDraw(Canvas canvas) {

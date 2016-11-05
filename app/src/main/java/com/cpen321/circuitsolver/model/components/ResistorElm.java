@@ -55,6 +55,11 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
+    public double getValue() {
+        return this.resistance;
+    }
+
+    @Override
     public void onDraw(Canvas canvas, Paint paint,
                        int disp) {
         SimplePoint p1 = this.getPoint(0);
