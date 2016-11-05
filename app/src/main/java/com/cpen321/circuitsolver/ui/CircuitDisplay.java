@@ -108,78 +108,6 @@ public class CircuitDisplay extends View {
 
     }
 
-
-    private void drawResistor(Canvas canvas, Point start, Point end, boolean horizontal) {
-        int fullLength = horizontal ? (end.x - start.x) : (end.y - start.y);
-        float quarterLength = ((float) fullLength) / 4f;
-        canvas.drawLine(start.x, start.y, start.x + quarterLength, start.y, this.circuitPaint);
-        canvas.drawLine(end.x - quarterLength, end.y, end.x, end.y, this.circuitPaint);
-
-        float halfLength = quarterLength * 2f;
-        int numSpikes = 7;
-        float xInterval = halfLength / ((float) numSpikes);
-
-        Point spikeStart = new Point((int) (start.x + quarterLength), start.y);
-
-        int startY = start.y;
-        int yDisp = 50;
-
-        for (int i=0; i < numSpikes; i++) {
-            if (i == 0) {
-                canvas.drawLine(spikeStart.x + (xInterval * i), startY, spikeStart.x + (xInterval * (i+1)), startY + (yDisp * (-1)^i), this.circuitPaint);
-            } else if (i == (numSpikes - 1)) {
-                canvas.drawLine(spikeStart.x + (xInterval * i), startY + yDisp, spikeStart.x + (xInterval * (i+1)), startY, this.circuitPaint);
-            } else if (i % 2 == 0) {
-                canvas.drawLine(spikeStart.x + (xInterval * (i+1)), startY + (yDisp * (-1)^i),
-                        spikeStart.x + (xInterval * (i)), startY - (yDisp * (-1)^(i+1)),
-                        this.circuitPaint);
-            } else {
-                canvas.drawLine(spikeStart.x + (xInterval * i), startY + (yDisp * (-1)^i) , spikeStart.x + (xInterval * (i+1)), startY - (yDisp * (-1)^(i+1)), this.circuitPaint);
-            }
-        }
-    }
-    private void drawInductor(Canvas canvas, Point start, Point end, boolean horizontal) {
-        int fullLength = horizontal ? (end.x - start.x) : (end.y - start.y);
-        float quarterLength = ((float) fullLength) / 4f;
-        canvas.drawLine(start.x, start.y, start.x + quarterLength, start.y, this.circuitPaint);
-        canvas.drawLine(end.x - quarterLength, end.y, end.x, end.y, this.circuitPaint);
-
-        float halfLength = quarterLength * 2f;
-        int numSpikes = 3;
-        float xInterval = halfLength / ((float) numSpikes);
-
-        Point spikeStart = new Point((int) (start.x + quarterLength), start.y);
-
-        int yDisp = 50;
-
-        Paint.Style tmp = this.circuitPaint.getStyle();
-        this.circuitPaint.setStyle(Paint.Style.STROKE);
-        for (int i=0; i < numSpikes; i++) {
-
-            this.rectF.left = spikeStart.x + xInterval * i;
-            this.rectF.bottom = spikeStart.y + yDisp;
-            this.rectF.top = spikeStart.y - yDisp;
-            this.rectF.right = spikeStart.x + xInterval * (i+1);
-            canvas.drawArc(this.rectF, 180f, 180f, false, this.circuitPaint);
-        }
-        this.circuitPaint.setStyle(tmp);
-    }
-    private void drawCapacitor(Canvas canvas, Point start, Point end, boolean horizontal) {
-        int fullLength = horizontal ? (end.x - start.x) : (end.y - start.y);
-        float fifthLength = ((float) fullLength) / 5f;
-        canvas.drawLine(start.x, start.y, start.x + (fifthLength*2), start.y, this.circuitPaint);
-        canvas.drawLine(end.x - (2*fifthLength), end.y, end.x, end.y, this.circuitPaint);
-
-        Point spikeStart = new Point((int) (start.x + (2*fifthLength)), start.y);
-
-        int yDisp = 50;
-        canvas.drawLine(spikeStart.x, spikeStart.y - yDisp,
-                spikeStart.x, spikeStart.y + yDisp, this.circuitPaint);
-        canvas.drawLine(spikeStart.x + fifthLength, spikeStart.y - yDisp,
-                spikeStart.x + fifthLength, spikeStart.y + yDisp, this.circuitPaint);
-
-    }
-
     /**
      * Find the CircuitElm touched by (x, y). Return null if none are touched
      */
@@ -199,6 +127,7 @@ public class CircuitDisplay extends View {
                 candidate = circuitElm;
             }
         }
+
         if(candidate == null){
             return candidate;
         }
