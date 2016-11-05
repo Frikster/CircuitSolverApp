@@ -147,6 +147,7 @@ public abstract class CircuitElm {
 
     }
 
+
     public void toggleIsSelected(){
         Log.i("RECT", "WRONG");
     }

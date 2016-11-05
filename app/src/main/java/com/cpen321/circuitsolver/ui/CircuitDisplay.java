@@ -66,14 +66,13 @@ public class CircuitDisplay extends View {
     }
 
     private void init() { // simply a test while we wait to get actual values from the processing
-        Log.i("RECT", "int");
         this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
                 new SimplePoint(700, 500)));
         this.components.add(new CapacitorElm(new SimplePoint(700, 500),
                 new SimplePoint(700, 700), 77));
-//        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
+        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
                 new SimplePoint(300, 900), 10));
         this.components.add(new WireElm(new SimplePoint(300, 900),
@@ -106,7 +105,6 @@ public class CircuitDisplay extends View {
             circuitElm.onDraw(canvas, this.circuitPaint, 50);
 
         }
-
     }
 
     /**

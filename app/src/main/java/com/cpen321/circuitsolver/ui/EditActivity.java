@@ -56,10 +56,7 @@ public class EditActivity extends AppCompatActivity {
             }
             //EditActivity.this.tappedElement = null;
             //EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
-
-
             EditActivity.this.displayElement();
-
             return true;
         }
     };
