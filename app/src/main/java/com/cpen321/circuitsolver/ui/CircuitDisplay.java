@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CapacitorElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
@@ -43,6 +44,8 @@ public class CircuitDisplay extends View {
     private ArrayList<CircuitElm> components = new ArrayList<>();
 
     Paint paint = new Paint();
+
+    CircuitElmFactory circuitElmFactory = new CircuitElmFactory();
 
     public CircuitDisplay(Context context) {
         super(context);
@@ -97,7 +100,11 @@ public class CircuitDisplay extends View {
         super.onDraw(canvas);
         canvas.drawColor(this.tmpColor);
         for (CircuitElm circuitElm : this.components) {
+            if (circuitElm == null)
+                continue;
+            System.out.println(circuitElm.toString());
             circuitElm.onDraw(canvas, this.circuitPaint, 50);
+
         }
 
     }
@@ -178,6 +185,21 @@ public class CircuitDisplay extends View {
             CircuitElm elm = this.components.get(i);
             if (elm.equals(elementToRotate)){
                 elm = this.swapOrientation(elm);
+                this.components.set(i, elm);
+                this.invalidate();
+                break;
+            }
+        }
+    }
+
+    public void changeElementType(CircuitElm elementToChange, String newType) {
+        for (int i=0; i < this.components.size(); i++) {
+            CircuitElm elm = this.components.get(i);
+            if (elm.equals(elementToChange)){
+                elm = this.circuitElmFactory.makeElm(newType,
+                        elementToChange.getP1(),
+                        elementToChange.getP2(),
+                        elementToChange.getValue());
                 this.components.set(i, elm);
                 this.invalidate();
                 break;

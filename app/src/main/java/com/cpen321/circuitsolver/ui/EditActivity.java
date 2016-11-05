@@ -158,7 +158,9 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void changeElementType(String newElementType) {
-        System.out.println("changing element type to: " + newElementType);
+        if (this.tappedElement == null)
+            return;
+        this.circuitDisplay.changeElementType(this.tappedElement, newElementType);
     }
 
     private void initElements() {
@@ -199,7 +201,8 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void rotateElement() {
-        System.out.println("in rotateElement");
+        if (this.tappedElement == null)
+            return;
         this.circuitDisplay.rotateElement(this.tappedElement);
 
     }
