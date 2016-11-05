@@ -49,7 +49,7 @@ public abstract class CircuitElm {
         if (!this.getType().equals(((CircuitElm) o).getType()))
             return false;
 
-        return (this.p1 == ((CircuitElm) o).getPoint(0) && this.p2 == ((CircuitElm) o).getPoint(1));
+        return (this.p1.equals( ((CircuitElm) o).getPoint(0)) && this.p2.equals( ((CircuitElm) o).getPoint(1)));
     }
 
     /**
