@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
 
 public class EditActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -80,21 +81,21 @@ public class EditActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    
+
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
 
             int x = (int) event.getX();
             int y = (int) event.getY();
+            Context context = getApplicationContext();
+            int duration = Toast.LENGTH_SHORT;
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    Log.i("TAG", "touched down");
-                    Context context = getApplicationContext();
-                    CharSequence text = "Touched (" + x + "," + y + ")";
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast.makeText(context, text, duration).show();
+                    //Log.i("TAG", "touched down");
+                    //CharSequence text = "Touched (" + x + "," + y + ")";
+                    //Toast.makeText(context, text, duration).show();
                     break;
                 case MotionEvent.ACTION_MOVE:
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
@@ -103,7 +104,14 @@ public class EditActivity extends AppCompatActivity
                     Log.i("TAG", "touched up");
                     break;
             }
+            CircuitElm circuitTouched = circuitDisplay.getCircuitElemTouched(x, y);
 
+            if (circuitTouched != null){
+                Toast.makeText(context, circuitTouched.getType(),duration).show();
+            }
+            else{
+                Toast.makeText(context, "Nothing nearby :(",duration).show();
+            }
             return true;
         }
     };
