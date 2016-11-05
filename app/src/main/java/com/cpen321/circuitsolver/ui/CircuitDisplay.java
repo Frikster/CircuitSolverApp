@@ -122,8 +122,10 @@ public class CircuitDisplay extends View {
             }
         }
         //(candidate.getType()) candidateConverted = ;
-        candidate.toggleIsSelected();
-        this.invalidate();
+        if (candidate != null){
+            candidate.toggleIsSelected();
+            this.invalidate();
+        }
         return candidate;
 
 //        if(candidate == null){
