@@ -4,7 +4,7 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
-import com.cpen321.circuitsolver.service.CircuitSim;
+import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
 
 import org.junit.Test;
 
@@ -25,10 +25,10 @@ public class SpiceElmTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(10, 0), 10));
         elements.add(new WireElm(new SimplePoint(0,0), new SimplePoint(0, 10)));
 
-        CircuitSim circuitSim = new CircuitSim(elements);
-        circuitSim.init();
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
 
-        for(CircuitElm elm : circuitSim.getElements()){
+        for(CircuitElm elm : analyzeCircuitImpl.getElements()){
             if(elm instanceof SpiceElm)
                 System.out.println(((SpiceElm) elm).constructSpiceLine());
         }
@@ -50,10 +50,10 @@ public class SpiceElmTest {
 
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(5, 0), 10));
 
-        CircuitSim circuitSim = new CircuitSim(elements);
-        circuitSim.init();
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
 
-        for(CircuitElm elm : circuitSim.getElements()){
+        for(CircuitElm elm : analyzeCircuitImpl.getElements()){
             if(elm instanceof SpiceElm)
                 System.out.println(((SpiceElm) elm).constructSpiceLine());
         }
@@ -79,10 +79,10 @@ public class SpiceElmTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(5, 0), 10));
 
 
-        CircuitSim circuitSim = new CircuitSim(elements);
-        circuitSim.init();
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
 
-        for(CircuitElm elm : circuitSim.getElements()){
+        for(CircuitElm elm : analyzeCircuitImpl.getElements()){
             if(elm instanceof SpiceElm)
                 System.out.println(((SpiceElm) elm).constructSpiceLine());
         }

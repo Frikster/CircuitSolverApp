@@ -69,7 +69,7 @@ public class CircuitDisplay extends View {
                 new SimplePoint(700, 500)));
         this.components.add(new CapacitorElm(new SimplePoint(700, 500),
                 new SimplePoint(700, 700), 77));
-        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
+//        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
                 new SimplePoint(300, 900), 10));
         this.components.add(new WireElm(new SimplePoint(300, 900),
@@ -169,5 +169,43 @@ public class CircuitDisplay extends View {
 //        }
 
 //        return candidate;
+    }
+
+    public void rotateElement(CircuitElm elementToRotate) {
+        for (int i=0; i < this.components.size(); i++) {
+            CircuitElm elm = this.components.get(i);
+            if (elm.equals(elementToRotate)){
+                elm = this.swapOrientation(elm);
+                this.components.set(i, elm);
+                this.invalidate();
+                break;
+            }
+        }
+    }
+
+    private CircuitElm swapOrientation(CircuitElm element) {
+        SimplePoint start = element.getPoint(0);
+        SimplePoint end = element.getPoint(1);
+
+        SimplePoint newStart;
+        SimplePoint newEnd;
+
+        if (start.getX() == end.getX()) {
+            int length = end.getY() - start.getY();
+            int halfLength = length/2;
+            int middleY = start.getY() + length/2;
+            newStart = new SimplePoint(start.getX() - halfLength, middleY);
+            newEnd = new SimplePoint(start.getX() + halfLength, middleY);
+        } else {
+            int length = end.getX() - start.getX();
+            int halfLength = length/2;
+            int middleX = start.getX() + length/2;
+            newStart = new SimplePoint(middleX, start.getY() - halfLength);
+            newEnd = new SimplePoint(middleX, start.getY() + halfLength);
+        }
+        element.setP1(newStart);
+        element.setP2(newEnd);
+
+        return element;
     }
 }

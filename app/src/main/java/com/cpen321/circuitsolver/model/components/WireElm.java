@@ -50,4 +50,8 @@ public class WireElm extends CircuitElm {
             canvas.drawLine(endX, endY, endX, startY, paint);
 //        }
     }
+
+    public boolean isWire(){
+        return true;
+    }
 }

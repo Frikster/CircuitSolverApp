@@ -96,6 +96,9 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
             int numSpikes = 7;
             float interval = halfLength / ((float) numSpikes);
 
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() + quarterLength, paint);
+            canvas.drawLine(p2.getX() , p2.getY() - quarterLength, p2.getX(), p2.getY(), paint);
+
             SimplePoint spikeStart = new SimplePoint(p1.getX(), (int) (p1.getY() - quarterLength));
 
             for (int i=0; i < numSpikes; i++) {
