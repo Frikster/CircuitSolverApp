@@ -26,6 +26,22 @@ public abstract class CircuitElm {
         this.p2 = p2;
     }
 
+    public SimplePoint getP1() {
+        return p1;
+    }
+
+    public void setP1(SimplePoint p1) {
+        this.p1 = p1;
+    }
+
+    public SimplePoint getP2() {
+        return p2;
+    }
+
+    public void setP2(SimplePoint p2) {
+        this.p2 = p2;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof CircuitElm))
