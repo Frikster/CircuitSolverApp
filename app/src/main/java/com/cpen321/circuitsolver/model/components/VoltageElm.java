@@ -1,6 +1,10 @@
 package com.cpen321.circuitsolver.model.components;
 
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.SpiceLabel;
@@ -47,5 +51,36 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     @Override
     public String constructSpiceLine() {
         return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + "dc" + " " + voltage;
+    }
+
+    @Override
+    public double getValue() {
+        return this.voltage;
+    }
+
+    @Override
+    public void onDraw(Canvas canvas, Paint paint, int disp) {
+        SimplePoint p1 = this.getPoint(0);
+        SimplePoint p2 = this.getPoint(1);
+
+        Paint.Style tmpStyle = paint.getStyle();
+        paint.setStyle(Paint.Style.STROKE);
+
+        if (p1.getX() == p2.getX()) {
+            int fullLength = (p2.getY() - p1.getY());
+            float quarterLength = ((float) fullLength) / 4f;
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() + quarterLength, paint);
+            canvas.drawLine(p2.getX() , p2.getY() - quarterLength, p2.getX(), p2.getY(), paint);
+            SimplePoint halfway = new SimplePoint(p1.getX(), p1.getY() + (fullLength / 2));
+            canvas.drawCircle(halfway.getX(), halfway.getY(), disp, paint);
+        } else {
+            int fullLength = (p2.getX() - p1.getX());
+            float quarterLength = ((float) fullLength) / 4f;
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + quarterLength, p1.getY(), paint);
+            canvas.drawLine(p2.getX() - quarterLength, p2.getY(), p2.getX(), p2.getY(), paint);
+            SimplePoint halfway = new SimplePoint(p1.getX() + (fullLength / 2), p1.getY());
+            canvas.drawCircle(halfway.getX(), halfway.getY(), disp, paint);
+        }
+        paint.setStyle(tmpStyle);
     }
 }

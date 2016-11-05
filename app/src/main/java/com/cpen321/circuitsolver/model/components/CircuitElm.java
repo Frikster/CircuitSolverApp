@@ -1,5 +1,8 @@
 package com.cpen321.circuitsolver.model.components;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
 
@@ -107,6 +110,14 @@ public abstract class CircuitElm {
         nodes.add(n1);
         nodes.add(n2);
         return nodes;
+    }
+
+    public void onDraw(Canvas canvas, Paint paint, int yDisp) {
+
+    }
+
+    public double getValue() {
+        return 0;
     }
 
 }
