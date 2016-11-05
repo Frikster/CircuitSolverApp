@@ -152,4 +152,8 @@ public abstract class CircuitElm {
             + ", sY:" + this.getP1().getX() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
     }
 
+    public boolean isWire(){
+        return false;
+    }
+
 }
