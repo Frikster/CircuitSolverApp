@@ -19,12 +19,39 @@ public abstract class CircuitElm {
     private CircuitNode n2;
 
     private SimplePoint p1;
-    private SimplePoint p2;
 
+    private SimplePoint p2;
     public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
         this.p2 = p2;
     }
+
+    public SimplePoint getP1() {
+        return p1;
+    }
+
+    public void setP1(SimplePoint p1) {
+        this.p1 = p1;
+    }
+
+    public SimplePoint getP2() {
+        return p2;
+    }
+
+    public void setP2(SimplePoint p2) {
+        this.p2 = p2;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof CircuitElm))
+            return false;
+        if (!this.getType().equals(((CircuitElm) o).getType()))
+            return false;
+
+        return (this.p1 == ((CircuitElm) o).getPoint(0) && this.p2 == ((CircuitElm) o).getPoint(1));
+    }
+
 
     /**
      * Find the voltage difference across the element
@@ -118,6 +145,12 @@ public abstract class CircuitElm {
 
     public double getValue() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "{type: " + this.getType() + ", val: " + this.getValue() + ", sX: " + this.getP1().getX()
+            + ", sY:" + this.getP1().getX() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
     }
 
 }

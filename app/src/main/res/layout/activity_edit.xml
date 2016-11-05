@@ -25,99 +25,121 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
         android:layout_gravity="bottom|start"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relativeLayout"
+            android:background="@color/colorPrimary"
             android:layout_gravity="bottom|start"
-            android:layout_alignParentStart="true">
+            android:id="@+id/relativeLayout"
+            android:layout_height="wrap_content">
 
-            <Button
-                android:text="Resistor"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="@color/circuitBackground"
-                android:textColor="@color/colorAccent"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/resistorButton"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:hapticFeedbackEnabled="true"
-                android:textAllCaps="false"
-                android:typeface="monospace" />
+                android:id="@+id/editButtonPanel"
+                android:layout_gravity="bottom|start"
+                android:layout_alignParentStart="true">
 
-            <Button
-                android:text="Capacitor"
-                android:layout_weight="1"
-                android:layout_width="0dp"
+                <Button
+                    android:text="Resistor"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/circuitBackground"
+                    android:textColor="@color/colorAccent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/resistorButton"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:hapticFeedbackEnabled="true"
+                    android:textAllCaps="false"
+                    android:typeface="monospace" />
+
+                <Button
+                    android:text="Capacitor"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:layout_alignParentTop="true"
+                    android:background="@color/circuitBackground"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/capacitor_button"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:typeface="monospace"
+                    android:layout_toRightOf="@id/resistorButton"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:text="Inductor"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:textColor="@color/colorAccent"
+                    android:layout_toRightOf="@id/capacitor_button"
+                    android:background="@color/circuitBackground"
+                    android:id="@+id/inductorButton"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:textAllCaps="false"
+                    android:typeface="monospace" />
+
+                <Button
+                    android:text="V Source"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:textColor="@color/colorAccent"
+                    android:layout_weight="1"
+                    android:layout_toRightOf="@id/inductorButton"
+                    android:background="@color/circuitBackground"
+                    android:id="@+id/voltage_source"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
+                    android:textAllCaps="false"
+                    android:typeface="monospace" />
+            </LinearLayout>
+
+            <EditText
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorAccent"
-                android:layout_alignParentTop="true"
-                android:background="@color/circuitBackground"
+                android:layout_below="@id/editButtonPanel"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/capacitor_button"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:typeface="monospace"
-                android:layout_toRightOf="@id/resistorButton"
-                android:textAllCaps="false" />
+                android:hint="Component Value"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:shadowColor="@color/circuitBackground"
+                android:textColor="@color/circuitBackground"
+                android:id="@+id/component_value"
+                android:backgroundTint="@color/backgroundGray" />
+            <TextView
+                android:text="ohms"
+                android:id="@+id/units_display"
+                android:textColor="@color/circuitBackground"
+                android:layout_toRightOf="@id/component_value"
+                android:layout_alignBaseline="@id/component_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
 
-            <Button
-                android:text="Inductor"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:textColor="@color/colorAccent"
-                android:layout_toRightOf="@id/capacitor_button"
-                android:background="@color/circuitBackground"
-                android:id="@+id/inductorButton"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:textAllCaps="false"
-                android:typeface="monospace" />
-
-            <Button
-                android:text="V Source"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:textColor="@color/colorAccent"
-                android:layout_weight="1"
-                android:layout_toRightOf="@id/inductorButton"
-                android:background="@color/circuitBackground"
-                android:id="@+id/voltage_source"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="10dp"
-                android:textAllCaps="false"
-                android:typeface="monospace" />
-        </LinearLayout>
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/relativeLayout"
-            android:layout_centerHorizontal="true"
-            android:hint="Component Value"
-            android:inputType="numberDecimal"
-            android:ems="10"
-            android:shadowColor="@color/circuitBackground"
-            android:textColor="@color/circuitBackground"
-            android:id="@+id/component_value"
-            android:backgroundTint="@color/backgroundGray" />
-        <TextView
-            android:text="ohms"
-            android:id="@+id/units_display"
-            android:textColor="@color/circuitBackground"
-            android:layout_toRightOf="@id/component_value"
-            android:layout_alignBaseline="@id/component_value"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
     </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/rotate_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="@color/circuitBackground"
+        app:srcCompat="@drawable/arrow_key"
+        app:layout_anchor="@id/editButtonPanel"
+        app:layout_anchorGravity="top|right|end"
+        android:layout_alignParentEnd="false"
+        android:padding="@dimen/fab_margin"
+        app:elevation="9dp" />
+
 
 </android.support.design.widget.CoordinatorLayout>

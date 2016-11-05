@@ -3,10 +3,9 @@ package com.cpen321.circuitsolver.ui;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +30,8 @@ public class EditActivity extends AppCompatActivity {
     private EditText componentValue;
 
     private CircuitElm tappedElement;
-    private boolean valueChanged = false;
+
+    private FloatingActionButton rotateFab;
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
@@ -80,6 +80,7 @@ public class EditActivity extends AppCompatActivity {
         this.voltageSourceButton = (Button) findViewById(R.id.voltage_source);
         this.valueUnits = (TextView) findViewById(R.id.units_display);
         this.componentValue = (EditText) findViewById(R.id.component_value);
+        this.rotateFab = (FloatingActionButton) findViewById(R.id.rotate_fav);
         this.initElements();
         this.tappedElement = this.circuitDisplay.getRandomElement();
         this.displayElement();
@@ -186,25 +187,17 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        this.componentValue.addTextChangedListener(new TextWatcher() {
+        this.rotateFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+            public void onClick(View view) {
+                EditActivity.this.rotateElement();
             }
         });
-
     }
 
+    public void rotateElement() {
+        System.out.println("in rotateElement");
+        this.circuitDisplay.rotateElement(this.tappedElement);
 
-
+    }
 }
