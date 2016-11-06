@@ -30,15 +30,55 @@ import java.util.Collections;
 public class HomeActivity extends BaseActivity {
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
-    String mCurrentPhotoPath;
-
     static final int REQUEST_TAKE_PHOTO = 1;
     private LinearLayout savedCircuitsScroll;
 
     private ArrayList<CircuitProject> circuitProjects = new ArrayList<>();
     private CircuitProject candidateProject;
 
-    public static String selectedTag = null;
+    private static String selectedTag = null;
+
+    private FloatingActionButton processingFab;
+    private FloatingActionButton cameraFab;
+    private FloatingActionButton deleteFab;
+
+
+
+    private View.OnClickListener thumbnailListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            LinearLayout parentView = (LinearLayout) view.getParent();
+
+            for(int i=0; i < parentView.getChildCount(); i++) {
+                ImageView imgView = (ImageView) parentView.getChildAt(i);
+                imgView.setAlpha(1f);
+            }
+
+            if (view instanceof ImageView) {
+                ImageView imageView = (ImageView) view;
+                if (imageView.getTag() == HomeActivity.selectedTag){
+                    imageView.setAlpha(1f);
+                    HomeActivity.this.setSelectedTag(null);
+                } else {
+                    imageView.setAlpha(0.65f);
+                    HomeActivity.this.setSelectedTag((String) imageView.getTag());
+                }
+
+            }
+
+        }
+    };
+
+    public void setSelectedTag(String selectedTag) {
+        if (selectedTag == null){
+            this.deleteFab.hide();
+            this.processingFab.hide();
+        } else {
+            this.deleteFab.show();
+            this.processingFab.show();
+        }
+        HomeActivity.selectedTag = selectedTag;
+    }
 
 
     @Override
@@ -48,28 +88,25 @@ public class HomeActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        FloatingActionButton process_fab = (FloatingActionButton) findViewById(R.id.processing_fab);
+        this.cameraFab = (FloatingActionButton) findViewById(R.id.fab);
+        this.processingFab = (FloatingActionButton) findViewById(R.id.processing_fab);
+        this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
 
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-//        this.deleteSavedCircuits();
         this.updateSavedCircuits();
 
 
         this.checkNecessaryPermissions();
 
-        fab.setOnClickListener(new View.OnClickListener() {
+        this.cameraFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 HomeActivity.this.checkNecessaryPermissions();
                 HomeActivity.this.dispatchTakePictureIntent();
-
-                Snackbar.make(view, "Camera button pressed! ", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
 
-        process_fab.setOnClickListener(new View.OnClickListener() {
+        this.processingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (HomeActivity.selectedTag == null)
@@ -78,6 +115,18 @@ public class HomeActivity extends BaseActivity {
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                 startActivity(displayIntent);
+            }
+        });
+
+        this.deleteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (HomeActivity.selectedTag == null)
+                    return;
+                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
+                CircuitProject projToDelete = new CircuitProject(circuitFolder);
+                projToDelete.deleteFileSystem();
+                HomeActivity.this.updateSavedCircuits();
             }
         });
     }
@@ -119,13 +168,6 @@ public class HomeActivity extends BaseActivity {
         startActivity(analysisIntent);
     }
 
-
-    private void deleteSavedCircuits() {
-        File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        for (File dir : imageStorageDir.listFiles())
-            this.deleteFolderOrFile(imageStorageDir);
-    }
-
     private void deleteFolderOrFile(File file) {
         if (file.isDirectory()) {
             for (File child : file.listFiles())
@@ -157,7 +199,7 @@ public class HomeActivity extends BaseActivity {
             newImage.setTag(circuitProject.getFolderID());
             newImage.setPadding(10, 10, 10, 10);
             newImage.setImageBitmap(circuitProject.getThumbnail());
-            newImage.setOnClickListener(new ThumbnailListener());
+            newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
     }

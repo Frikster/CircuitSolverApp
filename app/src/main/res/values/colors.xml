@@ -8,6 +8,7 @@
     <!--Circuit Colours-->
     <color name="circuitBackground">#f0f0f0</color>
     <color name="processing_green">#00B238</color>
+    <color name="delete_brown">#593424</color>
 
 
 </resources>
