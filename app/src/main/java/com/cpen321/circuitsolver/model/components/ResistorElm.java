@@ -57,4 +57,9 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
     public String constructSpiceLine() {
         return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + resistance;
     }
+
+    @Override
+    public String toString(){
+        return "ResistorElm: " + super.toString();
+    }
 }

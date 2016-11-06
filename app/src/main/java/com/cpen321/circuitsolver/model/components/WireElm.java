@@ -32,4 +32,9 @@ public class WireElm extends CircuitElm {
         return Constants.WIRE;
     }
 
+    @Override
+    public String toString(){
+        return "WireElm: " + super.toString();
+    }
+
 }
