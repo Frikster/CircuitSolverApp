@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.List;
 
@@ -12,8 +13,8 @@ import java.util.List;
  * Created by lotus on 05/11/16.
  */
 
-public class CircuitNgSpiceInterface {
-    public static String TAG = "CircuitNgSpiceInterface";
+public class SpiceInterfacer {
+    public static String TAG = "SpiceInterfacer";
     private final List<CircuitElm> elements;
     private final static String controlCommands = ".CONTROL\n" +
             "tran 1ns 1ns\n" +
@@ -25,7 +26,7 @@ public class CircuitNgSpiceInterface {
      * Pre: nodes and elements must describe a proper circuit
      * @param elements
      */
-    public CircuitNgSpiceInterface(List<CircuitElm> elements) {
+    public SpiceInterfacer(List<CircuitElm> elements) {
         this.elements = elements;
     }
 
@@ -41,17 +42,12 @@ public class CircuitNgSpiceInterface {
         StringBuilder netlist = new StringBuilder();
         netlist.append(netListName);
         for(CircuitElm element : elements) {
-            if(element instanceof SpiceElm) {
+            if(!element.getType().equals(Constants.WIRE)) {
                 SpiceElm spiceElm = (SpiceElm)element;
-                CircuitNode posTerminal = element.getNode(0);
-                CircuitNode negTerminal = element.getNode(1);
-                if (posTerminal == null || negTerminal == null) {
-                    Log.e(TAG, "Terminal of circuit element is not connect to a node");
-                }
                 netlist.append(spiceElm.constructSpiceLine() + "\n");
             }
         }
-        return null;
+        return netlist.toString();
     }
 
     /**

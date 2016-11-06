@@ -1,5 +1,6 @@
 package com.cpen321.circuitsolver.ngspice;
 
+
 import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitNode;

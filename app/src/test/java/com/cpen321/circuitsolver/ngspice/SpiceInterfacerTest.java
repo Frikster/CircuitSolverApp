@@ -12,12 +12,13 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by lotus on 05/11/16.
  */
 
-public class CircuitNgSpiceInterfaceTest {
+public class SpiceInterfacerTest {
     @Test
     public void getNgSpiceInputTest() {
         List<CircuitElm> elements = new ArrayList<CircuitElm>();
@@ -41,9 +42,17 @@ public class CircuitNgSpiceInterfaceTest {
 
         AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
         analyzeCircuitImpl.init();
+        List<CircuitNode> resultNodes = analyzeCircuitImpl.getNodes();
+        System.out.println(resultNodes);
+        assertTrue(resultNodes.size() == 4);
 
-        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
-        System.out.println(result);
+        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(analyzeCircuitImpl.getElements());
+        System.out.println(analyzeCircuitImpl.getElements());
+        String ngSpiceInput = spiceInterfacer.getNgSpiceInput();
+        System.out.println(ngSpiceInput);
+
+
+
     }
 
 
