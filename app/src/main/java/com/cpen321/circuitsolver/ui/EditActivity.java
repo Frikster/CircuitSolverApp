@@ -6,6 +6,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -154,12 +156,6 @@ public class EditActivity extends AppCompatActivity {
 
     }
 
-    private void changeElementType(String newElementType) {
-        if (this.tappedElement == null)
-            return;
-        this.circuitDisplay.changeElementType(this.tappedElement, newElementType);
-    }
-
     private void initElements() {
         this.resistorButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -195,9 +191,44 @@ public class EditActivity extends AppCompatActivity {
                 EditActivity.this.rotateElement();
             }
         });
+
+        this.componentValue.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                EditActivity.this.changeElementValue();
+            }
+        });
     }
 
-    public void rotateElement() {
+    private void changeElementType(String newElementType) {
+        if (this.tappedElement == null)
+            return;
+        this.circuitDisplay.changeElementType(this.tappedElement, newElementType);
+    }
+
+    private void changeElementValue() {
+        if (this.tappedElement == null)
+            return;
+        String newValue = this.componentValue.getText().toString();
+
+        if (newValue.isEmpty())
+            return;
+
+        this.circuitDisplay.changeElementValue(this.tappedElement,
+                Double.valueOf(newValue));
+    }
+
+    private void rotateElement() {
         if (this.tappedElement == null)
             return;
         this.circuitDisplay.rotateElement(this.tappedElement);

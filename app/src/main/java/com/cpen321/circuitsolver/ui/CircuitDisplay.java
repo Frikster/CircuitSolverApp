@@ -161,6 +161,18 @@ public class CircuitDisplay extends View {
         this.invalidate();
     }
 
+    public void changeElementValue(CircuitElm elementToChange, double newValue) {
+        for (int i=0; i < this.components.size(); i++) {
+            CircuitElm elm = this.components.get(i);
+            if (elm.equals(elementToChange)){
+                elm.setValue(newValue);
+                this.components.set(i, elm);
+                break;
+            }
+        }
+        this.invalidate();
+    }
+
     private CircuitElm swapOrientation(CircuitElm element) {
         SimplePoint start = element.getPoint(0);
         SimplePoint end = element.getPoint(1);
