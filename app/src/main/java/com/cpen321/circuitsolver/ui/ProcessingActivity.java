@@ -60,6 +60,7 @@ public class ProcessingActivity extends AppCompatActivity {
                 System.out.println("right before processing");
                 MainOpencv main = new MainOpencv();
                 ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap));
+                ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(main.getCircuitText());
                 ProcessingActivity.this.circuitProject.print();
                 System.out.println("out of processing");
                 ProcessingActivity.this.displayOutputImage();
