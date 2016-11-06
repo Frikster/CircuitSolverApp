@@ -221,6 +221,19 @@ public class MainOpencv {
         }
         return circuitElements;
     }
+    public String getCircuitText(){
+        String circStr = "l 300 300 500 300 10.0\n" +
+                "w 500 300 700 500\n" +
+                "c 700 500 700 700 10.0 \n" +
+                "w 500 900 700 700\n" +
+                "r 500 900 300 900 10.0 \n" +
+                "w 300 900 300 700 \n" +
+                "v 300 700 300 500 10.0 \n" +
+                "w 300 500 300 300 \n";
+
+        return circStr;
+    }
+
     /**returns corners that are not too near from components
      *
      * @param assignedPoints, the list of points that have been assigned to a cluster
