@@ -9,6 +9,7 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.Constants;
 
 import org.opencv.android.Utils;
@@ -289,17 +290,22 @@ public class MainOpencv {
         return circuitElements;
     }
     public String getCircuitText(){
-        String circStr = "l 300 300 500 300 10.0\n" +
-                "w 500 300 700 500\n" +
-                "c 700 500 700 700 10.0 \n" +
-                "w 500 900 700 700\n" +
-                "r 500 900 300 900 10.0 \n" +
-                "w 300 900 300 700 \n" +
-                "v 300 700 300 500 10.0 \n" +
-                "w 300 500 300 300 \n";
+//        String circStr = "l 300 300 500 300 10.0\n" +
+//                "w 500 300 700 500\n" +
+//                "c 700 500 700 700 10.0 \n" +
+//                "w 500 900 700 700\n" +
+//                "r 500 900 300 900 10.0 \n" +
+//                "w 300 900 300 700 \n" +
+//                "v 300 700 300 500 10.0 \n" +
+//                "w 300 500 300 300 \n";
+
+        CircuitDefParser parser = new CircuitDefParser();
+        String circStr = parser.elementsToTxt(getCircuitElements());
 
         return circStr;
     }
+
+
 
     /**returns corners that are not too near from components
      *
