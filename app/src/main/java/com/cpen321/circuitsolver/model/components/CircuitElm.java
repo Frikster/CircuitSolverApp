@@ -25,6 +25,16 @@ public abstract class CircuitElm {
 
     private boolean isSelected;
 
+    public double getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(double current) {
+        this.current = current;
+    }
+
+    private double current;
+
     public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
         this.p2 = p2;
