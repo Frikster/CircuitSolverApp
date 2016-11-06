@@ -61,6 +61,11 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
+    public boolean isSelected(){
+        return isSelected;
+    }
+
+    @Override
     public void toggleIsSelected(){
         Log.i("RECT", "CORRECT");
         Log.i("RECT", this.getType());

@@ -82,14 +82,6 @@ public class CircuitDisplay extends View {
                 new SimplePoint(300, 500), 12));
         this.components.add(new WireElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300)));
-
-        //test stuff for the rectangle
-//        Paint myPaint = new Paint();
-//        myPaint.setColor(Color.rgb(0, 0, 0));
-//        myPaint.setStrokeWidth(10);
-//        c.drawRect(100, 100, 200, 200, myPaint);
-
-
     }
 
     public CircuitElm getRandomElement() {
@@ -103,7 +95,6 @@ public class CircuitDisplay extends View {
             if (circuitElm == null)
                 continue;
             circuitElm.onDraw(canvas, this.circuitPaint, 50);
-
         }
     }
 
@@ -113,7 +104,8 @@ public class CircuitDisplay extends View {
     public CircuitElm getCircuitElemTouched(int x, int y){
         CircuitElm candidate = null;
         double candidate_distance = 50;
-        for(CircuitElm circuitElm : components ){
+        for(CircuitElm circuitElm : components )
+        {
             int x1 = circuitElm.getPoint(0).getX();
             int y1 = circuitElm.getPoint(0).getY();
             int x2 = circuitElm.getPoint(1).getX();
@@ -121,13 +113,19 @@ public class CircuitDisplay extends View {
             double mid_x = (x1 + x2) / 2.0;
             double mid_y = (y1 + y2) / 2.0;
             double distance = Math.sqrt((mid_x-x)*(mid_x-x) + (mid_y-y)*(mid_y-y));
-            if(distance < candidate_distance) {
+            if(distance < candidate_distance)
+            {
                 candidate_distance = distance;
                 candidate = circuitElm;
             }
+            else{
+                if(circuitElm.isSelected()){
+                    circuitElm.toggleIsSelected();
+                }
+            }
         }
-        //(candidate.getType()) candidateConverted = ;
-        if (candidate != null){
+        if (candidate != null)
+        {
             candidate.toggleIsSelected();
             this.invalidate();
         }
