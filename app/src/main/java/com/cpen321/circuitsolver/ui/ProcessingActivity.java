@@ -42,6 +42,7 @@ public class ProcessingActivity extends AppCompatActivity {
         }
 
         this.circuitProject = new CircuitProject(new File(this.dataLocation));
+        this.displayOutputImage();
 
         Thread tmp = new Thread() {
             @Override
@@ -72,7 +73,7 @@ public class ProcessingActivity extends AppCompatActivity {
 
     private void displayOutputImage() {
 
-        Intent displayIntent = new Intent(getApplicationContext(), AnalysisActivity.class);
+        Intent displayIntent = new Intent(getApplicationContext(), EditActivity.class);
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
 
         startActivity(displayIntent);

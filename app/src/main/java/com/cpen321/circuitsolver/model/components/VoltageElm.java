@@ -2,8 +2,10 @@ package com.cpen321.circuitsolver.model.components;
 
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
@@ -18,6 +20,14 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
 
     private String name;
     private double voltage;
+    private boolean isSelected;
+
+    public VoltageElm(SimplePoint p1, SimplePoint p2){
+        super(p1, p2);
+        this.voltage = 10;
+        this.name = "v" + numVoltageElms;
+        numVoltageElms++;
+    }
 
     public VoltageElm(SimplePoint p1, SimplePoint p2, double voltage){
         super(p1, p2);
@@ -59,26 +69,69 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
+    public boolean isSelected(){
+        return isSelected;
+    }
+
+    @Override
+    public void toggleIsSelected(){
+        Log.i("RECT", "CORRECT");
+        Log.i("RECT", this.getType());
+        isSelected = !isSelected;
+    }
+
+    @Override
     public void onDraw(Canvas canvas, Paint paint, int disp) {
         SimplePoint p1 = this.getPoint(0);
         SimplePoint p2 = this.getPoint(1);
+        Paint rectPaint = new Paint();
+        rectPaint.setColor(Color.RED);
+        rectPaint.setStyle(Paint.Style.STROKE);
 
         Paint.Style tmpStyle = paint.getStyle();
         paint.setStyle(Paint.Style.STROKE);
 
         if (p1.getX() == p2.getX()) {
-            int fullLength = (p2.getY() - p1.getY());
+            int fullLength = Math.abs(p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
-            canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() + quarterLength, paint);
-            canvas.drawLine(p2.getX() , p2.getY() - quarterLength, p2.getX(), p2.getY(), paint);
-            SimplePoint halfway = new SimplePoint(p1.getX(), p1.getY() + (fullLength / 2));
+
+            // Draw a rectangle as required
+            if (isSelected){
+                float left = p1.getX() - quarterLength;
+                float top = p1.getY();
+                float right = p1.getX() + quarterLength;
+                float bottom = p2.getY();
+                if (top > bottom){
+                    top = p2.getY();
+                    bottom = p1.getY();
+                }
+                canvas.drawRect(left, top, right, bottom, rectPaint);
+            }
+
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() - quarterLength, paint);
+            canvas.drawLine(p2.getX() , p2.getY() + quarterLength, p2.getX(), p2.getY(), paint);
+            SimplePoint halfway = new SimplePoint(p1.getX(), p1.getY() - (fullLength / 2));
             canvas.drawCircle(halfway.getX(), halfway.getY(), disp, paint);
         } else {
-            int fullLength = (p2.getX() - p1.getX());
+            int fullLength = Math.abs(p2.getX() - p1.getX());
             float quarterLength = ((float) fullLength) / 4f;
-            canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + quarterLength, p1.getY(), paint);
-            canvas.drawLine(p2.getX() - quarterLength, p2.getY(), p2.getX(), p2.getY(), paint);
-            SimplePoint halfway = new SimplePoint(p1.getX() + (fullLength / 2), p1.getY());
+
+            // Draw a rectangle as required
+            if (isSelected){
+                float left = p1.getX();
+                float top = p1.getY() + quarterLength;
+                float right = p2.getX();
+                float bottom = p1.getY() - quarterLength;
+                if (left > right){
+                    left = p2.getX();
+                    right = p1.getX();
+                }
+                canvas.drawRect(left, top, right, bottom, rectPaint);
+            }
+
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX() - quarterLength, p1.getY(), paint);
+            canvas.drawLine(p2.getX() + quarterLength, p2.getY(), p2.getX(), p2.getY(), paint);
+            SimplePoint halfway = new SimplePoint(p1.getX() - (fullLength / 2), p1.getY());
             canvas.drawCircle(halfway.getX(), halfway.getY(), disp, paint);
         }
         paint.setStyle(tmpStyle);

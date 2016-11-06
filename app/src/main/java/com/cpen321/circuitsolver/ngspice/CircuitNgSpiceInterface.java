@@ -5,7 +5,6 @@ import android.util.Log;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.List;
 

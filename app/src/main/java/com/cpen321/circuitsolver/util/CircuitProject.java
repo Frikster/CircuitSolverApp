@@ -8,11 +8,18 @@ package com.cpen321.circuitsolver.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.cpen321.circuitsolver.model.components.CircuitElm;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class CircuitProject {
     private File originalImage = null;
@@ -21,6 +28,8 @@ public class CircuitProject {
     private File circuitDefinition = null;
 
     private File savedFolder = null;
+
+    private List<CircuitElm> circElms = null;
 
     public CircuitProject(File directory) {
         this.savedFolder = directory;
@@ -39,6 +48,10 @@ public class CircuitProject {
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    public String getCircuitText() throws IOException{
+        return this.getText(this.circuitDefinition);
     }
 
     public Bitmap getOriginalImage() throws IOException {
@@ -68,6 +81,13 @@ public class CircuitProject {
 
     }
 
+    private String getText(File fileLocation) throws IOException{
+        FileReader reader = new FileReader(fileLocation);
+        char [] cbuf = new char[100];
+        reader.read(cbuf);
+        return new String(cbuf);
+    }
+
     public void saveOriginalImage(Bitmap originalBM) {
         if (this.originalImage == null)
             this.generateOriginalImageFile();
@@ -84,6 +104,29 @@ public class CircuitProject {
         if (this.processedImage == null)
             this.generateProcessedImageFile();
         this.saveImage(processedBM, this.processedImage);
+    }
+
+    public void saveCircuitDefinitionFile(String txt){
+        if(this.circuitDefinition == null)
+            this.generateCircuitDefinitionFile();
+        this.saveTextFile(txt, this.circuitDefinition);
+    }
+
+    private void saveTextFile(String txt, File filename){
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(filename);
+            writer.write(txt);
+            writer.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println("FILE NOT FOUND");
+            ex.printStackTrace();
+            return;
+        } catch (IOException ex) {
+            System.out.println("IO EXCEPTION");
+            ex.printStackTrace();
+            return;
+        }
     }
 
     private void saveImage(Bitmap imgBmp, File filename) {
@@ -112,7 +155,15 @@ public class CircuitProject {
                 this.downsizedImage = file;
             else if (file.getName().contains("processed_"))
                 this.processedImage = file;
+            else if (file.getName().contains("circuit_"))
+                this.circuitDefinition = file;
         }
+    }
+
+    public File generateCircuitDefinitionFile(){
+        // this function generates a file for the circuit definition and assigns it to the class variable
+        this.circuitDefinition = this.generateTxtFile("circuit_");
+        return this.circuitDefinition;
     }
 
 
@@ -132,6 +183,22 @@ public class CircuitProject {
         // this function generates a file for the processed image and assigns it to the class variable
         this.originalImage = this.generateImage("original_");
         return this.originalImage;
+    }
+
+    private File generateTxtFile(String prefix){
+        if (this.savedFolder == null){
+            System.out.println("saved folder is null....");
+            return null;
+        }
+        File tmpFile = null;
+        try {
+            String filename = prefix + ImageUtils.getTimeStamp();
+            tmpFile = File.createTempFile(filename, ".txt", this.savedFolder);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return tmpFile;
     }
 
     private File generateImage(String prefix) {
@@ -184,6 +251,20 @@ public class CircuitProject {
 
     public String getFolderID() {
         return this.savedFolder.getName();
+    }
+
+    public boolean deleteFileSystem() {
+        if (this.downsizedImage != null)
+            this.downsizedImage.delete();
+        if (this.originalImage != null)
+            this.originalImage.delete();
+        if (this.processedImage != null)
+            this.processedImage.delete();
+        if (this.circuitDefinition != null)
+            this.circuitDefinition.delete();
+        if (this.savedFolder != null)
+            this.savedFolder.delete();
+        return true;
     }
 
 }
