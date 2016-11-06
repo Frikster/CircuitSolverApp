@@ -105,9 +105,9 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
             // Draw a rectangle as required
             if (isSelected){
                 float left = p1.getX();
-                float top = p1.getY() - quarterLength;
+                float top = p1.getY() + quarterLength;
                 float right = p2.getX();
-                float bottom = p1.getY() + quarterLength;
+                float bottom = p1.getY() - quarterLength;
                 if (left > right){
                     left = p2.getX();
                     right = p1.getX();
@@ -115,9 +115,9 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
                 canvas.drawRect(left, top, right, bottom, paint);
             }
 
-            canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + quarterLength, p1.getY(), paint);
-            canvas.drawLine(p2.getX() - quarterLength, p2.getY(), p2.getX(), p2.getY(), paint);
-            SimplePoint halfway = new SimplePoint(p1.getX() + (fullLength / 2), p1.getY());
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX() - quarterLength, p1.getY(), paint);
+            canvas.drawLine(p2.getX() + quarterLength, p2.getY(), p2.getX(), p2.getY(), paint);
+            SimplePoint halfway = new SimplePoint(p1.getX() - (fullLength / 2), p1.getY());
             canvas.drawCircle(halfway.getX(), halfway.getY(), disp, paint);
         }
         paint.setStyle(tmpStyle);
