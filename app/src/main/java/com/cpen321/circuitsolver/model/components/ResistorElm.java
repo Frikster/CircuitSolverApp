@@ -75,7 +75,7 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
         Log.i("RECT", "onDraw");
         if (p1.getX() == p2.getX()) {
-            int fullLength = (p2.getY() - p1.getY());
+            int fullLength = Math.abs(p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
             paint.setStyle(Paint.Style.STROKE);
 
@@ -96,21 +96,32 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
             int numSpikes = 7;
             float interval = halfLength / ((float) numSpikes);
 
-            canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() + quarterLength, paint);
-            canvas.drawLine(p2.getX() , p2.getY() - quarterLength, p2.getX(), p2.getY(), paint);
+            canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() - quarterLength, paint);
+            canvas.drawLine(p2.getX() , p2.getY() + quarterLength, p2.getX(), p2.getY(), paint);
 
-            SimplePoint spikeStart = new SimplePoint(p1.getX(), (int) (p1.getY() + quarterLength));
+            SimplePoint spikeStart = new SimplePoint(p1.getX(), (int) (p1.getY() - quarterLength));
 
             for (int i=0; i < numSpikes; i++) {
                 if (i == 0) {
-                    canvas.drawLine(spikeStart.getX(), spikeStart.getY() + (interval * i), spikeStart.getX() + (disp * (-1)^i), spikeStart.getY() + (interval * (i+1)), paint);
+                    canvas.drawLine(spikeStart.getX(),
+                            spikeStart.getY() - (interval * i),
+                            spikeStart.getX() + (disp * (-1)^i),
+                            spikeStart.getY() - (interval * (i+1)), paint);
                 } else if (i == (numSpikes - 1)) {
-                    canvas.drawLine(spikeStart.getX() + disp, spikeStart.getY() + (interval * i), spikeStart.getX(), spikeStart.getY() + (interval * (i+1)), paint);
+                    canvas.drawLine(spikeStart.getX() + disp,
+                            spikeStart.getY() - (interval * i),
+                            spikeStart.getX(),
+                            spikeStart.getY() - (interval * (i+1)), paint);
                 } else if (i % 2 == 0) {
-                    canvas.drawLine(spikeStart.getX() + (disp * (-1)^i), spikeStart.getY() + (interval * (i+1)),
-                            spikeStart.getX()- (disp * (-1)^(i+1)), spikeStart.getY() + (interval * (i)), paint);
+                    canvas.drawLine(spikeStart.getX() + (disp * (-1)^i),
+                            spikeStart.getY() - (interval * (i+1)),
+                            spikeStart.getX()- (disp * (-1)^(i+1)),
+                            spikeStart.getY() - (interval * (i)), paint);
                 } else {
-                    canvas.drawLine(spikeStart.getX() + (disp * (-1)^i), spikeStart.getY()  + (interval * i), spikeStart.getX() - (disp * (-1)^(i+1)), spikeStart.getY()  + (interval * (i+1)), paint);
+                    canvas.drawLine(spikeStart.getX() + (disp * (-1)^i),
+                            spikeStart.getY()  - (interval * i),
+                            spikeStart.getX() - (disp * (-1)^(i+1)),
+                            spikeStart.getY()  - (interval * (i+1)), paint);
                 }
             }
         } else {
