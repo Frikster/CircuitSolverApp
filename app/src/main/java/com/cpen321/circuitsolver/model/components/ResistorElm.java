@@ -181,6 +181,9 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
                 }
             }
         }
+    }
 
+    public static void resetNumElements() {
+        numResistors = 1;
     }
 }

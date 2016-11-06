@@ -7,6 +7,7 @@ import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,9 @@ public class SpiceInterfacer {
             ".ENDC\n" +
             ".END\n";
     private final static String netListName = "* My Circuit\n";
+    private final Map<String, CircuitNode> circuitNodeMap;
+    private final Map<String, CircuitElm> circuitElmMap;
+
 
     /**
      * Pre: nodes and elements must describe a proper circuit
@@ -29,8 +33,9 @@ public class SpiceInterfacer {
      */
     public SpiceInterfacer(List<CircuitElm> elements) {
         this.elements = elements;
+        circuitNodeMap = new HashMap<String, CircuitNode>();
+        circuitElmMap = new HashMap<String, CircuitElm>();
     }
-
 
     public String getNgSpiceInput() {
         return addControl(createNetlist());
@@ -100,13 +105,14 @@ public class SpiceInterfacer {
 
     /**
      * Create and return a string which describes the netlist in ngspice format
+     * Updates internal CircuitElm/CircuitNode maps used for quick parsing
      * @return a string which describes the netlist in ngspice format
      */
     private String createNetlist() {
         StringBuilder netlist = new StringBuilder();
         netlist.append(netListName);
         for(CircuitElm element : elements) {
-            if(!element.getType().equals(Constants.WIRE)) {
+            if(element instanceof SpiceElm) {
                 SpiceElm spiceElm = (SpiceElm)element;
                 netlist.append(spiceElm.constructSpiceLine() + "\n");
             }

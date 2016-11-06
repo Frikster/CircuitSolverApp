@@ -3,6 +3,7 @@ package com.cpen321.circuitsolver.ngspice;
 import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitNode;
+import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
@@ -10,6 +11,7 @@ import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -25,6 +27,11 @@ import static junit.framework.Assert.assertTrue;
  */
 
 public class SpiceInterfacerTest {
+    @Before
+    public void init() {
+        ResetComponents.resetNumComponents();
+    }
+
     @Test
     public void getNgSpiceInputTest() {
         List<CircuitElm> elements = new ArrayList<CircuitElm>();
@@ -57,11 +64,11 @@ public class SpiceInterfacerTest {
         System.out.println(ngSpiceInput);
 
         String expected = "* My Circuit\n" +
-                "v1 4 3 dc 24.0\n" +
-                "r3 4 5 10000.0\n" +
-                "r4 5 6 8100.0\n" +
-                "v2 6 3 dc 15.0\n" +
-                "r5 5 3 4700.0\n" +
+                "v1 1 0 dc 24.0\n" +
+                "r1 1 2 10000.0\n" +
+                "r2 2 3 8100.0\n" +
+                "v2 3 0 dc 15.0\n" +
+                "r3 2 0 4700.0\n" +
                 "\n" +
                 ".CONTROL\n" +
                 "tran 1ns 1ns\n" +
