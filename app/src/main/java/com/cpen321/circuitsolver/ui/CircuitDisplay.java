@@ -98,6 +98,21 @@ public class CircuitDisplay extends View {
 //                "w 300 500 300 300 10.0";
         try {
             String circStr = circuitProject.getCircuitText();
+            int scaleFactor = 30;
+            List<CircuitElm> elms = parser.parseElements(circStr);
+            for(CircuitElm elm: elms){
+                //Scale point 1
+                SimplePoint p1 = elm.getP1();
+                int x1 = p1.getX()*scaleFactor;
+                int y1 = p1.getY()*scaleFactor;
+                elm.setP1(new SimplePoint(x1, y1));
+
+                //Scale point 2
+                SimplePoint p2 = elm.getP1();
+                int x2 = p1.getX()*scaleFactor;
+                int y2 = p1.getY()*scaleFactor;
+                elm.setP1(new SimplePoint(x2, y2));
+            }
             components.addAll(parser.parseElements(circStr));
         } catch (IOException e) {
             e.printStackTrace();
