@@ -2,6 +2,7 @@ package com.cpen321.circuitsolver.model.components;
 
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
@@ -76,6 +77,9 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     public void onDraw(Canvas canvas, Paint paint, int disp) {
         SimplePoint p1 = this.getPoint(0);
         SimplePoint p2 = this.getPoint(1);
+        Paint rectPaint = new Paint();
+        rectPaint.setColor(Color.RED);
+        rectPaint.setStyle(Paint.Style.STROKE);
 
         Paint.Style tmpStyle = paint.getStyle();
         paint.setStyle(Paint.Style.STROKE);
@@ -83,7 +87,6 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
         if (p1.getX() == p2.getX()) {
             int fullLength = Math.abs(p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
-            paint.setStyle(Paint.Style.STROKE);
 
             // Draw a rectangle as required
             if (isSelected){
@@ -95,7 +98,7 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
                     top = p2.getY();
                     bottom = p1.getY();
                 }
-                canvas.drawRect(left, top, right, bottom, paint);
+                canvas.drawRect(left, top, right, bottom, rectPaint);
             }
 
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX(), p1.getY() - quarterLength, paint);
@@ -105,7 +108,6 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
         } else {
             int fullLength = Math.abs(p2.getX() - p1.getX());
             float quarterLength = ((float) fullLength) / 4f;
-            paint.setStyle(Paint.Style.STROKE);
 
             // Draw a rectangle as required
             if (isSelected){
@@ -117,7 +119,7 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
                     left = p2.getX();
                     right = p1.getX();
                 }
-                canvas.drawRect(left, top, right, bottom, paint);
+                canvas.drawRect(left, top, right, bottom, rectPaint);
             }
 
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX() - quarterLength, p1.getY(), paint);

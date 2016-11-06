@@ -2,6 +2,7 @@ package com.cpen321.circuitsolver.model.components;
 
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -77,6 +78,9 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
                        int disp) {
         SimplePoint p1 = this.getPoint(0);
         SimplePoint p2 = this.getPoint(1);
+        Paint rectPaint = new Paint();
+        rectPaint.setColor(Color.RED);
+        rectPaint.setStyle(Paint.Style.STROKE);
         RectF rectF = new RectF(p1.getY(), p1.getX(), p1.getX() + disp, p2.getY());
 
         if (p1.getX() == p2.getX()) {
@@ -94,7 +98,7 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
                     top = p2.getY();
                     bottom = p1.getY();
                 }
-                canvas.drawRect(left, top, right, bottom, paint);
+                canvas.drawRect(left, top, right, bottom, rectPaint);
             }
 
             canvas.drawLine(p1.getX(), p1.getY() + (2*fifthLength), p1.getX(), p1.getY(), paint);
@@ -121,7 +125,7 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
                     left = p2.getX();
                     right = p1.getX();
                 }
-                canvas.drawRect(left, top, right, bottom, paint);
+                canvas.drawRect(left, top, right, bottom, rectPaint);
             }
 
             canvas.drawLine(p1.getX(), p1.getY(), p1.getX() + (2*fifthLength), p1.getY(), paint);
