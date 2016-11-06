@@ -175,7 +175,7 @@ public abstract class CircuitElm{
     @Override
     public String toString() {
         return "{type: " + this.getType() + ", val: " + this.getValue() + ", sX: " + this.getP1().getX()
-            + ", sY:" + this.getP1().getX() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
+            + ", sY:" + this.getP1().getY() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
     }
 
     public boolean isWire(){
