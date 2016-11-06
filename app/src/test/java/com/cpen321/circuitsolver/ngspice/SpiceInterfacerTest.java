@@ -32,7 +32,7 @@ public class SpiceInterfacerTest {
         elements.add(new ResistorElm(new SimplePoint(4, 3), new SimplePoint(5, 3), 8100));
         elements.add(new WireElm(new SimplePoint(5, 3), new SimplePoint(6, 3)));
         elements.add(new WireElm(new SimplePoint(6, 3), new SimplePoint(6, 2)));
-        elements.add(new ResistorElm(new SimplePoint(6, 2), new SimplePoint(6, 1), 15));
+        elements.add(new VoltageElm(new SimplePoint(6, 2), new SimplePoint(6, 1), 15));
         elements.add(new WireElm(new SimplePoint(6, 1), new SimplePoint(6, 0)));
         elements.add(new WireElm(new SimplePoint(3, 3), new SimplePoint(3, 2)));
         elements.add(new ResistorElm(new SimplePoint(3, 2), new SimplePoint(3, 1), 4700));
@@ -47,9 +47,22 @@ public class SpiceInterfacerTest {
         assertTrue(resultNodes.size() == 4);
 
         SpiceInterfacer spiceInterfacer = new SpiceInterfacer(analyzeCircuitImpl.getElements());
-        System.out.println(analyzeCircuitImpl.getElements());
         String ngSpiceInput = spiceInterfacer.getNgSpiceInput();
         System.out.println(ngSpiceInput);
+
+        String expected = "* My Circuit\n" +
+                "v1 1 0 dc 24.0\n" +
+                "r1 1 2 10000.0\n" +
+                "r2 2 3 8100.0\n" +
+                "v2 3 0 dc 15.0\n" +
+                "r3 2 0 4700.0\n" +
+                "\n" +
+                ".CONTROL\n" +
+                "tran 1ns 1ns\n" +
+                ".ENDC\n" +
+                ".END";
+
+        assertTrue(ngSpiceInput.contains(expected));
 
 
 

@@ -15,13 +15,11 @@ import java.util.Map;
 
 public class NgOutputParser {
 
-    public static void callNgOutputParser(String input, Map nodes, Map elms ) {
+    public static void callNgOutputParser(String input, Map<String, CircuitNode> nodes, Map<String, CircuitElm> elms ) {
         boolean addWord = false;
         boolean isValueNum = false;
         boolean isNode = false;
         String key = null;
-
-        //nodes.put("1",cicuitNode);
 
         //replace all "\n" with spaces
         String s = input;
@@ -59,14 +57,14 @@ public class NgOutputParser {
                     isValueNum = false;
                     //add voltage to node
                     if(isNode){
-                        CircuitNode currNode = (CircuitNode)nodes.get(key);
+                        CircuitNode currNode = nodes.get(key);
                         double value = Double.parseDouble(word);
                         if(currNode != null)
                             currNode.setVoltage(value);
                     }
                     //add current to element
                     else {
-                        CircuitElm currElm = (CircuitElm)elms.get(key);
+                        CircuitElm currElm = elms.get(key);
                         if(currElm != null)
                             currElm.setCurrent(Double.parseDouble(word));
                     }
