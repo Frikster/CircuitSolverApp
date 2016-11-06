@@ -23,6 +23,7 @@ import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.opencv.Component;
 import com.cpen321.circuitsolver.util.CircuitProject;
+import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.ArrayList;
 
@@ -101,7 +102,6 @@ public class CircuitDisplay extends View {
         for (CircuitElm circuitElm : this.components) {
             if (circuitElm == null)
                 continue;
-            System.out.println(circuitElm.toString());
             circuitElm.onDraw(canvas, this.circuitPaint, 50);
 
         }
@@ -132,50 +132,6 @@ public class CircuitDisplay extends View {
             this.invalidate();
         }
         return candidate;
-
-//        if(candidate == null){
-//            return candidate;
-//        }
-        // Find bounding rect defining
-//        int x1 = candidate.getPoint(0).getX();
-//        int y1 = candidate.getPoint(0).getY();
-//        int x2 = candidate.getPoint(1).getX();
-//        int y2 = candidate.getPoint(1).getY();
-//        int touchThreshold = 50;
-//        assert(x1==x2 || y1==y2);
-//        if (x1 == x2){
-//            int bound_rect_x1 = x1 - touchThreshold;
-//            int bound_rect_x2 = x1 + touchThreshold;
-//        }
-//        else{
-//            int bound_rect_y1 = y1 - touchThreshold;
-//            int bound_rect_y2 = y1 + touchThreshold;
-//        }
-
-//        int touchThreshold = 50;
-//
-//
-//        int bound_rect_y = x1 + touchThreshold;
-//        int bound_rect_y = y1 + touchThreshold;
-//
-//
-//        CircuitElm candidate = null;
-//        double candidate_distance = Double.POSITIVE_INFINITY;
-//        for(CircuitElm circuitElm : components ){
-//            int x1 = circuitElm.getPoint(0).getX();
-//            int y1 = circuitElm.getPoint(0).getY();
-//            int x2 = circuitElm.getPoint(1).getX();
-//            int y2 = circuitElm.getPoint(1).getY();
-//            double mid_x = (x1 + x2) / 2.0;
-//            double mid_y = (y1 + y2) / 2.0;
-//            double distance = Math.sqrt((mid_x-x)*(mid_x-x) + (mid_y-y)*(mid_y-y));
-//            if(distance < candidate_distance && distance < touchThreshold) {
-//                candidate_distance = distance;
-//                candidate = circuitElm;
-//            }
-//        }
-
-//        return candidate;
     }
 
     public void rotateElement(CircuitElm elementToRotate) {
@@ -184,10 +140,10 @@ public class CircuitDisplay extends View {
             if (elm.equals(elementToRotate)){
                 elm = this.swapOrientation(elm);
                 this.components.set(i, elm);
-                this.invalidate();
-                break;
+//                break;
             }
         }
+        this.invalidate();
     }
 
     public void changeElementType(CircuitElm elementToChange, String newType) {
@@ -199,10 +155,10 @@ public class CircuitDisplay extends View {
                         elementToChange.getP2(),
                         elementToChange.getValue());
                 this.components.set(i, elm);
-                this.invalidate();
                 break;
             }
         }
+        this.invalidate();
     }
 
     private CircuitElm swapOrientation(CircuitElm element) {
