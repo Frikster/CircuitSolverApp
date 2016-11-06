@@ -21,6 +21,17 @@ public abstract class CircuitElm {
     private SimplePoint p1;
     private SimplePoint p2;
 
+    public double getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(double current) {
+        this.current = current;
+    }
+
+    private double current;
+
+
     public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
         this.p2 = p2;
