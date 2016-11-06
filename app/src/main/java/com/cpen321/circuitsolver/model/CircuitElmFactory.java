@@ -1,6 +1,8 @@
 package com.cpen321.circuitsolver.model;
 
+import com.cpen321.circuitsolver.model.components.CapacitorElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
@@ -19,11 +21,17 @@ public class CircuitElmFactory {
             case Constants.RESISTOR:
                 elm = new ResistorElm(p1, p2, value);
                 break;
-            case Constants.WIRE:
-                elm = new WireElm(p1,p2);
+            case Constants.CAPACITOR:
+                elm = new CapacitorElm(p1,p2, value);
+                break;
+            case Constants.INDUCTOR:
+                elm = new InductorElm(p1,p2, value);
                 break;
             case Constants.DC_VOLTAGE:
                 elm = new VoltageElm(p1, p2, value);
+                break;
+            case Constants.WIRE:
+                elm = new WireElm(p1,p2);
                 break;
             default: elm = null;
         }

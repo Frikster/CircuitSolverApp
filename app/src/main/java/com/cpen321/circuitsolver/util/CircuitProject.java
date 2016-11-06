@@ -253,4 +253,18 @@ public class CircuitProject {
         return this.savedFolder.getName();
     }
 
+    public boolean deleteFileSystem() {
+        if (this.downsizedImage != null)
+            this.downsizedImage.delete();
+        if (this.originalImage != null)
+            this.originalImage.delete();
+        if (this.processedImage != null)
+            this.processedImage.delete();
+        if (this.circuitDefinition != null)
+            this.circuitDefinition.delete();
+        if (this.savedFolder != null)
+            this.savedFolder.delete();
+        return true;
+    }
+
 }

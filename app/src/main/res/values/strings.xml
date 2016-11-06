@@ -7,4 +7,10 @@
     <string name="example_circuits">Example Circuits:</string>
     <string name="title_activity_analysis">AnalysisActivity</string>
     <string name="button_to_ui">Test UI</string>
+    <string name="title_activity_edit">EditActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
 </resources>

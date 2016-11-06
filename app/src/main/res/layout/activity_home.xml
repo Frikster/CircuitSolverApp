@@ -38,15 +38,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         app:backgroundTint="@color/processing_green"
+        android:visibility="gone"
         app:srcCompat="@drawable/arrow_key" />
 
-    <!--<Button-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/button_to_ui"-->
-        <!--app:layout_anchorGravity="center_vertical|left"-->
-        <!--android:layout_gravity="center_vertical|center_horizontal" />-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/delete_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_gravity="bottom|start"
+        app:backgroundTint="@color/delete_brown"
+        android:visibility="gone"
+        app:srcCompat="@drawable/delete" />
+
 
 </android.support.design.widget.CoordinatorLayout>

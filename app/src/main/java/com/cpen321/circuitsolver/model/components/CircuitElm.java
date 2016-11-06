@@ -1,7 +1,9 @@
 package com.cpen321.circuitsolver.model.components;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
@@ -20,6 +22,8 @@ public abstract class CircuitElm {
 
     private SimplePoint p1;
     private SimplePoint p2;
+
+    private boolean isSelected;
 
     public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
@@ -140,6 +144,16 @@ public abstract class CircuitElm {
 
     public void onDraw(Canvas canvas, Paint paint, int yDisp) {
 
+    }
+
+    public boolean isSelected(){
+        return isSelected;
+    }
+
+
+    public void toggleIsSelected(){
+        Log.i("RECT", "in CircuitElm toggleIsSelected");
+        isSelected = !isSelected;
     }
 
     public double getValue() {
