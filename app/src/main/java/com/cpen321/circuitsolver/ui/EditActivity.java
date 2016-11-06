@@ -19,7 +19,10 @@ import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+
+import java.io.File;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -71,7 +74,16 @@ public class EditActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        Bundle extras = getIntent().getExtras();
+        String dataLocation = null;
+
+        if (extras != null) {
+            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+        }
+
+        File test = new File(dataLocation);
+
+        this.circuitDisplay = new CircuitDisplay(getApplicationContext(), new CircuitProject(test));
         circuitDisplay.setOnTouchListener(handleTouch);
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
         relativeLayout.addView(this.circuitDisplay, 0);
@@ -84,7 +96,7 @@ public class EditActivity extends AppCompatActivity {
         this.componentValue = (EditText) findViewById(R.id.component_value);
         this.rotateFab = (FloatingActionButton) findViewById(R.id.rotate_fav);
         this.initElements();
-        this.tappedElement = this.circuitDisplay.getRandomElement();
+        //this.tappedElement = this.circuitDisplay.getRandomElement();
         this.displayElement();
     }
 

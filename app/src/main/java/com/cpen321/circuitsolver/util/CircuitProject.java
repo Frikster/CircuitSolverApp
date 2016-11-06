@@ -9,7 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -82,10 +84,14 @@ public class CircuitProject {
     }
 
     private String getText(File fileLocation) throws IOException{
-        FileReader reader = new FileReader(fileLocation);
-        char [] cbuf = new char[100];
-        reader.read(cbuf);
-        return new String(cbuf);
+        StringBuilder sb = new StringBuilder();
+        BufferedReader in = new BufferedReader(new FileReader(fileLocation));
+        String line;
+        while ((line = in.readLine()) != null){
+            sb.append(line);
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     public void saveOriginalImage(Bitmap originalBM) {
@@ -241,6 +247,8 @@ public class CircuitProject {
             tmpString += " Original Image: " + this.originalImage.toString();
         if (this.processedImage != null)
             tmpString += " Processed Image: " + this.processedImage.toString();
+        if(this.circuitDefinition != null)
+            tmpString += " Circuit Definition: " + this.circuitDefinition.toString();
 
         return tmpString;
     }

@@ -22,10 +22,13 @@ import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.opencv.Component;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Neil Goossen on 2016-10-15.
@@ -64,24 +67,50 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.circuitPaint.setStrokeWidth(2.5f);
         this.rectF = new RectF(200, 100, 300, 200);
+        this.init();
     }
 
     private void init() { // simply a test while we wait to get actual values from the processing
-        this.components.add(new InductorElm(new SimplePoint(300, 300),
-                new SimplePoint(500, 300), 1.5));
-        this.components.add(new WireElm(new SimplePoint(500, 300),
-                new SimplePoint(700, 500)));
-        this.components.add(new CapacitorElm(new SimplePoint(700, 500),
-                new SimplePoint(700, 700), 77));
-        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
-        this.components.add(new ResistorElm(new SimplePoint(500, 900),
-                new SimplePoint(300, 900), 10));
-        this.components.add(new WireElm(new SimplePoint(300, 900),
-                new SimplePoint(300, 700)));
-        this.components.add(new VoltageElm(new SimplePoint(300, 700),
-                new SimplePoint(300, 500), 12));
-        this.components.add(new WireElm(new SimplePoint(300, 500),
-                new SimplePoint(300, 300)));
+//        this.components.add(new InductorElm(new SimplePoint(300, 300),
+//                new SimplePoint(500, 300), 1.5));
+//        this.components.add(new WireElm(new SimplePoint(500, 300),
+//                new SimplePoint(700, 500)));
+//        this.components.add(new CapacitorElm(new SimplePoint(700, 500),
+//                new SimplePoint(700, 700), 77));
+//        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
+//        this.components.add(new ResistorElm(new SimplePoint(500, 900),
+//                new SimplePoint(300, 900), 10));
+//        this.components.add(new WireElm(new SimplePoint(300, 900),
+//                new SimplePoint(300, 700)));
+//        this.components.add(new VoltageElm(new SimplePoint(300, 700),
+//                new SimplePoint(300, 500), 12));
+//        this.components.add(new WireElm(new SimplePoint(300, 500),
+//                new SimplePoint(300, 300)));
+
+        CircuitDefParser parser = new CircuitDefParser();
+//        String circStr = "l 300 300 500 300 10.0\n" +
+//                "w 500 300 700 500 10.0 \n" +
+//                "c 700 500 700 700 10.0 \n" +
+//                "w 500 900 700 700 10.0 \n" +
+//                "r 500 900 300 900 10.0 \n" +
+//                "w 300 900 300 700 10.0 \n" +
+//                "v 300 700 300 500 10.0 \n" +
+//                "w 300 500 300 300 10.0";
+        try {
+            String circStr = circuitProject.getCircuitText();
+            components.addAll(parser.parseElements(circStr));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //test stuff for the rectangle
+//        Paint myPaint = new Paint();
+//        myPaint.setColor(Color.rgb(0, 0, 0));
+//        myPaint.setStrokeWidth(10);
+//        c.drawRect(100, 100, 200, 200, myPaint);
+
+
     }
 
     public CircuitElm getRandomElement() {
