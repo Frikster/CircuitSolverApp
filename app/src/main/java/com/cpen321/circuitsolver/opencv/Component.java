@@ -10,4 +10,9 @@ public class Component extends Element {
         super(x,y);
         this.type = type;
     }
+
+    public String getType(){
+        return type;
+    }
+
 }

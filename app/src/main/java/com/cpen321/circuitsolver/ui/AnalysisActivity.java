@@ -1,16 +1,22 @@
 package com.cpen321.circuitsolver.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.BaseActivity;
+import com.cpen321.circuitsolver.util.CircuitElmsNotSetException;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -51,6 +57,30 @@ public class AnalysisActivity extends BaseActivity {
             return;
         }
 
+        TextView outputTextView = (TextView) findViewById(R.id.output_text);
+
+        try {
+            outputTextView.setText(this.circuitProject.getCircuitText());
+        }
+        catch(IOException e){
+            dialogAlert("Sorry, there was an error processing the circuit components.");
+        }
+
+    }
+
+    private void dialogAlert(String msg) {
+        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+        dlgAlert.setMessage(msg);
+        dlgAlert.setPositiveButton("OK", null);
+        dlgAlert.setCancelable(true);
+        dlgAlert.create().show();
+
+        dlgAlert.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
     }
 
     @Override

@@ -19,6 +19,13 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     private String name;
     private double voltage;
 
+    public VoltageElm(SimplePoint p1, SimplePoint p2){
+        super(p1, p2);
+        this.voltage = 10;
+        this.name = "v" + numVoltageElms;
+        numVoltageElms++;
+    }
+
     public VoltageElm(SimplePoint p1, SimplePoint p2, double voltage){
         super(p1, p2);
         this.voltage = voltage;
