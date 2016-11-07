@@ -53,18 +53,20 @@ public class AnalysisActivity extends BaseActivity {
         // Not sure why or if we should use this constant as a key
         String component = extras.getString(Constants.CIRCUIT_PROJECT_FOLDER);
 
-//      CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
-//      relativeLayout.addView(this.circuitDisplay, 0);
+//        CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_analysis);
+//        relativeLayout.addView(this.circuitDisplay, 0);
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
         this.circuitDisplay.displayComponent(component);
+        CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_analysis);
+        relativeLayout.addView(this.circuitDisplay, 0);
         this.circuitDisplay.invalidate();
 //        this.resistanceValue = (EditText) findViewById(R.id.resistance_value);
 //        this.resistanceValueUnits = (TextView) findViewById(R.id.units_display);
 //        this.voltageValue = (EditText) findViewById(R.id.voltage_value);
 //        this.voltageValueUnits = (TextView) findViewById(R.id.voltage_units_display);
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_analysis);
-        layout.addView(this.circuitDisplay);
+//        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_analysis);
+//        layout.addView(this.circuitDisplay);
 //      this.loadCircuit(new File(dataLocation));
     }
 

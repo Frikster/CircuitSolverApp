@@ -152,5 +152,4 @@
         android:padding="@dimen/fab_margin"
         app:elevation="9dp" />
 
-
 </android.support.design.widget.CoordinatorLayout>

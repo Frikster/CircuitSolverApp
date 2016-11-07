@@ -11,33 +11,33 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.cpen321.circuitsolver.ui.AnalysisActivity"
-    tools:showIn="@layout/activity_analysis">
+    tools:showIn="@layout/app_bar_edit">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/relativeLayout"
-    android:layout_alignParentBottom="true"
-    android:background="@color/colorPrimary"
-    android:layout_alignParentStart="true">
+<!--<RelativeLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/relativeLayout"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--android:layout_alignParentStart="true">-->
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:hint="Component Value"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:id="@+id/editText" />
-    <TextView
-        android:text="ohms"
-        android:id="@+id/units_display"
-        android:textColor="@color/circuitBackground"
-        android:layout_toRightOf="@id/editText"
-        android:layout_alignBaseline="@id/editText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</RelativeLayout>
+    <!--<EditText-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:hint="Component Value"-->
+        <!--android:inputType="numberDecimal"-->
+        <!--android:ems="10"-->
+        <!--android:id="@+id/editText" />-->
+    <!--<TextView-->
+        <!--android:text="ohms"-->
+        <!--android:id="@+id/units_display"-->
+        <!--android:textColor="@color/circuitBackground"-->
+        <!--android:layout_toRightOf="@id/editText"-->
+        <!--android:layout_alignBaseline="@id/editText"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+<!--</RelativeLayout>-->
 
     <!--<ImageView-->
         <!--android:id="@+id/output_image"-->
