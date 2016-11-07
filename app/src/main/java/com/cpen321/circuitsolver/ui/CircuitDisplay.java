@@ -9,12 +9,12 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
+import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CapacitorElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
@@ -22,12 +22,13 @@ import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.ngspice.NgSpice;
+import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
 import com.cpen321.circuitsolver.opencv.Component;
-import com.cpen321.circuitsolver.service.CircuitDefParser;
+import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,13 +71,14 @@ public class CircuitDisplay extends View {
         this.rectF = new RectF(200, 100, 300, 200);
     }
 
-    public void init_test() { // simply a test while we wait to get actual values from the processing
-        this.components.add(new InductorElm(new SimplePoint(300, 300),
-                new SimplePoint(500, 300), 1.5));
+    public void init() { // simply a test while we wait to get actual values from the processing
+        ResetComponents.resetNumComponents();
+        this.components.add(new WireElm(new SimplePoint(300, 300),
+                new SimplePoint(500, 300)));
         this.components.add(new WireElm(new SimplePoint(500, 300),
                 new SimplePoint(700, 500)));
-        this.components.add(new CapacitorElm(new SimplePoint(700, 500),
-                new SimplePoint(700, 700), 77));
+        this.components.add(new WireElm(new SimplePoint(700, 500),
+                new SimplePoint(700, 700)));
         this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
                 new SimplePoint(300, 900), 10));
@@ -84,21 +86,16 @@ public class CircuitDisplay extends View {
                 new SimplePoint(300, 700)));
         this.components.add(new VoltageElm(new SimplePoint(300, 700),
                 new SimplePoint(300, 500), 12));
-        this.components.add(new WireElm(new SimplePoint(300, 500),
-                new SimplePoint(300, 300)));
+        this.components.add(new ResistorElm(new SimplePoint(300, 500),
+                new SimplePoint(300, 300), 50));
+
     }
 
-    private void init() {
-
-        CircuitDefParser parser = new CircuitDefParser();
-        try {
-            String circStr = circuitProject.getCircuitText();
-            int scaleToX = 1000;
-            int scaleToY = 1000;
-            components.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void solveCircuit() {
+        AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(components);
+        circuit.init();
+        SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
+        interfacer.solveCircuit(NgSpice.getInstance(getContext()));
     }
 
     public void displayComponent(String c){

@@ -43,6 +43,22 @@
                 android:layout_alignParentStart="true">
 
                 <Button
+                    android:text="Solve"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/circuitBackground"
+                    android:textColor="@color/colorAccent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/solveButton"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:hapticFeedbackEnabled="true"
+                    android:textAllCaps="false"
+                    android:typeface="monospace" />
+
+
+                <Button
                     android:text="Resistor"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -151,5 +167,12 @@
         android:layout_alignParentEnd="false"
         android:padding="@dimen/fab_margin"
         app:elevation="9dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="370dp"
+        android:layout_height="121dp"
+        android:id="@+id/voltageAndCurrent" />
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -2,6 +2,7 @@ package com.cpen321.circuitsolver.service;
 
 
 import com.cpen321.circuitsolver.model.CircuitNode;
+import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
@@ -31,6 +32,7 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
      */
     public void init(){
         nodes = new ArrayList<CircuitNode>();
+        ResetComponents.resetNumComponents();
 
         for(CircuitElm e: elements){
             //Wire elements are technically part of one node (voltage is the same at both ends)
