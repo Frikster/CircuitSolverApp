@@ -10,6 +10,8 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.util.Constants;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by Jennifer on 10/12/2016.
  */
@@ -27,16 +29,21 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
         numResistors++;
 
     }
-    public ResistorElm(SimplePoint p1, SimplePoint p2, double resistance){
+    public ResistorElm(SimplePoint p1, SimplePoint p2, double resistance) {
         super(p1, p2);
         this.resistance = resistance;
         this.name = "r" + numResistors;
         numResistors++;
+    }
 
+    //TODO do this method differently
+    @Override
+    public double getCurrent() {
+        return getVoltageDiff()/resistance;
     }
 
     public double getVoltageDiff() {
-        return 0;
+        return abs(getNode(0).getVoltage() - getNode(1).getVoltage());
     }
 
     public double calculateCurrent() {
@@ -91,7 +98,7 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
         Log.i("RECT", "onDraw");
         if (p1.getX() == p2.getX()) {
-            int fullLength = Math.abs(p2.getY() - p1.getY());
+            int fullLength = abs(p2.getY() - p1.getY());
             float quarterLength = ((float) fullLength) / 4f;
 
             // Draw a rectangle as required
@@ -140,7 +147,7 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
                 }
             }
         } else {
-            int fullLength = Math.abs(p2.getX() - p1.getX());
+            int fullLength = abs(p2.getX() - p1.getX());
             float quarterLength = ((float) fullLength) / 4f;
 
             // Draw a rectangle as required
