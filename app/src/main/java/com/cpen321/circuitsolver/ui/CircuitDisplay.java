@@ -54,7 +54,7 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.rectF = new RectF(200, 100, 300, 200);
         this.circuitPaint.setStrokeWidth(2.5f);
-        this.init();
+        //this.init();
     }
 
     public CircuitDisplay(Context context, CircuitProject project) {
@@ -66,7 +66,7 @@ public class CircuitDisplay extends View {
         this.rectF = new RectF(200, 100, 300, 200);
     }
 
-    private void init() { // simply a test while we wait to get actual values from the processing
+    public void init() { // simply a test while we wait to get actual values from the processing
         this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
@@ -82,6 +82,32 @@ public class CircuitDisplay extends View {
                 new SimplePoint(300, 500), 12));
         this.components.add(new WireElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300)));
+    }
+
+    public void displayComponent(String c){
+        this.components.clear();
+        switch (c) {
+            case Constants.CAPACITOR: {
+                this.components.add(new CapacitorElm(new SimplePoint(700, 500),
+                        new SimplePoint(700, 700), 77));
+                break;
+            }
+            case Constants.RESISTOR: {
+                this.components.add(new ResistorElm(new SimplePoint(500, 900),
+                        new SimplePoint(300, 900), 10));
+                break;
+            }
+            case Constants.DC_VOLTAGE: {
+                this.components.add(new VoltageElm(new SimplePoint(300, 700),
+                        new SimplePoint(300, 500), 12));
+                break;
+            }
+            case Constants.INDUCTOR: {
+                this.components.add(new InductorElm(new SimplePoint(300, 300),
+                        new SimplePoint(500, 300), 1.5));
+                break;
+            }
+        }
     }
 
     public CircuitElm getRandomElement() {

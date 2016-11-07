@@ -1,7 +1,9 @@
 package com.cpen321.circuitsolver.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +36,7 @@ public class EditActivity extends AppCompatActivity {
     private CircuitElm tappedElement;
 
     private FloatingActionButton rotateFab;
+    private FloatingActionButton analysisActivity;
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
@@ -72,6 +75,8 @@ public class EditActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        // todo: remove the call to init. make it work without it. Init is just a test method
+        circuitDisplay.init();
         circuitDisplay.setOnTouchListener(handleTouch);
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
         relativeLayout.addView(this.circuitDisplay, 0);
@@ -83,6 +88,7 @@ public class EditActivity extends AppCompatActivity {
         this.valueUnits = (TextView) findViewById(R.id.units_display);
         this.componentValue = (EditText) findViewById(R.id.component_value);
         this.rotateFab = (FloatingActionButton) findViewById(R.id.rotate_fav);
+        this.analysisActivity = (FloatingActionButton) findViewById(R.id.component_analysis);
         this.initElements();
         this.tappedElement = this.circuitDisplay.getRandomElement();
         this.displayElement();
@@ -163,32 +169,34 @@ public class EditActivity extends AppCompatActivity {
                 EditActivity.this.changeElementType(Constants.RESISTOR);
             }
         });
-
         this.capacitorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditActivity.this.changeElementType(Constants.CAPACITOR);
             }
         });
-
         this.inductorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditActivity.this.changeElementType(Constants.INDUCTOR);
             }
         });
-
         this.voltageSourceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditActivity.this.changeElementType(Constants.DC_VOLTAGE);
             }
         });
-
         this.rotateFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 EditActivity.this.rotateElement();
+            }
+        });
+        this.analysisActivity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditActivity.this.analyzeComponent();
             }
         });
 
@@ -232,6 +240,11 @@ public class EditActivity extends AppCompatActivity {
         if (this.tappedElement == null)
             return;
         this.circuitDisplay.rotateElement(this.tappedElement);
+    }
 
+    private void analyzeComponent(){
+        Intent analysisIntent = new Intent(EditActivity.this, AnalysisActivity.class);
+        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.tappedElement.getType());
+        startActivity(analysisIntent);
     }
 }
