@@ -1,6 +1,7 @@
 package com.cpen321.circuitsolver.opencv;
 
 import android.graphics.Bitmap;
+import android.provider.Settings;
 
 
 import com.cpen321.circuitsolver.model.SimplePoint;
@@ -56,6 +57,7 @@ public class MainOpencv {
      * @return the bitmap with the detected lines and a circle around the components
      */
     public Bitmap houghLines(Bitmap bMap){
+        System.out.println("couc");
 
         //Convert to a canny edge detector grayscale mat
         System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
@@ -81,7 +83,7 @@ public class MainOpencv {
 
         int maxLinesToBeChunk = 2;
         int radius = 5;
-        int minPoints = 22;
+        int minPoints = 25;
 
 
         List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
@@ -101,7 +103,7 @@ public class MainOpencv {
 
 
 
-        int twoCornersTooNear = 8;
+        int twoCornersTooNear = 15;
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
         int tooNearFromComponent = 4;
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
@@ -120,17 +122,81 @@ public class MainOpencv {
             firstCorner = objectizeCorners(validCorners).get(0);
         }
 
+        System.out.println("before any wire processing");
+        for(int i=0 ;i<components.size();i++){
+            double[] coord = components.get(i);
+            double x1 = coord[0];
+            double y1 = coord[1];
+
+            System.out.println("Coord of comp : "+x1+" , "+y1);
+        }
+        for(int i=0 ;i<validCorners.size();i++){
+            double[] coord = validCorners.get(i);
+            double x1 = coord[0];
+            double y1 = coord[1];
+
+            System.out.println("Coord of corner : "+x1+" , "+y1);
+        }
         int thresholdXY = 10;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY);
-        System.out.println("Wires size : "+wires.size());
+        System.out.println("Finding wires after the first time : "+wires.size());
+        //Prints the found wires
+        for(List<Element> wire : wires){
+            System.out.println("New wire : ");
+            for(Element e : wire){
+                if(e instanceof Corner){
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
+                }
+                else{
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
+                }
+
+            }
+        }
         //correctCallToWires(validCorners, components);
         separatedComponents = separateComponents(wires);
-        System.out.println("separated components size :"+separatedComponents.size());
+        System.out.println("After separated components size :"+separatedComponents.size());
+        for(List<Element> wire : separatedComponents){
+            System.out.println("New wire : ");
+            for(Element e : wire){
+                if(e instanceof Corner){
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
+                }
+                else{
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
+                }
+
+            }
+        }
         separatedComponents = completeMissingEndings(separatedComponents, thresholdXY);
         System.out.println("After completing missing Endings : "+separatedComponents.size());
+        for(List<Element> wire : separatedComponents){
+            System.out.println("New wire : ");
+            for(Element e : wire){
+                if(e instanceof Corner){
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
+                }
+                else{
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
+                }
+
+            }
+        }
         separatedComponents = addOrphansToWires(separatedComponents);
         System.out.println("After adding orphans to the wires : "+separatedComponents.size());
+        for(List<Element> wire : separatedComponents){
+            System.out.println("New wire : ");
+            for(Element e : wire){
+                if(e instanceof Corner){
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
+                }
+                else{
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
+                }
+
+            }
+        }
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
         System.out.println("After all : "+separatedComponents.size());
 
@@ -682,7 +748,7 @@ public class MainOpencv {
      */
     private void detectWires(List<Element> elements, Corner currCorner, int thresholdXY){
         //Threshold : so that two points have sameX or sameY
-
+        System.out.println("Current corner "+currCorner.getX()+" , "+currCorner.getY());
         if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
 
             //get same horizontal and vertical components
@@ -722,6 +788,9 @@ public class MainOpencv {
 
                     Element elem = sameY.get(f);
                     aWire.add(elem);
+                    if(elem instanceof Component){
+                        elements.remove(elem);
+                    }
                     if(elem instanceof Corner){
                         ((Corner)elem).exploredDirections.remove('e');
 
@@ -745,6 +814,9 @@ public class MainOpencv {
                     Element elem = sameY.get(f);
 
                     aWire.add(elem);
+                    if(elem instanceof Component){
+                        elements.remove(elem);
+                    }
                     if(elem instanceof Corner){
                         ((Corner)elem).exploredDirections.remove('w');
 
@@ -768,6 +840,9 @@ public class MainOpencv {
                     Element elem = sameX.get(f);
 
                     aWire.add(elem);
+                    if(elem instanceof Component){
+                        elements.remove(elem);
+                    }
                     if(elem instanceof Corner){
                         ((Corner)elem).exploredDirections.remove('s');
 
@@ -791,6 +866,9 @@ public class MainOpencv {
                     Element elem = sameX.get(f);
 
                     aWire.add(elem);
+                    if(elem instanceof Component){
+                        elements.remove(elem);
+                    }
                     if(elem instanceof Corner){
                         ((Corner)elem).exploredDirections.remove('n');
 

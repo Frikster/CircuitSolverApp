@@ -136,4 +136,8 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
         }
         paint.setStyle(tmpStyle);
     }
+
+    public static void resetNumElements() {
+        numVoltageElms = 1;
+    }
 }
