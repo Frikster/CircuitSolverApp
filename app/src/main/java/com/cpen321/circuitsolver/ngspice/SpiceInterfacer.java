@@ -30,7 +30,7 @@ public class SpiceInterfacer {
 
 
     /**
-     * Pre: nodes and elements must describe a proper circuit
+     * Pre: nodes and elements must describe a proper circuit (a non wire element must be connected to two nodes, no gaps in circuit)
      * @param elements
      */
     public SpiceInterfacer(List<CircuitNode> nodes, List<CircuitElm> elements) {
@@ -40,11 +40,22 @@ public class SpiceInterfacer {
         circuitElmMap = new HashMap<String, CircuitElm>();
     }
 
+    /**
+     * Updates nodes with voltage values, and voltage sources with current values
+     * @param ngSpice
+     */
+    public void solveCircuit(NgSpice ngSpice) {
+        String input = getNgSpiceInput();
+        String spiceOutput = ngSpice.callNgSpice(input);
+        populateMaps();
+        callNgOutputParser(spiceOutput, circuitNodeMap, circuitElmMap);
+    }
+
+    //TODO every mothid below this point should be private later or removed
+
     public String getNgSpiceInput() {
         return addControl(createNetlist());
     }
-
-    //TODO Many methods in this class should be private or not exist, theyre public and exist for now to help with testing
 
     public void testParser(String input) {
         populateMaps();
