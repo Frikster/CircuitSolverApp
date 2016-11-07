@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
@@ -26,9 +27,11 @@ import com.cpen321.circuitsolver.ngspice.NgSpice;
 import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
 import com.cpen321.circuitsolver.opencv.Component;
 import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +62,7 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.rectF = new RectF(200, 100, 300, 200);
         this.circuitPaint.setStrokeWidth(2.5f);
-        //this.init_test();
+        this.init();
     }
 
     public CircuitDisplay(Context context, CircuitProject project) {
@@ -69,9 +72,10 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.circuitPaint.setStrokeWidth(2.5f);
         this.rectF = new RectF(200, 100, 300, 200);
+        this.init_opencv();
     }
 
-    public void init() { // simply a test while we wait to get actual values from the processing
+    private void init() { // simply a test while we wait to get actual values from the processing
         ResetComponents.resetNumComponents();
         this.components.add(new WireElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300)));
@@ -88,7 +92,18 @@ public class CircuitDisplay extends View {
                 new SimplePoint(300, 500), 12));
         this.components.add(new ResistorElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300), 50));
+    }
 
+    private void init_opencv() {
+        CircuitDefParser parser = new CircuitDefParser();
+        try {
+            String circStr = circuitProject.getCircuitText();
+            int scaleToX = 1000;
+            int scaleToY = 1000;
+            components.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void solveCircuit() {

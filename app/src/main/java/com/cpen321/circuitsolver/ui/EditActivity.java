@@ -21,7 +21,10 @@ import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+
+import java.io.File;
 
 public class EditActivity extends AppCompatActivity {
     public static String TAG = "EditActivity";
@@ -80,11 +83,17 @@ public class EditActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Bundle extras = getIntent().getExtras();
+        String dataLocation = null;
+        if (extras != null) {
+            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+        }
+        File test = new File(dataLocation);
+
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
-        circuitDisplay.init();
-        // todo: uncomment these two and comment out the previous two to switch to using opencv!
-        //circuitDisplay.init_test();
+        // todo: uncomment this one and comment out the previous two to switch to using opencv!
         //this.circuitDisplay = new CircuitDisplay(getApplicationContext(), new CircuitProject(test));
+
         circuitDisplay.setOnTouchListener(handleTouch);
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
         relativeLayout.addView(this.circuitDisplay, 0);

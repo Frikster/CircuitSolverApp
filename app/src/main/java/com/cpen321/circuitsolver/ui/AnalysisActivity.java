@@ -59,8 +59,8 @@ public class AnalysisActivity extends BaseActivity {
         this.voltageValueUnits = (TextView) findViewById(R.id.voltage_units_display);
         this.displayValues();
 
-//        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_analysis);
-//        layout.addView(this.circuitDisplay);
+//      RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_analysis);
+//      layout.addView(this.circuitDisplay);
 //      this.loadCircuit(new File(dataLocation));
     }
 
