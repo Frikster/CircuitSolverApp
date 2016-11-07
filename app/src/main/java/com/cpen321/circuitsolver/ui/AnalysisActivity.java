@@ -40,6 +40,8 @@ public class AnalysisActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_analysis);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Bundle extras = getIntent().getExtras();
@@ -53,8 +55,6 @@ public class AnalysisActivity extends BaseActivity {
 
 //      CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
 //      relativeLayout.addView(this.circuitDisplay, 0);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_analysis);
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
         this.circuitDisplay.displayComponent(component);
         this.circuitDisplay.invalidate();
