@@ -20,7 +20,10 @@ import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+
+import java.io.File;
 
 public class EditActivity extends AppCompatActivity {
 
@@ -72,6 +75,15 @@ public class EditActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Bundle extras = getIntent().getExtras();
+        String dataLocation = null;
+
+        if (extras != null) {
+            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+        }
+
+        File test = new File(dataLocation);
 
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
         // todo: remove the call to init. make it work without it. Init is just a test method
