@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class SpiceInterfacer {
     public static String TAG = "SpiceInterfacer";
     private final List<CircuitElm> elements;
+    private final List<CircuitNode> nodes;
     private final static String controlCommands = ".CONTROL\n" +
             "tran 1ns 1ns\n" +
             ".ENDC\n" +
@@ -31,7 +33,8 @@ public class SpiceInterfacer {
      * Pre: nodes and elements must describe a proper circuit
      * @param elements
      */
-    public SpiceInterfacer(List<CircuitElm> elements) {
+    public SpiceInterfacer(List<CircuitNode> nodes, List<CircuitElm> elements) {
+        this.nodes = nodes;
         this.elements = elements;
         circuitNodeMap = new HashMap<String, CircuitNode>();
         circuitElmMap = new HashMap<String, CircuitElm>();
@@ -39,6 +42,13 @@ public class SpiceInterfacer {
 
     public String getNgSpiceInput() {
         return addControl(createNetlist());
+    }
+
+    //TODO Many methods in this class should be private or not exist, theyre public and exist for now to help with testing
+
+    public void testParser(String input) {
+        populateMaps();
+        callNgOutputParser(input, circuitNodeMap, circuitElmMap);
     }
 
     public void callNgOutputParser(String input, Map<String, CircuitNode> nodes, Map<String, CircuitElm> elms ) {
@@ -52,6 +62,10 @@ public class SpiceInterfacer {
         s = s.replaceAll("\n", " ");
         //split everything separated by spaces into new words
         String[] arr = s.split(" ");
+
+        if(nodes.containsKey("0")) {
+            nodes.get("0").setVoltage(0);
+        }
 
         for ( String word : arr) {
             //stop adding words after "No." word
@@ -127,5 +141,19 @@ public class SpiceInterfacer {
      */
     private String addControl(String netlist) {
         return netlist + "\n" + controlCommands;
+    }
+
+    /*
+     * Populates private maps used used by parser
+     */
+    private void populateMaps() {
+        for(CircuitNode node : nodes) {
+            circuitNodeMap.put(node.getSpiceLabel(), node);
+        }
+        for(CircuitElm element : elements) {
+            if(element instanceof VoltageElm) {
+                circuitElmMap.put(((VoltageElm) element).getSpiceLabel() + "#branch", element);
+            }
+        }
     }
 }

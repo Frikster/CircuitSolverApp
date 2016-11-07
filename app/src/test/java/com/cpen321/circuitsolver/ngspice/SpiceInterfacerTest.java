@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * Created by lotus on 05/11/16.
@@ -59,7 +60,7 @@ public class SpiceInterfacerTest {
         System.out.println(resultNodes);
         assertTrue(resultNodes.size() == 4);
 
-        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(analyzeCircuitImpl.getElements());
+        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(analyzeCircuitImpl.getNodes() ,analyzeCircuitImpl.getElements());
         String ngSpiceInput = spiceInterfacer.getNgSpiceInput();
         System.out.println(ngSpiceInput);
 
@@ -79,20 +80,91 @@ public class SpiceInterfacerTest {
     }
 
     @Test
-    public void callNgOutputParserTest() {
+    public void parserTest() {
+        List<CircuitElm> elements = new ArrayList<CircuitElm>();
+        elements.add(new WireElm(new SimplePoint(0, 0), new SimplePoint(0, 1)));
+        elements.add(new VoltageElm(new SimplePoint(0, 2), new SimplePoint(0, 1), 24));
+        elements.add(new WireElm(new SimplePoint(0, 2), new SimplePoint(0, 3)));
+        elements.add(new WireElm(new SimplePoint(0, 3), new SimplePoint(1, 3)));
+        elements.add(new ResistorElm(new SimplePoint(1, 3), new SimplePoint(2, 3), 10000));
+        elements.add(new WireElm(new SimplePoint(2, 3), new SimplePoint(3, 3)));
+        elements.add(new WireElm(new SimplePoint(3, 3), new SimplePoint(4, 3)));
+        elements.add(new ResistorElm(new SimplePoint(4, 3), new SimplePoint(5, 3), 8100));
+        elements.add(new WireElm(new SimplePoint(5, 3), new SimplePoint(6, 3)));
+        elements.add(new WireElm(new SimplePoint(6, 3), new SimplePoint(6, 2)));
+        elements.add(new VoltageElm(new SimplePoint(6, 2), new SimplePoint(6, 1), 15));
+        elements.add(new WireElm(new SimplePoint(6, 1), new SimplePoint(6, 0)));
+        elements.add(new WireElm(new SimplePoint(3, 3), new SimplePoint(3, 2)));
+        elements.add(new ResistorElm(new SimplePoint(3, 2), new SimplePoint(3, 1), 4700));
+        elements.add(new WireElm(new SimplePoint(3, 1), new SimplePoint(3, 0)));
+        elements.add(new WireElm(new SimplePoint(0, 0), new SimplePoint(3, 0)));
+        elements.add(new WireElm(new SimplePoint(3, 0), new SimplePoint(6, 0)));
+
         String input =
-                "Doing analysis at TEMP = 27.000000 and TNOM = 27.000000\n" +
+                "Note: can't find init file.\n" +
+                        "\n" +
+                        "Circuit: * my circuit\n" +
+                        "\n" +
+                        "Doing analysis at TEMP = 27.000000 and TNOM = 27.000000\n" +
+                        "\n" +
                         "\n" +
                         "Initial Transient Solution\n" +
                         "--------------------------\n" +
+                        "\n" +
                         "Node                                   Voltage\n" +
                         "----                                   -------\n" +
                         "1                                           24\n" +
-                        "3                                           15\n" +
                         "2                                      9.74697\n" +
+                        "3                                           15\n" +
                         "v2#branch                         -0.000648522\n" +
-                        "v1#branch                           -0.0014253\n" +
-                        "No. of Data Rows : 59\n";
+                        "v1#branch                           -0.0014253\n";
+
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
+        List<CircuitNode> resultNodes = analyzeCircuitImpl.getNodes();
+        List<CircuitElm> resultElms = analyzeCircuitImpl.getElements();
+        System.out.println(resultNodes);
+        assertTrue(resultNodes.size() == 4);
+
+        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(resultNodes ,analyzeCircuitImpl.getElements());
+        spiceInterfacer.testParser(input);
+
+        for(CircuitNode resultNode : resultNodes) {
+            String spiceLabel = resultNode.getSpiceLabel();
+            Double voltage = resultNode.getVoltage();
+            if(spiceLabel.equals("1")) {
+                assertEquals(24.0, voltage);
+            } else if(spiceLabel.equals("2")) {
+                assertEquals(9.74697, voltage);
+            } else if(spiceLabel.equals("3")) {
+                assertEquals(15.0, voltage);
+            } else {
+                assertEquals(0.0, voltage);
+                assertEquals("0", spiceLabel);
+            }
+        }
+    }
+
+    @Test
+    public void callNgOutputParserTest() {
+        String input =
+                "Note: can't find init file.\n" +
+                        "\n" +
+                        "Circuit: * my circuit\n" +
+                        "\n" +
+                        "Doing analysis at TEMP = 27.000000 and TNOM = 27.000000\n" +
+                        "\n" +
+                        "\n" +
+                        "Initial Transient Solution\n" +
+                        "--------------------------\n" +
+                        "\n" +
+                        "Node                                   Voltage\n" +
+                        "----                                   -------\n" +
+                        "1                                           24\n" +
+                        "2                                      9.74697\n" +
+                        "3                                           15\n" +
+                        "v2#branch                         -0.000648522\n" +
+                        "v1#branch                           -0.0014253\n";
 
         SimplePoint f = new SimplePoint(100,200);//arb inputs
         SimplePoint g = new SimplePoint(100,200);//arb inputs
@@ -117,7 +189,7 @@ public class SpiceInterfacerTest {
             put("v2#branch",elm2);
         }};
 
-        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(null);
+        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(null, null);
 
         spiceInterfacer.callNgOutputParser(input, nodes, elms);
         Log.v("node1 voltage", String.valueOf(node1.getVoltage()));
