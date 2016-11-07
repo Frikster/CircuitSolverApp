@@ -9,7 +9,9 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 /**
  * Created by lotus on 31/10/16.
