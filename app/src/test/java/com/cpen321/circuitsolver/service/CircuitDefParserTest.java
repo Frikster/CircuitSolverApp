@@ -75,7 +75,7 @@ public class CircuitDefParserTest {
                 "v 1 6 5 6 10.0 ";
         List<CircuitElm> elements = parser.parseElements(circTxt);
 
-        System.out.println(parser.elementsToTxt(elements));
+        System.out.println(parser.elementsToTxt(elements, 10, 10));
 
         //assertEquals(circTxt, parser.elementsToTxt(elements));
         //assert statement returns false but appears to be working fine. String might be slightly different in format. 
