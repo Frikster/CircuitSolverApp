@@ -82,8 +82,8 @@ public class MainOpencv {
 
 
         int maxLinesToBeChunk = 2;
-        int radius = 5;
-        int minPoints = 25;
+        int radius = 4;
+        int minPoints = 20;
 
 
         List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
@@ -139,6 +139,7 @@ public class MainOpencv {
         }
         int thresholdXY = 10;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
+        List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY);
         System.out.println("Finding wires after the first time : "+wires.size());
         //Prints the found wires
@@ -183,7 +184,7 @@ public class MainOpencv {
 
             }
         }
-        separatedComponents = addOrphansToWires(separatedComponents);
+        separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents);
         System.out.println("After adding orphans to the wires : "+separatedComponents.size());
         for(List<Element> wire : separatedComponents){
             System.out.println("New wire : ");
@@ -486,28 +487,41 @@ public class MainOpencv {
         return dbPoints;
     }
 
+    private List<Component> getCompFromElements(List<Element> elements){
+        List<Component> components = new ArrayList<>();
+        for(Element e: elements){
+            if(e instanceof Component){
+                components.add((Component) e);
+            }
+        }
+        return components;
+    }
 
-    private List<List<Element>> addOrphansToWires(List<List<Element>> wires){
-        List<Element> allElements = getCornersAndComp(wires);
+    private List<List<Element>> addOrphansToWires(List<List<Element>> wires, List<Component> allComponents){
+
+        System.out.println("in adding orphans :");
+
         int distanceFromComponent = 12;
         List<List<Element>> orphans = new ArrayList<>();
         List<List<Element>> wiresWithorphans = new ArrayList<>(wires);
-        for(Element e : allElements){
+        for(Component e : allComponents){
 
-            if(e instanceof Component) {
+                System.out.println("comp analyzed:"+e.getX()+" , "+e.getY());
                 boolean foundOrphan = true;
                 for (List<Element> wire : wires) {
-                    for (Element wireElem : wire) {
-                        if (wireElem instanceof Component) {
-                            if (wireElem.getX() == e.getX() && wireElem.getY() == e.getY()) {
-                                foundOrphan = false;
-                                break;
-                            }
-                        }
+                    System.out.println("wire analyzed : ");
+                    for(Element c : wire){
+                        System.out.println(c.getX()+" , "+c.getY());
+                    }
+                    if(containsElement(wire,e)){
+                        System.out.println("Is not an orphan anymore ! ");
+                        foundOrphan = false;
+                        break;
                     }
                 }
 
                 if (foundOrphan) {
+                    System.out.println("Found an orphan !");
                     Component co = (Component) e;
                     Corner c1 = new Corner(co.getX() - distanceFromComponent, co.getY());
                     Corner c2 = new Corner(co.getX() + distanceFromComponent, co.getY());
@@ -518,7 +532,7 @@ public class MainOpencv {
                     orphans.add(wire);
                 }
             }
-        }
+
         //Integrate orphans
         wiresWithorphans.addAll(orphans);
         return wiresWithorphans;
@@ -528,50 +542,17 @@ public class MainOpencv {
 
     private List<Corner> findCornersToWire(List<List<Element>> wires){
         List<Corner> toFindAnOther = new ArrayList<>();
-        for(int i=0; i<wires.size();i++) {
-            Corner c1=null;
-            Corner c2=null;
-            if(wires.get(i).size() == 3) {
-                //look for equivalents
-                c1 = (Corner) wires.get(i).get(0);
-                c2 = (Corner) wires.get(i).get(2);
-            }
-            else if(wires.get(i).size() == 2) {
-                c1 = (Corner) wires.get(i).get(0);
-                c2 = (Corner) wires.get(i).get(1);
-            }
+        List<Corner> allCorners = getCornersFromWires(wires);
 
-            boolean isOrphan1 = true;
-            boolean isOrphan2 = true;
-            for(int j = i+1; j<wires.size();j++) {
-                if (i != j) {
-                    if (wires.get(j).size() == 2) {
-                        Corner c11 = (Corner) wires.get(j).get(0);
-                        Corner c21 = (Corner) wires.get(j).get(1);
-                        if ((c11.getX() == c1.getX() && c11.getY() == c1.getY()) || (c21.getX() == c1.getX() && c21.getY() == c1.getY())) {
-                            isOrphan1 = false;
-                        }
-                        if ((c11.getX() == c2.getX() && c11.getY() == c2.getY()) || (c21.getX() == c2.getX() && c21.getY() == c2.getY())) {
-                            isOrphan2 = false;
-                        }
-                    } else if (wires.get(j).size() == 3) {
-                        Corner c11 = (Corner) wires.get(j).get(0);
-                        Corner c21 = (Corner) wires.get(j).get(2);
-                        if ((c11.getX() == c1.getX() && c11.getY() == c1.getY()) || (c21.getX() == c1.getX() && c21.getY() == c1.getY())) {
-                            isOrphan1 = false;
-                        }
-                        if ((c11.getX() == c2.getX() && c11.getY() == c2.getY()) || (c21.getX() == c2.getX() && c21.getY() == c2.getY())) {
-                            isOrphan2 = false;
-                        }
-                    }
+        for(Corner c : allCorners){
+            int nrApparition = 0;
+            for(List<Element> wire : wires){
+                if(containsElement(wire,c)){
+                    nrApparition++;
                 }
-
             }
-            if(isOrphan1) {
-                toFindAnOther.add(c1);
-            }
-            if(isOrphan2) {
-                toFindAnOther.add(c2);
+            if(nrApparition <= 1){
+                toFindAnOther.add(c);
             }
         }
         return toFindAnOther;
@@ -588,7 +569,7 @@ public class MainOpencv {
         System.out.println("allcorners size : "+allCorners.size());
         for(Corner c : cornersToWire){
             double nearestDistance = Double.MAX_VALUE;
-            Corner currentCorner = null;
+            Corner currentCorner = new Corner(0,0);
             int bestIndex = 0;
             for(int i =0; i<allCorners.size();i++){
                 if(allCorners.get(i).getX() != c.getX() && allCorners.get(i).getY() != c.getY()){
@@ -604,34 +585,63 @@ public class MainOpencv {
             newWire.add(c);
             newWire.add(currentCorner);
             wiresWithMissing.add(newWire);
-            allCorners.remove(bestIndex);
+
         }
         return wiresWithMissing;
     }
 
-    private List<Element> getCornersAndComp(List<List<Element>> wires){
-        List<Element> elements = new ArrayList<>();
-        for(List<Element> wire: wires){
-            for(Element e: wire){
-                elements.add(e);
-            }
-        }
-        return elements;
-    }
+
 
     private List<Corner> getCornersFromWires(List<List<Element>> wires){
         List<Corner> corners = new ArrayList<>();
         for(List<Element> wire : wires){
             if(wire.size() == 2){
-                corners.add((Corner)wire.get(0));
-                corners.add((Corner)wire.get(1));
+                Corner c1 = (Corner)wire.get(0);
+                Corner c2 = (Corner)wire.get(1);
+                if(!containsCorner(corners,c1)){
+                    corners.add(c1);
+                }
+                if(!containsCorner(corners,c2)){
+                    corners.add(c2);
+                }
             }
             else if(wire.size() == 3){
-                corners.add((Corner)wire.get(0));
-                corners.add((Corner)wire.get(2));
+                Corner c1 = (Corner)wire.get(0);
+                Corner c2 = (Corner)wire.get(2);
+                if(!containsCorner(corners,c1)){
+                    corners.add(c1);
+                }
+                if(!containsCorner(corners,c2)){
+                    corners.add(c2);
+                }
             }
         }
         return corners;
+    }
+
+    private boolean containsElement(List<Element> element, Element e){
+        for(Element e1 : element){
+            if(e1.getX() == e.getX() && e1.getY()==e.getY()){
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean containsComponent(List<Component> alreadyAdded, Component corner){
+        for(Component c : alreadyAdded){
+            if(c.getX() == corner.getX() && c.getY()==corner.getY()){
+                return true;
+            }
+        }
+        return false;
+    }
+    private boolean containsCorner(List<Corner> alreadyAdded, Corner corner){
+        for(Corner c : alreadyAdded){
+            if(c.getX() == corner.getX() && c.getY()==corner.getY()){
+                return true;
+            }
+        }
+        return false;
     }
 
 
