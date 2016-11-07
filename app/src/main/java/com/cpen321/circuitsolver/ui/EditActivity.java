@@ -3,6 +3,7 @@ package com.cpen321.circuitsolver.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,7 @@ public class EditActivity extends AppCompatActivity {
     private EditText componentValue;
     private Button solveCircuitButton;
     private TextView currentAndVoltageText;
+    private String currentAndVoltageString;
 
     private CircuitElm tappedElement;
 
@@ -172,7 +174,8 @@ public class EditActivity extends AppCompatActivity {
 
         circuitDisplay.solveCircuit();
         this.componentValue.setText(Double.toString(this.tappedElement.getValue()));
-        this.currentAndVoltageText.setText("\n\n\n\n\n\n\n\n\n\n" + Double.toString(this.tappedElement.getCurrent()) + " A\n" + Double.toString(this.tappedElement.getVoltageDiff())+ " V");
+        this.currentAndVoltageString = "\n\n\n\n\n\n\n\n\n\n" + Double.toString(this.tappedElement.getCurrent()) + " A\n" + Double.toString(this.tappedElement.getVoltageDiff())+ " V";
+        this.currentAndVoltageText.setText(currentAndVoltageString);
         Log.d(TAG ,"\n\n" + Double.toString(this.tappedElement.getCurrent()) + " A\n" + Double.toString(this.tappedElement.getVoltageDiff())+ " V");
     }
 
@@ -263,7 +266,11 @@ public class EditActivity extends AppCompatActivity {
 
     private void analyzeComponent(){
         Intent analysisIntent = new Intent(EditActivity.this, AnalysisActivity.class);
-        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.tappedElement.getType());
+        Bundle extras = new Bundle();
+        // todo: figure out what we should use as keys...
+        extras.putString("tappedElementType", this.tappedElement.getType());
+        extras.putString("currentAndVoltageString", currentAndVoltageString);
+        analysisIntent.putExtras(extras);
         startActivity(analysisIntent);
     }
 }

@@ -46,12 +46,13 @@ public class AnalysisActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         Bundle extras = getIntent().getExtras();
         // not sure what the point is of the following three lines
-        String dataLocation = null;
-        if (extras != null) {
-            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
-        }
+//        String dataLocation = null;
+//        if (extras != null) {
+//            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+//        }
         // Not sure why or if we should use this constant as a key
-        String component = extras.getString(Constants.CIRCUIT_PROJECT_FOLDER);
+        String component = extras.getString("tappedElementType");
+        String analysis_output_string = extras.getString("currentAndVoltageString");
 
 //        CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_analysis);
 //        relativeLayout.addView(this.circuitDisplay, 0);
