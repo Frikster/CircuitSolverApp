@@ -199,7 +199,24 @@ public class MainOpencv {
             }
         }
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
-        System.out.println("After all : "+separatedComponents.size());
+        System.out.println("After add missing wires : "+separatedComponents.size());
+
+        //Prints the found wires
+        for(List<Element> wire : separatedComponents){
+            System.out.println("New wire : ");
+            for(Element e : wire){
+                if(e instanceof Corner){
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
+                }
+                else{
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
+                }
+
+            }
+        }
+
+        separatedComponents = removeDuplicateWires(separatedComponents);
+        System.out.println("After remove duplicates : "+separatedComponents.size());
 
         //Prints the found wires
         for(List<Element> wire : separatedComponents){
@@ -560,6 +577,31 @@ public class MainOpencv {
     }
 
 
+    private List<List<Element>> removeDuplicateWires (List<List<Element>> wires){
+        List<List<Element>> singleWires = new ArrayList<>();
+        for(int i=0; i<wires.size();i++){
+            boolean identicalWire = false;
+            for(int j=i+1; j<wires.size();j++){
+                boolean hasIdenticalComponents = true;
+                if(wires.get(i).size() == wires.get(j).size()){
+                    List<Element> wire1 = wires.get(i);
+                    List<Element> wire2 = wires.get(j);
+                    for(int e=0;e<wire1.size();e++){
+                        if(!containsElement(wire2,wire1.get(e))){
+                            hasIdenticalComponents=false;
+                        }
+                    }
+                    if(hasIdenticalComponents){
+                        identicalWire = true;
+                    }
+                }
+            }
+            if(!identicalWire){
+                singleWires.add(wires.get(i));
+            }
+        }
+        return singleWires;
+    }
 
     private List<List<Element>> addMisingWires(List<List<Element>> wires, List<Corner> cornersToWire){
         List<List<Element>> wiresWithMissing = new ArrayList<>(wires);
