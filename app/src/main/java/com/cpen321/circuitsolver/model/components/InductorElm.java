@@ -16,7 +16,7 @@ import com.cpen321.circuitsolver.util.Constants;
  * Created by Jennifer on 10/12/2016.
  */
 public class InductorElm extends CircuitElm implements SpiceElm {
-    private static int numResistors = 1;
+    private static int numInductors = 1;
 
     private double inductance;
     private String name;
@@ -25,8 +25,8 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     public InductorElm(SimplePoint p1, SimplePoint p2, double inductance){
         super(p1, p2);
         this.inductance = inductance;
-        this.name = "l" + numResistors;
-        numResistors++;
+        this.name = "l" + numInductors;
+        numInductors++;
     }
 
     public double getVoltageDiff() {
@@ -158,6 +158,9 @@ public class InductorElm extends CircuitElm implements SpiceElm {
             }
             paint.setStyle(tmp);
         }
+    }
 
+    public static void resetNumElements() {
+        numInductors = 1;
     }
 }

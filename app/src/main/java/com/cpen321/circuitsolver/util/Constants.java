@@ -11,6 +11,8 @@ public final class Constants {
     public static final String PROCESSING_DATA_LOCATION_KEY = "processing_data_location_key";
 
     public static final int PROCESSING_WIDTH = 125;
+
+    //TODO change many of these things to enum for type safety
     public static final String RESISTOR = "r";
     public static final String INDUCTOR = "l";
     public static final String CAPACITOR = "c";

@@ -16,7 +16,7 @@ import com.cpen321.circuitsolver.util.Constants;
  * Created by Jennifer on 10/12/2016.
  */
 public class CapacitorElm extends CircuitElm implements SpiceElm {
-    private static int numResistors = 1;
+    private static int numCapacitors = 1;
 
     private double capacitance;
     private String name;
@@ -25,8 +25,8 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
     public CapacitorElm(SimplePoint p1, SimplePoint p2, double capacitance){
         super(p1, p2);
         this.capacitance = capacitance;
-        this.name = "c" + numResistors;
-        numResistors++;
+        this.name = "c" + numCapacitors;
+        numCapacitors++;
     }
 
     public double getVoltageDiff() {
@@ -138,6 +138,9 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
             canvas.drawLine(spikeStart.x + fifthLength, spikeStart.y - disp,
                     spikeStart.x + fifthLength, spikeStart.y + disp, paint);
         }
+    }
 
+    public static void resetNumElements() {
+        numCapacitors = 1;
     }
 }

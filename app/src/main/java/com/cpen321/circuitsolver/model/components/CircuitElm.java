@@ -179,5 +179,4 @@ public abstract class CircuitElm {
     public boolean isWire(){
         return false;
     }
-
 }

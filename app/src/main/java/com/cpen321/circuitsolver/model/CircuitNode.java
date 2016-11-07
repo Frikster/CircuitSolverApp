@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class CircuitNode implements SpiceLabel{
 
-    private static int numNodes;
+    private static int numNodes = 0;
 
     private List<SimplePoint> points = new ArrayList<SimplePoint>();
     private boolean isValidVoltage;
@@ -90,4 +90,6 @@ public class CircuitNode implements SpiceLabel{
     public String getSpiceLabel() {
         return this.label;
     }
+
+    public static void resetNumNodes() { numNodes = 0; }
 }

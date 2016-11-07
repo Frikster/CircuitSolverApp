@@ -11,5 +11,4 @@ public interface SpiceLabel {
      * @return
      */
     public String getSpiceLabel();
-
 }
