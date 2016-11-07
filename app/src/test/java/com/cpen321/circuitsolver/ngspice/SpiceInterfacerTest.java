@@ -101,7 +101,7 @@ public class SpiceInterfacerTest {
         elements.add(new WireElm(new SimplePoint(3, 0), new SimplePoint(6, 0)));
 
         String input =
-                "Note: can't find init_test file.\n" +
+                "Note: can't find init file.\n" +
                         "\n" +
                         "Circuit: * my circuit\n" +
                         "\n" +
@@ -163,7 +163,7 @@ public class SpiceInterfacerTest {
     @Test
     public void callNgOutputParserTest() {
         String input =
-                "Note: can't find init_test file.\n" +
+                "Note: can't find init file.\n" +
                         "\n" +
                         "Circuit: * my circuit\n" +
                         "\n" +

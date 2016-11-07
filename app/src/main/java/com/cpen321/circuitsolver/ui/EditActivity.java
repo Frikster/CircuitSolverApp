@@ -85,6 +85,7 @@ public class EditActivity extends AppCompatActivity {
         File test = new File(dataLocation);
 
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        //this.circuitDisplay = new CircuitDisplay(getApplicationContext(), new CircuitProject(test));
         // todo: remove the call to init_test. make it work without it. Init is just a test method
         circuitDisplay.init_test();
         circuitDisplay.setOnTouchListener(handleTouch);

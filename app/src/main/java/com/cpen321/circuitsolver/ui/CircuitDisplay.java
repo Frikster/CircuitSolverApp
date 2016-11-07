@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
@@ -22,10 +23,13 @@ import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.opencv.Component;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Neil Goossen on 2016-10-15.
@@ -82,6 +86,19 @@ public class CircuitDisplay extends View {
                 new SimplePoint(300, 500), 12));
         this.components.add(new WireElm(new SimplePoint(300, 500),
                 new SimplePoint(300, 300)));
+    }
+
+    private void init() {
+
+        CircuitDefParser parser = new CircuitDefParser();
+        try {
+            String circStr = circuitProject.getCircuitText();
+            int scaleToX = 1000;
+            int scaleToY = 1000;
+            components.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void displayComponent(String c){
