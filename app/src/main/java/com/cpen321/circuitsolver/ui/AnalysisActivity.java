@@ -60,14 +60,58 @@ public class AnalysisActivity extends BaseActivity {
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_analysis);
         relativeLayout.addView(this.circuitDisplay, 0);
         this.circuitDisplay.invalidate();
-//        this.resistanceValue = (EditText) findViewById(R.id.resistance_value);
-//        this.resistanceValueUnits = (TextView) findViewById(R.id.units_display);
+        this.resistanceValue = (EditText) findViewById(R.id.resistance_value);
+        this.resistanceValueUnits = (TextView) findViewById(R.id.resistance_units_display);
 //        this.voltageValue = (EditText) findViewById(R.id.voltage_value);
 //        this.voltageValueUnits = (TextView) findViewById(R.id.voltage_units_display);
 
 //        RelativeLayout layout = (RelativeLayout) findViewById(R.id.content_analysis);
 //        layout.addView(this.circuitDisplay);
 //      this.loadCircuit(new File(dataLocation));
+    }
+
+    private void enableAllButtons() {
+        this.resistanceValue.setEnabled(true);
+        this.resistanceValue.setFocusable(true);
+        this.resistanceValue.setClickable(true);
+        this.resistanceValueUnits.setEnabled(true);
+    }
+
+    private void displayElement() {
+        this.enableAllButtons();
+
+        //todo: fix
+//        if (this.tappedElement == null) {
+//            this.valueUnits.setText(Constants.NOTHING_SELECTED);
+//            this.componentValue.setText("--");
+//            return;
+//        }
+//
+//        switch (this.tappedElement.getType()) {
+//            case Constants.CAPACITOR: {
+//                this.capacitorButton.setEnabled(false);
+//                this.valueUnits.setText(Constants.CAPACITOR_UNITS);
+//                break;
+//            }
+//            case Constants.RESISTOR: {
+//                this.resistorButton.setEnabled(false);
+//                this.valueUnits.setText(Constants.RESISTOR_UNITS);
+//                break;
+//            }
+//            case Constants.DC_VOLTAGE: {
+//                this.voltageSourceButton.setEnabled(false);
+//                this.valueUnits.setText(Constants.VOLTAGE_UNITS);
+//                break;
+//            }
+//            case Constants.INDUCTOR: {
+//                this.inductorButton.setEnabled(false);
+//                this.valueUnits.setText(Constants.INDUCTOR_UNTIS);
+//                break;
+//            }
+//        }
+//
+//        this.componentValue.setText(Double.toString(this.tappedElement.getValue()));
+
     }
 
 

@@ -43,14 +43,14 @@
                 android:ems="10"
                 android:shadowColor="@color/circuitBackground"
                 android:textColor="@color/circuitBackground"
-                android:id="@+id/component_value"
+                android:id="@+id/resistance_value"
                 android:backgroundTint="@color/backgroundGray" />
             <TextView
                 android:text="ohms"
-                android:id="@+id/units_display"
+                android:id="@+id/resistance_units_display"
                 android:textColor="@color/circuitBackground"
-                android:layout_toRightOf="@id/component_value"
-                android:layout_alignBaseline="@id/component_value"
+                android:layout_toRightOf="@id/resistance_value"
+                android:layout_alignBaseline="@id/resistance_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
     </RelativeLayout>
