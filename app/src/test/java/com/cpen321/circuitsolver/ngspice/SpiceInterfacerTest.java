@@ -143,6 +143,21 @@ public class SpiceInterfacerTest {
                 assertEquals("0", spiceLabel);
             }
         }
+
+        for(CircuitElm resultElm : resultElms) {
+            int numSources = 0;
+            if(resultElm instanceof VoltageElm) {
+                String spiceLabel = ((VoltageElm) resultElm).getSpiceLabel();
+                Double current = resultElm.getCurrent();
+                if(spiceLabel.equals("v2")) {
+                    assertEquals(current, -0.000648522);
+                } else if(spiceLabel.equals("v1")) {
+                    assertEquals(current, -0.0014253);
+                } else {
+                    fail();
+                }
+            }
+        }
     }
 
     @Test
