@@ -20,7 +20,6 @@ import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.io.File;
@@ -86,8 +85,8 @@ public class EditActivity extends AppCompatActivity {
         File test = new File(dataLocation);
 
         this.circuitDisplay = new CircuitDisplay(getApplicationContext());
-        // todo: remove the call to init. make it work without it. Init is just a test method
-        circuitDisplay.init();
+        // todo: remove the call to init_test. make it work without it. Init is just a test method
+        circuitDisplay.init_test();
         circuitDisplay.setOnTouchListener(handleTouch);
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
         relativeLayout.addView(this.circuitDisplay, 0);

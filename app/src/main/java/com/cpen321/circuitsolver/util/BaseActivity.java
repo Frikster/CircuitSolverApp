@@ -19,9 +19,9 @@ public class BaseActivity extends AppCompatActivity{
 
     static{
         if(!OpenCVLoader.initDebug()){
-            Log.i("opencv","opencv init failed");
+            Log.i("opencv","opencv init_test failed");
         }else{
-            Log.i("opencv","opencv init success");
+            Log.i("opencv","opencv init_test success");
         }
     }
 

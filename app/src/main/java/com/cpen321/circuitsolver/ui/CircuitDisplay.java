@@ -54,7 +54,7 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.rectF = new RectF(200, 100, 300, 200);
         this.circuitPaint.setStrokeWidth(2.5f);
-        //this.init();
+        //this.init_test();
     }
 
     public CircuitDisplay(Context context, CircuitProject project) {
@@ -66,7 +66,7 @@ public class CircuitDisplay extends View {
         this.rectF = new RectF(200, 100, 300, 200);
     }
 
-    public void init() { // simply a test while we wait to get actual values from the processing
+    public void init_test() { // simply a test while we wait to get actual values from the processing
         this.components.add(new InductorElm(new SimplePoint(300, 300),
                 new SimplePoint(500, 300), 1.5));
         this.components.add(new WireElm(new SimplePoint(500, 300),
