@@ -31,11 +31,10 @@ public class CircuitDefParser {
                 String[] metaData = strElms[0].split(" ");
                 originalWidth = Integer.parseInt(metaData[1]);
                 originalHeight = Integer.parseInt(metaData[2]);
-                System.out.println("width: " + originalWidth + " height: " + originalHeight);
+                //System.out.println("width: " + originalWidth + " height: " + originalHeight);
             }
             //Ignore lines starting with #
             else if(!str.startsWith("#")){
-                CircuitElmFactory circuitElmFactory= new CircuitElmFactory();
                 CircuitElm elm = parseCircuitElmLine(str, originalWidth, originalHeight, scaleToWidth, scaleToHeight);
 
                 elements.add(elm);
@@ -58,22 +57,12 @@ public class CircuitDefParser {
 
         //TODO: Lots of dangerous out of bound index cases here. Need to build safer code.
         List<CircuitElm> elements = new ArrayList<>();
-        int originalWidth;
-        int originalHeight;
-
         //Each line represents a new circuit element
         String strElms[] = circTxt.split("\n");
 
         for(String str: strElms){
-            //Check if file has meta data about width and height
-            if(str.startsWith("$")){
-                String[] metaData = strElms[0].split(" ");
-                originalWidth = Integer.parseInt(metaData[1]);
-                originalHeight = Integer.parseInt(metaData[2]);
-                System.out.println("width: " + originalWidth + " height: " + originalHeight);
-            }
-            //Ignore lines starting with #
-            else if(!str.startsWith("#")){
+            //Ignore lines starting with # or $
+            if(!str.startsWith("#") && !str.startsWith("$")){
                 CircuitElmFactory circuitElmFactory= new CircuitElmFactory();
                 CircuitElm elm = parseCircuitElmLine(str);
 
@@ -91,8 +80,9 @@ public class CircuitDefParser {
      * Writes List of circuit elements into list of circuit elements
      * @param elements
      */
-    public String elementsToTxt(List<CircuitElm> elements){
+    public String elementsToTxt(List<CircuitElm> elements, int originalHeight, int originalWidth){
         StringBuilder sb = new StringBuilder();
+        sb.append("$ " + originalHeight + " " + originalWidth + "\n");
         for(CircuitElm elm : elements){
             //Column 1 is element type
             sb.append(elm.getType() + " ");

@@ -96,7 +96,7 @@ public class EditActivity extends AppCompatActivity {
         this.componentValue = (EditText) findViewById(R.id.component_value);
         this.rotateFab = (FloatingActionButton) findViewById(R.id.rotate_fav);
         this.initElements();
-        //this.tappedElement = this.circuitDisplay.getRandomElement();
+        this.tappedElement = this.circuitDisplay.getRandomElement();
         this.displayElement();
     }
 

@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
@@ -70,50 +71,14 @@ public class CircuitDisplay extends View {
         this.init();
     }
 
-    private void init() { // simply a test while we wait to get actual values from the processing
-//        this.components.add(new InductorElm(new SimplePoint(300, 300),
-//                new SimplePoint(500, 300), 1.5));
-//        this.components.add(new WireElm(new SimplePoint(500, 300),
-//                new SimplePoint(700, 500)));
-//        this.components.add(new CapacitorElm(new SimplePoint(700, 500),
-//                new SimplePoint(700, 700), 77));
-//        this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
-//        this.components.add(new ResistorElm(new SimplePoint(500, 900),
-//                new SimplePoint(300, 900), 10));
-//        this.components.add(new WireElm(new SimplePoint(300, 900),
-//                new SimplePoint(300, 700)));
-//        this.components.add(new VoltageElm(new SimplePoint(300, 700),
-//                new SimplePoint(300, 500), 12));
-//        this.components.add(new WireElm(new SimplePoint(300, 500),
-//                new SimplePoint(300, 300)));
+    private void init() {
 
         CircuitDefParser parser = new CircuitDefParser();
-//        String circStr = "l 300 300 500 300 10.0\n" +
-//                "w 500 300 700 500 10.0 \n" +
-//                "c 700 500 700 700 10.0 \n" +
-//                "w 500 900 700 700 10.0 \n" +
-//                "r 500 900 300 900 10.0 \n" +
-//                "w 300 900 300 700 10.0 \n" +
-//                "v 300 700 300 500 10.0 \n" +
-//                "w 300 500 300 300 10.0";
         try {
             String circStr = circuitProject.getCircuitText();
-            int scaleFactor = 30;
-            List<CircuitElm> elms = parser.parseElements(circStr);
-            for(CircuitElm elm: elms){
-                //Scale point 1
-                SimplePoint p1 = elm.getP1();
-                int x1 = p1.getX()*scaleFactor;
-                int y1 = p1.getY()*scaleFactor;
-                elm.setP1(new SimplePoint(x1, y1));
-
-                //Scale point 2
-                SimplePoint p2 = elm.getP1();
-                int x2 = p1.getX()*scaleFactor;
-                int y2 = p1.getY()*scaleFactor;
-                elm.setP1(new SimplePoint(x2, y2));
-            }
-            components.addAll(parser.parseElements(circStr));
+            int scaleToX = 1000;
+            int scaleToY = 1000;
+            components.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -48,6 +48,9 @@ public class MainOpencv {
     List<List<Element>> wires = new ArrayList<>();
     List<List<Element>> separatedComponents = new ArrayList<>();
 
+    private int bitMapWidth = 500;
+    private int bitMapHeight = 800;
+
     /**Method to detect the components,main method of this class
      *
      * @return the bitmap with the detected lines and a circle around the components
@@ -56,6 +59,9 @@ public class MainOpencv {
 
         //Convert to a canny edge detector grayscale mat
         System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
+        bitMapHeight = bMap.getHeight();
+        bitMapWidth = bMap.getWidth();
+
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
@@ -223,7 +229,8 @@ public class MainOpencv {
         return circuitElements;
     }
     public String getCircuitText(){
-//        String circStr = "l 300 300 500 300 10.0\n" +
+//        String circStr = "$ 500 800\n" +
+//                "l 300 300 500 300 10.0\n" +
 //                "w 500 300 700 500\n" +
 //                "c 700 500 700 700 10.0 \n" +
 //                "w 500 900 700 700\n" +
@@ -233,7 +240,7 @@ public class MainOpencv {
 //                "w 300 500 300 300 \n";
 
         CircuitDefParser parser = new CircuitDefParser();
-        String circStr = parser.elementsToTxt(getCircuitElements());
+        String circStr = parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
 
         return circStr;
     }
