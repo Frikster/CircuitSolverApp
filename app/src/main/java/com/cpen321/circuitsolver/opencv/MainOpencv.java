@@ -81,7 +81,7 @@ public class MainOpencv {
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
 
-        int maxLinesToBeChunk = 2;
+        int maxLinesToBeChunk = 3;
         int radius = 4;
         int minPoints = 20;
 
@@ -137,7 +137,7 @@ public class MainOpencv {
 
             System.out.println("Coord of corner : "+x1+" , "+y1);
         }
-        int thresholdXY = 10;
+        int thresholdXY = 7;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
         List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY);
@@ -567,25 +567,49 @@ public class MainOpencv {
         System.out.println("wires all size :"+ wires.size());
         System.out.println("Corners to wire size"+cornersToWire.size());
         System.out.println("allcorners size : "+allCorners.size());
+        List<Corner> alreadyWiredCorners = new ArrayList<>();
         for(Corner c : cornersToWire){
-            double nearestDistance = Double.MAX_VALUE;
-            Corner currentCorner = new Corner(0,0);
-            int bestIndex = 0;
-            for(int i =0; i<allCorners.size();i++){
-                if(allCorners.get(i).getX() != c.getX() && allCorners.get(i).getY() != c.getY()){
-                    double distance = Math.sqrt(Math.pow(allCorners.get(i).getX()-c.getX(),2)+Math.pow(allCorners.get(i).getY()-c.getY(),2));
-                    if(distance<nearestDistance){
-                        nearestDistance = distance;
-                        currentCorner = allCorners.get(i);
-                        bestIndex = i;
+            if(!containsCorner(alreadyWiredCorners,c)) {
+                //Go and look through the unconnected corners
+                boolean foundAnUnconnected = false;
+                double nearestDistanceUnc = Double.MAX_VALUE;
+                Corner currentCornerUnc = new Corner(0, 0);
+                for (int i = 0; i < cornersToWire.size(); i++) {
+                    if (cornersToWire.get(i).getX() != c.getX() && cornersToWire.get(i).getY() != c.getY()) {
+                        foundAnUnconnected = true;
+                        double distance = Math.sqrt(Math.pow(cornersToWire.get(i).getX() - c.getX(), 2) + Math.pow(cornersToWire.get(i).getY() - c.getY(), 2));
+                        if (distance < nearestDistanceUnc) {
+                            nearestDistanceUnc = distance;
+                            currentCornerUnc = cornersToWire.get(i);
+                        }
                     }
                 }
-            }
-            List<Element> newWire = new ArrayList<>();
-            newWire.add(c);
-            newWire.add(currentCorner);
-            wiresWithMissing.add(newWire);
+                List<Element> newWireUnc = new ArrayList<>();
+                newWireUnc.add(c);
+                newWireUnc.add(currentCornerUnc);
+                wiresWithMissing.add(newWireUnc);
+                alreadyWiredCorners.add(currentCornerUnc);
 
+
+                //Go and look through all corners
+                if (!foundAnUnconnected) {
+                    double nearestDistance = Double.MAX_VALUE;
+                    Corner currentCorner = new Corner(0, 0);
+                    for (int i = 0; i < allCorners.size(); i++) {
+                        if (allCorners.get(i).getX() != c.getX() && allCorners.get(i).getY() != c.getY()) {
+                            double distance = Math.sqrt(Math.pow(allCorners.get(i).getX() - c.getX(), 2) + Math.pow(allCorners.get(i).getY() - c.getY(), 2));
+                            if (distance < nearestDistance) {
+                                nearestDistance = distance;
+                                currentCorner = allCorners.get(i);
+                            }
+                        }
+                    }
+                    List<Element> newWire = new ArrayList<>();
+                    newWire.add(c);
+                    newWire.add(currentCorner);
+                    wiresWithMissing.add(newWire);
+                }
+            }
         }
         return wiresWithMissing;
     }
