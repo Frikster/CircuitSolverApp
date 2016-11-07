@@ -36,6 +36,8 @@ public class EditActivity extends AppCompatActivity {
     private Button solveCircuitButton;
     private TextView currentAndVoltageText;
     private String currentAndVoltageString;
+    private double computedCurrent;
+    private double computedResistance;
 
     private CircuitElm tappedElement;
 
@@ -269,7 +271,8 @@ public class EditActivity extends AppCompatActivity {
         Bundle extras = new Bundle();
         // todo: figure out what we should use as keys...
         extras.putString("tappedElementType", this.tappedElement.getType());
-        extras.putString("currentAndVoltageString", currentAndVoltageString);
+        extras.putDouble("computedCurrent", this.tappedElement.getCurrent());
+        extras.putDouble("computedVoltageDiff", this.tappedElement.getVoltageDiff());
         analysisIntent.putExtras(extras);
         startActivity(analysisIntent);
     }

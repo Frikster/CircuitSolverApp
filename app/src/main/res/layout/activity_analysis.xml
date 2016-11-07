@@ -43,14 +43,34 @@
                 android:ems="10"
                 android:shadowColor="@color/circuitBackground"
                 android:textColor="@color/circuitBackground"
-                android:id="@+id/resistance_value"
+                android:id="@+id/current_value"
                 android:backgroundTint="@color/backgroundGray" />
             <TextView
-                android:text="ohms"
-                android:id="@+id/resistance_units_display"
+                android:text="amps"
+                android:id="@+id/current_units_display"
                 android:textColor="@color/circuitBackground"
-                android:layout_toRightOf="@id/resistance_value"
-                android:layout_alignBaseline="@id/resistance_value"
+                android:layout_toRightOf="@id/current_value"
+                android:layout_alignBaseline="@id/current_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/current_value"
+                android:hint="Component Value"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:shadowColor="@color/circuitBackground"
+                android:textColor="@color/circuitBackground"
+                android:id="@+id/voltage_value"
+                android:backgroundTint="@color/backgroundGray" />
+            <TextView
+                android:text="volts"
+                android:id="@+id/voltage_units_display"
+                android:textColor="@color/circuitBackground"
+                android:layout_toRightOf="@id/voltage_value"
+                android:layout_alignBaseline="@id/voltage_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
     </RelativeLayout>
