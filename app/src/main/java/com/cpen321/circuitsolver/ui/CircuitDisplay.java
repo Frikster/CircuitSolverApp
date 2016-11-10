@@ -9,11 +9,13 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.text.method.TextKeyListener;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
+import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CapacitorElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
@@ -21,11 +23,17 @@ import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.ngspice.NgSpice;
+import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
 import com.cpen321.circuitsolver.opencv.Component;
+import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Neil Goossen on 2016-10-15.
@@ -64,15 +72,17 @@ public class CircuitDisplay extends View {
         this.circuitPaint.setColor(Color.BLACK);
         this.circuitPaint.setStrokeWidth(2.5f);
         this.rectF = new RectF(200, 100, 300, 200);
+        this.init_opencv();
     }
 
     private void init() { // simply a test while we wait to get actual values from the processing
-        this.components.add(new InductorElm(new SimplePoint(300, 300),
-                new SimplePoint(500, 300), 1.5));
+        ResetComponents.resetNumComponents();
+        this.components.add(new WireElm(new SimplePoint(300, 300),
+                new SimplePoint(500, 300)));
         this.components.add(new WireElm(new SimplePoint(500, 300),
                 new SimplePoint(700, 500)));
-        this.components.add(new CapacitorElm(new SimplePoint(700, 500),
-                new SimplePoint(700, 700), 77));
+        this.components.add(new WireElm(new SimplePoint(700, 500),
+                new SimplePoint(700, 700)));
         this.components.add(new WireElm(new SimplePoint(500, 900), new SimplePoint(700, 700)));
         this.components.add(new ResistorElm(new SimplePoint(500, 900),
                 new SimplePoint(300, 900), 10));
@@ -80,12 +90,96 @@ public class CircuitDisplay extends View {
                 new SimplePoint(300, 700)));
         this.components.add(new VoltageElm(new SimplePoint(300, 700),
                 new SimplePoint(300, 500), 12));
-        this.components.add(new WireElm(new SimplePoint(300, 500),
-                new SimplePoint(300, 300)));
+        this.components.add(new ResistorElm(new SimplePoint(300, 500),
+                new SimplePoint(300, 300), 50));
+    }
+
+    private void init_opencv() {
+        CircuitDefParser parser = new CircuitDefParser();
+        try {
+            String circStr = circuitProject.getCircuitText();
+            int scaleToX = 1000;
+            int scaleToY = 1000;
+            components.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
+            this.rectifyComponents();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void rectifyComponents() {
+        CircuitElm tmpElement;
+        SimplePoint tmpMiddle, tmpStart, tmpEnd;
+
+        for (int i=0; i < this.components.size(); i++) {
+            CircuitElm elm = this.components.get(i);
+            tmpMiddle = this.findMiddle(elm.getP1(), elm.getP2());
+            if (elm.isVertical()) {
+                tmpStart = new SimplePoint(tmpMiddle.getX(), tmpMiddle.getY() - 100);
+                tmpEnd = new SimplePoint(tmpMiddle.getX(), tmpMiddle.getY() + 100);
+            } else {
+                tmpStart = new SimplePoint(tmpMiddle.getX() - 100, tmpMiddle.getY());
+                tmpEnd = new SimplePoint(tmpMiddle.getX() + 100, tmpMiddle.getY());
+            }
+            tmpElement = this.circuitElmFactory.makeElm(elm.getType(),
+                    tmpStart, tmpEnd, elm.getValue());
+            this.components.set(i, tmpElement);
+        }
+    }
+
+    private SimplePoint findMiddle(SimplePoint p1, SimplePoint p2) {
+        int newX, newY;
+        if (p1.getX() >= p2.getX()) {
+            newX = p2.getX() + (p1.getX() - p2.getX())/2;
+        } else {
+            newX = p1.getX() + (p2.getX() - p1.getX())/2;
+        }
+
+        if (p1.getY() >= p2.getY()) {
+            newY = p2.getY() + (p1.getY() - p2.getY())/2;
+        } else {
+            newY = p1.getY() + (p2.getY() - p1.getY())/2;
+        }
+
+        return new SimplePoint(newX, newY);
+    }
+
+    public void solveCircuit() {
+        AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(components);
+        circuit.init();
+        SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
+        interfacer.solveCircuit(NgSpice.getInstance(getContext()));
+    }
+
+    public void displayComponent(String c){
+        this.components.clear();
+        switch (c) {
+            case Constants.CAPACITOR: {
+                this.components.add(new CapacitorElm(new SimplePoint(700, 500),
+                        new SimplePoint(700, 700), 77));
+                break;
+            }
+            case Constants.RESISTOR: {
+                this.components.add(new ResistorElm(new SimplePoint(500, 900),
+                        new SimplePoint(300, 900), 10));
+                break;
+            }
+            case Constants.DC_VOLTAGE: {
+                this.components.add(new VoltageElm(new SimplePoint(300, 700),
+                        new SimplePoint(300, 500), 12));
+                break;
+            }
+            case Constants.INDUCTOR: {
+                this.components.add(new InductorElm(new SimplePoint(300, 300),
+                        new SimplePoint(500, 300), 1.5));
+                break;
+            }
+        }
     }
 
     public CircuitElm getRandomElement() {
-        return this.components.get(4);
+//        return this.components.get(4);
+        return this.components.get(0);
     }
 
     public void onDraw(Canvas canvas) {

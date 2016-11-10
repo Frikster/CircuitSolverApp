@@ -2,10 +2,12 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_analysis"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.cpen321.circuitsolver.ui.AnalysisActivity">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.cpen321.circuitsolver.ui.AnalysisActivity"
+    android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,6 +22,59 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom|start"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@color/colorPrimary"
+            android:layout_gravity="bottom|start"
+            android:id="@+id/relativeLayout"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:hint="Component Value"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:shadowColor="@color/circuitBackground"
+                android:textColor="@color/circuitBackground"
+                android:id="@+id/current_value"
+                android:backgroundTint="@color/backgroundGray" />
+            <TextView
+                android:text="amps"
+                android:id="@+id/current_units_display"
+                android:textColor="@color/circuitBackground"
+                android:layout_toRightOf="@id/current_value"
+                android:layout_alignBaseline="@id/current_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/current_value"
+                android:hint="Component Value"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:shadowColor="@color/circuitBackground"
+                android:textColor="@color/circuitBackground"
+                android:id="@+id/voltage_value"
+                android:backgroundTint="@color/backgroundGray" />
+            <TextView
+                android:text="volts"
+                android:id="@+id/voltage_units_display"
+                android:textColor="@color/circuitBackground"
+                android:layout_toRightOf="@id/voltage_value"
+                android:layout_alignBaseline="@id/voltage_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+    </RelativeLayout>
+        </RelativeLayout>
 
     <include layout="@layout/content_analysis" />
 

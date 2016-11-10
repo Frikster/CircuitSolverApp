@@ -9,6 +9,7 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.Constants;
 
 import org.opencv.android.Utils;
@@ -48,6 +49,9 @@ public class MainOpencv {
     List<List<Element>> wires = new ArrayList<>();
     List<List<Element>> separatedComponents = new ArrayList<>();
 
+    private int bitMapWidth = 500;
+    private int bitMapHeight = 800;
+
     /**Method to detect the components,main method of this class
      *
      * @return the bitmap with the detected lines and a circle around the components
@@ -57,6 +61,9 @@ public class MainOpencv {
 
         //Convert to a canny edge detector grayscale mat
         System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
+        bitMapHeight = bMap.getHeight();
+        bitMapWidth = bMap.getWidth();
+
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
@@ -74,7 +81,7 @@ public class MainOpencv {
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
 
-        int maxLinesToBeChunk = 2;
+        int maxLinesToBeChunk = 3;
         int radius = 4;
         int minPoints = 20;
 
@@ -130,7 +137,7 @@ public class MainOpencv {
 
             System.out.println("Coord of corner : "+x1+" , "+y1);
         }
-        int thresholdXY = 10;
+        int thresholdXY = 7;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
         List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY);
@@ -192,7 +199,24 @@ public class MainOpencv {
             }
         }
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
-        System.out.println("After all : "+separatedComponents.size());
+        System.out.println("After add missing wires : "+separatedComponents.size());
+
+        //Prints the found wires
+        for(List<Element> wire : separatedComponents){
+            System.out.println("New wire : ");
+            for(Element e : wire){
+                if(e instanceof Corner){
+                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
+                }
+                else{
+                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
+                }
+
+            }
+        }
+
+        separatedComponents = removeDuplicateWires(separatedComponents);
+        System.out.println("After remove duplicates : "+separatedComponents.size());
 
         //Prints the found wires
         for(List<Element> wire : separatedComponents){
@@ -288,6 +312,25 @@ public class MainOpencv {
         }
         return circuitElements;
     }
+    public String getCircuitText(){
+//        String circStr = "$ 500 800\n" +
+//                "l 300 300 500 300 10.0\n" +
+//                "w 500 300 700 500\n" +
+//                "c 700 500 700 700 10.0 \n" +
+//                "w 500 900 700 700\n" +
+//                "r 500 900 300 900 10.0 \n" +
+//                "w 300 900 300 700 \n" +
+//                "v 300 700 300 500 10.0 \n" +
+//                "w 300 500 300 300 \n";
+
+        CircuitDefParser parser = new CircuitDefParser();
+        String circStr = parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
+
+        return circStr;
+    }
+
+
+
     /**returns corners that are not too near from components
      *
      * @param assignedPoints, the list of points that have been assigned to a cluster
@@ -534,6 +577,31 @@ public class MainOpencv {
     }
 
 
+    private List<List<Element>> removeDuplicateWires (List<List<Element>> wires){
+        List<List<Element>> singleWires = new ArrayList<>();
+        for(int i=0; i<wires.size();i++){
+            boolean identicalWire = false;
+            for(int j=i+1; j<wires.size();j++){
+                boolean hasIdenticalComponents = true;
+                if(wires.get(i).size() == wires.get(j).size()){
+                    List<Element> wire1 = wires.get(i);
+                    List<Element> wire2 = wires.get(j);
+                    for(int e=0;e<wire1.size();e++){
+                        if(!containsElement(wire2,wire1.get(e))){
+                            hasIdenticalComponents=false;
+                        }
+                    }
+                    if(hasIdenticalComponents){
+                        identicalWire = true;
+                    }
+                }
+            }
+            if(!identicalWire){
+                singleWires.add(wires.get(i));
+            }
+        }
+        return singleWires;
+    }
 
     private List<List<Element>> addMisingWires(List<List<Element>> wires, List<Corner> cornersToWire){
         List<List<Element>> wiresWithMissing = new ArrayList<>(wires);
@@ -541,25 +609,49 @@ public class MainOpencv {
         System.out.println("wires all size :"+ wires.size());
         System.out.println("Corners to wire size"+cornersToWire.size());
         System.out.println("allcorners size : "+allCorners.size());
+        List<Corner> alreadyWiredCorners = new ArrayList<>();
         for(Corner c : cornersToWire){
-            double nearestDistance = Double.MAX_VALUE;
-            Corner currentCorner = new Corner(0,0);
-            int bestIndex = 0;
-            for(int i =0; i<allCorners.size();i++){
-                if(allCorners.get(i).getX() != c.getX() && allCorners.get(i).getY() != c.getY()){
-                    double distance = Math.sqrt(Math.pow(allCorners.get(i).getX()-c.getX(),2)+Math.pow(allCorners.get(i).getY()-c.getY(),2));
-                    if(distance<nearestDistance){
-                        nearestDistance = distance;
-                        currentCorner = allCorners.get(i);
-                        bestIndex = i;
+            if(!containsCorner(alreadyWiredCorners,c)) {
+                //Go and look through the unconnected corners
+                boolean foundAnUnconnected = false;
+                double nearestDistanceUnc = Double.MAX_VALUE;
+                Corner currentCornerUnc = new Corner(0, 0);
+                for (int i = 0; i < cornersToWire.size(); i++) {
+                    if (cornersToWire.get(i).getX() != c.getX() && cornersToWire.get(i).getY() != c.getY()) {
+                        foundAnUnconnected = true;
+                        double distance = Math.sqrt(Math.pow(cornersToWire.get(i).getX() - c.getX(), 2) + Math.pow(cornersToWire.get(i).getY() - c.getY(), 2));
+                        if (distance < nearestDistanceUnc) {
+                            nearestDistanceUnc = distance;
+                            currentCornerUnc = cornersToWire.get(i);
+                        }
                     }
                 }
-            }
-            List<Element> newWire = new ArrayList<>();
-            newWire.add(c);
-            newWire.add(currentCorner);
-            wiresWithMissing.add(newWire);
+                List<Element> newWireUnc = new ArrayList<>();
+                newWireUnc.add(c);
+                newWireUnc.add(currentCornerUnc);
+                wiresWithMissing.add(newWireUnc);
+                alreadyWiredCorners.add(currentCornerUnc);
 
+
+                //Go and look through all corners
+                if (!foundAnUnconnected) {
+                    double nearestDistance = Double.MAX_VALUE;
+                    Corner currentCorner = new Corner(0, 0);
+                    for (int i = 0; i < allCorners.size(); i++) {
+                        if (allCorners.get(i).getX() != c.getX() && allCorners.get(i).getY() != c.getY()) {
+                            double distance = Math.sqrt(Math.pow(allCorners.get(i).getX() - c.getX(), 2) + Math.pow(allCorners.get(i).getY() - c.getY(), 2));
+                            if (distance < nearestDistance) {
+                                nearestDistance = distance;
+                                currentCorner = allCorners.get(i);
+                            }
+                        }
+                    }
+                    List<Element> newWire = new ArrayList<>();
+                    newWire.add(c);
+                    newWire.add(currentCorner);
+                    wiresWithMissing.add(newWire);
+                }
+            }
         }
         return wiresWithMissing;
     }

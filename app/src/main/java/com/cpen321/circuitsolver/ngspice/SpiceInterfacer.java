@@ -142,7 +142,9 @@ public class SpiceInterfacer {
                 netlist.append(spiceElm.constructSpiceLine() + "\n");
             }
         }
-        return netlist.toString();
+        String result = netlist.toString();
+        Log.d(TAG, result);
+        return result;
     }
 
     /**

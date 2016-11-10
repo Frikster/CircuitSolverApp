@@ -14,7 +14,9 @@ import java.util.List;
 /**
  * Created by Jennifer on 10/10/2016.
  */
-public abstract class CircuitElm {
+public abstract class CircuitElm{
+
+
 
     //protected CircuitNode[] nodes;
     private CircuitNode n1;
@@ -36,8 +38,13 @@ public abstract class CircuitElm {
     private double current;
 
     public CircuitElm(SimplePoint p1, SimplePoint p2){
-        this.p1 = p1;
-        this.p2 = p2;
+//        if (p2.getX() <= p1.getX() && p2.getY() <= p1.getY()) {
+//            this.p1 = p2;
+//            this.p2 = p1;
+//        } else {
+            this.p1 = p1;
+            this.p2 = p2;
+//        }
     }
 
     public SimplePoint getP1() {
@@ -173,10 +180,17 @@ public abstract class CircuitElm {
     @Override
     public String toString() {
         return "{type: " + this.getType() + ", val: " + this.getValue() + ", sX: " + this.getP1().getX()
-            + ", sY:" + this.getP1().getX() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
+            + ", sY:" + this.getP1().getY() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
     }
 
     public boolean isWire(){
+        return false;
+    }
+
+    public boolean isVertical() {
+        if(Math.abs(this.p1.getX() - this.p2.getX()) < 50 ) {
+            return true;
+        }
         return false;
     }
 }

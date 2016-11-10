@@ -32,6 +32,7 @@ public class HomeActivity extends BaseActivity {
 
     static final int REQUEST_TAKE_PHOTO = 1;
     private LinearLayout savedCircuitsScroll;
+    private LinearLayout exampleCircuitScroll;
 
     private ArrayList<CircuitProject> circuitProjects = new ArrayList<>();
     private CircuitProject candidateProject;
@@ -93,7 +94,9 @@ public class HomeActivity extends BaseActivity {
         this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
 
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
+        this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
         this.updateSavedCircuits();
+        this.loadExamples();
 
 
         this.checkNecessaryPermissions();
@@ -115,6 +118,7 @@ public class HomeActivity extends BaseActivity {
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                 startActivity(displayIntent);
+                finish();
             }
         });
 
@@ -122,6 +126,8 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 if (HomeActivity.selectedTag == null)
+                    return;
+                if (HomeActivity.selectedTag.contains("example"))
                     return;
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 CircuitProject projToDelete = new CircuitProject(circuitFolder);
@@ -166,6 +172,7 @@ public class HomeActivity extends BaseActivity {
         Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
         analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
         startActivity(analysisIntent);
+        finish();
     }
 
     private void deleteFolderOrFile(File file) {
@@ -202,6 +209,15 @@ public class HomeActivity extends BaseActivity {
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
+    }
+    protected void loadExamples(){
+        this.exampleCircuitScroll.removeAllViews();
+        ImageView newImage = new ImageView(getApplicationContext());
+        newImage.setTag("example_1");
+        newImage.setPadding(10, 10, 10, 10);
+        newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.example_1));
+        newImage.setOnClickListener(this.thumbnailListener);
+        this.exampleCircuitScroll.addView(newImage);
     }
 
 
