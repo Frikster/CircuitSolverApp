@@ -2,6 +2,7 @@ package com.cpen321.circuitsolver.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.widget.EditText;
@@ -9,6 +10,7 @@ import android.widget.EditText;
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.util.BaseActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
+import com.cpen321.circuitsolver.util.Constants;
 
 import android.widget.TextView;
 
@@ -26,6 +28,8 @@ public class AnalysisActivity extends BaseActivity {
     private TextView currentValueUnits;
     private TextView voltageValueUnits;
 
+    private String dataLocation;
+
     private double computedCurrent;
     private double computedVoltageDiff;
 
@@ -39,12 +43,12 @@ public class AnalysisActivity extends BaseActivity {
         // not sure what the point is of the following three lines
 //        String dataLocation = null;
 //        if (extras != null) {
-//            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
 //        }
         // Not sure why or if we should use this constant as a key
         String component = extras.getString("tappedElementType");
         this.computedCurrent = extras.getDouble("computedCurrent");
         this.computedVoltageDiff = extras.getDouble("computedVoltageDiff");
+//        this.dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
 
 //        CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_analysis);
 //        relativeLayout.addView(this.circuitDisplay, 0);
@@ -63,6 +67,8 @@ public class AnalysisActivity extends BaseActivity {
 //      layout.addView(this.circuitDisplay);
 //      this.loadCircuit(new File(dataLocation));
     }
+
+
 
     private void displayValues() {
         this.currentValue.setText(Double.toString(this.computedCurrent));
@@ -120,8 +126,14 @@ public class AnalysisActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Intent backToHome = new Intent(this, EditActivity.class);
+//        Intent displayIntent = new Intent(this, EditActivity.class);
+//        File circuitFolder = new File(this.dataLocation);
+//        displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+//        startActivity(displayIntent);
+
         startActivity(backToHome);
         super.onBackPressed();
+        finish();
     }
 
 }

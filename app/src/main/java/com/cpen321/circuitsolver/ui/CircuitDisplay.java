@@ -101,9 +101,47 @@ public class CircuitDisplay extends View {
             int scaleToX = 1000;
             int scaleToY = 1000;
             components.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
+            this.rectifyComponents();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void rectifyComponents() {
+        CircuitElm tmpElement;
+        SimplePoint tmpMiddle, tmpStart, tmpEnd;
+
+        for (int i=0; i < this.components.size(); i++) {
+            CircuitElm elm = this.components.get(i);
+            tmpMiddle = this.findMiddle(elm.getP1(), elm.getP2());
+            if (elm.isVertical()) {
+                tmpStart = new SimplePoint(tmpMiddle.getX(), tmpMiddle.getY() - 100);
+                tmpEnd = new SimplePoint(tmpMiddle.getX(), tmpMiddle.getY() + 100);
+            } else {
+                tmpStart = new SimplePoint(tmpMiddle.getX() - 100, tmpMiddle.getY());
+                tmpEnd = new SimplePoint(tmpMiddle.getX() + 100, tmpMiddle.getY());
+            }
+            tmpElement = this.circuitElmFactory.makeElm(elm.getType(),
+                    tmpStart, tmpEnd, elm.getValue());
+            this.components.set(i, tmpElement);
+        }
+    }
+
+    private SimplePoint findMiddle(SimplePoint p1, SimplePoint p2) {
+        int newX, newY;
+        if (p1.getX() >= p2.getX()) {
+            newX = p2.getX() + (p1.getX() - p2.getX())/2;
+        } else {
+            newX = p1.getX() + (p2.getX() - p1.getX())/2;
+        }
+
+        if (p1.getY() >= p2.getY()) {
+            newY = p2.getY() + (p1.getY() - p2.getY())/2;
+        } else {
+            newY = p1.getY() + (p2.getY() - p1.getY())/2;
+        }
+
+        return new SimplePoint(newX, newY);
     }
 
     public void solveCircuit() {
@@ -140,7 +178,8 @@ public class CircuitDisplay extends View {
     }
 
     public CircuitElm getRandomElement() {
-        return this.components.get(4);
+//        return this.components.get(4);
+        return this.components.get(0);
     }
 
     public void onDraw(Canvas canvas) {

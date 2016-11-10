@@ -76,6 +76,14 @@ public class EditActivity extends AppCompatActivity {
     };
 
     @Override
+    public void onBackPressed() {
+        Intent backToHomeIntent = new Intent(this, HomeActivity.class);
+        startActivity(backToHomeIntent);
+        finish();
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
@@ -88,11 +96,18 @@ public class EditActivity extends AppCompatActivity {
         if (extras != null) {
             dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
         }
-        File test = new File(dataLocation);
 
-        this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        if (dataLocation != null){
+            File test = new File(dataLocation);
+            if (dataLocation.contains("example"))
+                this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+            else
+                this.circuitDisplay = new CircuitDisplay(getApplicationContext(), new CircuitProject(test));
+        } else {
+            this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        }
+
         // todo: uncomment this one and comment out the previous two to switch to using opencv!
-        //this.circuitDisplay = new CircuitDisplay(getApplicationContext(), new CircuitProject(test));
 
         circuitDisplay.setOnTouchListener(handleTouch);
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
@@ -264,6 +279,10 @@ public class EditActivity extends AppCompatActivity {
 
         if (newValue.isEmpty())
             return;
+
+        if (newValue.equals("--")) {
+            return;
+        }
 
         this.circuitDisplay.changeElementValue(this.tappedElement,
                 Double.valueOf(newValue));

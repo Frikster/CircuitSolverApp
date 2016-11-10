@@ -144,13 +144,45 @@
 
     </RelativeLayout>
 
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/rotate_fav"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--app:backgroundTint="@color/circuitBackground"-->
+        <!--app:srcCompat="@drawable/arrow_key"-->
+        <!--android:layout_alignParentEnd="false"-->
+        <!--android:padding="@dimen/fab_margin"-->
+        <!--app:elevation="9dp" />-->
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/component_analysis"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--app:backgroundTint="@color/circuitBackground"-->
+        <!--app:srcCompat="@drawable/arrow_key"-->
+        <!--app:layout_anchor="@id/editButtonPanel"-->
+        <!--app:layout_anchorGravity="top|right|end"-->
+        <!--android:layout_alignParentEnd="false"-->
+        <!--android:padding="@dimen/fab_margin"-->
+        <!--app:elevation="9dp" />-->
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="370dp"
+        android:layout_height="121dp"
+        android:id="@+id/voltageAndCurrent" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/rotate_fav"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/circuitBackground"
-        app:srcCompat="@drawable/arrow_key"
+        app:srcCompat="@drawable/rotate"
+        app:backgroundTint="@color/colorAccent"
+        app:layout_anchor="@id/editButtonPanel"
+        app:layout_anchorGravity="end"
         android:layout_alignParentEnd="false"
         android:padding="@dimen/fab_margin"
         app:elevation="9dp" />
@@ -160,19 +192,12 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/fab_margin"
-        app:backgroundTint="@color/circuitBackground"
-        app:srcCompat="@drawable/arrow_key"
+        app:backgroundTint="@color/colorAccent"
         app:layout_anchor="@id/editButtonPanel"
-        app:layout_anchorGravity="top|right|end"
+        app:srcCompat="@drawable/arrow_key"
+        app:layout_anchorGravity="start"
         android:layout_alignParentEnd="false"
         android:padding="@dimen/fab_margin"
         app:elevation="9dp" />
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="370dp"
-        android:layout_height="121dp"
-        android:id="@+id/voltageAndCurrent" />
-
 
 </android.support.design.widget.CoordinatorLayout>
