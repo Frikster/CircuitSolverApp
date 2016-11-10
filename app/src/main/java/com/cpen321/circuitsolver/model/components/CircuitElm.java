@@ -40,6 +40,7 @@ public abstract class CircuitElm{
     public CircuitElm(SimplePoint p1, SimplePoint p2){
         this.p1 = p1;
         this.p2 = p2;
+        preserveInvariant();
     }
 
     public SimplePoint getP1() {
@@ -48,6 +49,7 @@ public abstract class CircuitElm{
 
     public void setP1(SimplePoint p1) {
         this.p1 = p1;
+        preserveInvariant();
     }
 
     public SimplePoint getP2() {
@@ -56,6 +58,15 @@ public abstract class CircuitElm{
 
     public void setP2(SimplePoint p2) {
         this.p2 = p2;
+        preserveInvariant();
+    }
+
+    private void preserveInvariant(){
+        if(p2.isCloserToOriginThan(p1)){
+            SimplePoint temp = p2;
+            p2 = p1;
+            p1 = temp;
+        }
     }
 
     @Override

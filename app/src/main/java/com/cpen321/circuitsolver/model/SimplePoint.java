@@ -31,6 +31,15 @@ public class SimplePoint {
             return false;
     }
 
+    public boolean isCloserToOriginThan(SimplePoint other){
+        if ( (Math.pow((double) this.x, 2) + Math.pow((double) this.y, 2) ) > (Math.pow((double) other.getX(), 2) + Math.pow((double) other.getY(), 2))) {
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public String toString(){
         return "(" + x + "," + y + ")";
     }
