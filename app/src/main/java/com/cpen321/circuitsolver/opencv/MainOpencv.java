@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.provider.Settings;
 
 
+import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
@@ -281,6 +282,7 @@ public class MainOpencv {
 
 
     public List<CircuitElm> getCircuitElements(){
+        CircuitElmFactory factory= new CircuitElmFactory();
         List<CircuitElm> circuitElements = new ArrayList<>();
         for(List<Element> circElem : separatedComponents){
             if(circElem.size() == 2){
@@ -288,7 +290,13 @@ public class MainOpencv {
                 Corner corner2 = (Corner) circElem.get(1);
                 SimplePoint p1 = new SimplePoint((int)corner1.getX(),(int)corner1.getY());
                 SimplePoint p2 = new SimplePoint((int)corner2.getX(),(int)corner2.getY());
-                WireElm wire = new WireElm(p1,p2);
+                CircuitElm wire;
+                if(p1.isCloserToOriginThan(p2)){
+                    wire = factory.makeElm(p2,p1);
+                }
+                else{
+                    wire = factory.makeElm(p1,p2);
+                }
                 circuitElements.add(wire);
             }
             else if (circElem.size() == 3){
@@ -297,21 +305,20 @@ public class MainOpencv {
                 Corner corner2 = (Corner) circElem.get(2);
                 SimplePoint p1 = new SimplePoint((int)corner1.getX(),(int)corner1.getY());
                 SimplePoint p2 = new SimplePoint((int)corner2.getX(),(int)corner2.getY());
-                switch(elem.getType()){
-                    case RESISTOR :
-                        ResistorElm resistor = new ResistorElm(p1,p2);
-                        circuitElements.add(resistor);
-                        break;
-                    case DC_VOLTAGE :
-                        VoltageElm voltage = new VoltageElm(p1,p2);
-                        circuitElements.add(voltage);
-                        break;
+                CircuitElm newElm;
 
+                if(p1.isCloserToOriginThan(p2)){
+                    newElm = factory.makeElm(elem.getType(), p2, p1, 10);
                 }
+                else{
+                    newElm = factory.makeElm(elem.getType(), p1, p2, 10);
+                }
+                circuitElements.add(newElm);
             }
         }
         return circuitElements;
     }
+
     public String getCircuitText(){
 //        String circStr = "$ 500 800\n" +
 //                "l 300 300 500 300 10.0\n" +
