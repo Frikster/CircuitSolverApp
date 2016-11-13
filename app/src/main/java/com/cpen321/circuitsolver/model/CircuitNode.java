@@ -1,5 +1,7 @@
 package com.cpen321.circuitsolver.model;
 
+import com.cpen321.circuitsolver.model.components.CircuitElm;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +14,8 @@ public class CircuitNode implements SpiceLabel{
     private static int numNodes = 0;
 
     private List<SimplePoint> points = new ArrayList<SimplePoint>();
+    private List<CircuitElm> elements = new ArrayList<CircuitElm>();
+
     private boolean isValidVoltage;
     private double voltage;
     private String label;
@@ -58,6 +62,23 @@ public class CircuitNode implements SpiceLabel{
     public List<SimplePoint> getPoints(){
         return Collections.unmodifiableList(points);
     }
+    public List<CircuitElm> getElements(){
+        return Collections.unmodifiableList(elements);
+    }
+
+    public void addElement(CircuitElm elm){
+        elements.add(elm);
+    }
+
+    /**
+     * Appends the elements to CircuitNode's list of elements
+     * @param elements
+     */
+    public void addElements(List<CircuitElm> elements){
+        //Rep invariant: parameter points should not be modified
+        this.elements.addAll(elements);
+    }
+
 
     @Override
     public String toString(){

@@ -47,6 +47,18 @@ public abstract class CircuitElm{
 //        }
     }
 
+    /**
+     * Returns true if node corresponds to the given point, false otherwise
+     * @param p the point to check
+     * @return true if node coresponds to the given point, false otherwise
+     */
+    public boolean correspondsToPoint(SimplePoint p){
+        if(p.equals(p1) || p.equals(p2))
+            return true;
+        return false;
+    }
+
+
     public SimplePoint getP1() {
         return p1;
     }
@@ -158,6 +170,8 @@ public abstract class CircuitElm{
         nodes.add(n2);
         return nodes;
     }
+
+
 
     public void onDraw(Canvas canvas, Paint paint, int yDisp) {
 

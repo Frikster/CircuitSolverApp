@@ -27,10 +27,14 @@ public class AnalyzeCircuitImplTest {
     public void testInitAndAllocateNodes_twoNodeCircuit(){
 
         List<CircuitElm> elements = new ArrayList<CircuitElm>();
-        elements.add(new WireElm(new SimplePoint(10,10), new SimplePoint(10, 0)));
-        elements.add(new ResistorElm(new SimplePoint(0, 10), new SimplePoint(10, 10), 10));
-        elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(10, 0), 10));
-        elements.add(new WireElm(new SimplePoint(0,0), new SimplePoint(0, 10)));
+        WireElm w1 = new WireElm(new SimplePoint(10,10), new SimplePoint(10, 0));
+        ResistorElm r1 = new ResistorElm(new SimplePoint(0, 10), new SimplePoint(10, 10), 10);
+        VoltageElm v1 = new VoltageElm(new SimplePoint(0, 0), new SimplePoint(10, 0), 10);
+        WireElm w2 = new WireElm(new SimplePoint(0,0), new SimplePoint(0, 10));
+        elements.add(w1);
+        elements.add(r1);
+        elements.add(v1);
+        elements.add(w2);
 
         AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
         analyzeCircuitImpl.init();
@@ -58,6 +62,16 @@ public class AnalyzeCircuitImplTest {
         cn.addPoint(p2);
         assertTrue("No node corresponding to " + cn, result.contains(cn));
 
+        //Node 1 should contain r1, v1, w2
+//        ArrayList<CircuitElm> elmInNode1 = new ArrayList<CircuitElm>();
+//        elmInNode1.addAll(Arrays.asList(r1, v1, w2));
+//        assertTrue("Node 1 does not contain the elements it should", analyzeCircuitImpl.getNodeConnectedToElements(elmInNode1) != null);
+        //Node 2 should contain w1, r1, v1
+//        ArrayList<CircuitElm> elmInNode2 = new ArrayList<CircuitElm>();
+//        elmInNode1.addAll(Arrays.asList(r1, w1, v1));
+//        assertTrue("Node 2 does not contain the elements it should", analyzeCircuitImpl.getNodeConnectedToElements(elmInNode1) != null);
+
+
         /*
         Assert that elements correspond to correct nodes
          */
@@ -70,7 +84,28 @@ public class AnalyzeCircuitImplTest {
             assertTrue("No element nodes in " + e + " match its post at " + p2, e.getNode(0).correspondsToPoint(p2) || e.getNode(1).correspondsToPoint(p2));
         }
 
+    }
 
+    @Test
+    public void testInitAndAllocateNodesWithElements_simpleCircuit(){
+        List<CircuitElm> elements = new ArrayList<CircuitElm>();
+        WireElm w1 = new WireElm(new SimplePoint(10,10), new SimplePoint(10, 0));
+        ResistorElm r1 = new ResistorElm(new SimplePoint(0, 10), new SimplePoint(10, 10), 10);
+        VoltageElm v1 = new VoltageElm(new SimplePoint(0, 0), new SimplePoint(10, 0), 10);
+        WireElm w2 = new WireElm(new SimplePoint(0,0), new SimplePoint(0, 10));
+        elements.add(w1);
+        elements.add(r1);
+        elements.add(v1);
+        elements.add(w2);
+
+        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
+        analyzeCircuitImpl.init();
+
+        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
+
+        for(CircuitNode node: result){
+            System.out.println(node.getElements());
+        }
     }
 
     @Test
