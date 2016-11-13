@@ -237,6 +237,7 @@ public class MainOpencv {
         for(CircuitElm c : myelement){
             System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
         }
+        /*
         //Draw the found lines
         for (int x = 0; x < withoutBorders.size(); x++)
         {
@@ -258,6 +259,31 @@ public class MainOpencv {
                 Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
             }
 
+        }
+        */
+        int x=0;
+        for (List<Element> wire : separatedComponents)
+        {
+            Point start = new Point();
+            Point end = new Point();
+            if(wire.size() == 2){
+                start = new Point(wire.get(0).getX(),wire.get(0).getY());
+                end = new Point(wire.get(1).getX(),wire.get(1).getY());
+            }
+            else if(wire.size() == 3){
+                start = new Point(wire.get(0).getX(),wire.get(0).getY());
+                end = new Point(wire.get(2).getX(),wire.get(2).getY());
+            }
+            if(x%3 == 0){
+                Imgproc.line(tmp3, start, end, new Scalar(255,0,0), 1);
+            }
+            else if(x% 3 == 1){
+                Imgproc.line(tmp3, start, end, new Scalar(0,255,0), 1);
+            }
+            else{
+                Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
+            }
+            x++;
 
         }
         //Create and return the final bitmap
