@@ -38,13 +38,13 @@ public abstract class CircuitElm{
     private double current;
 
     public CircuitElm(SimplePoint p1, SimplePoint p2){
-//        if (p2.getX() <= p1.getX() && p2.getY() <= p1.getY()) {
-//            this.p1 = p2;
-//            this.p2 = p1;
-//        } else {
+        if (p2.getX() <= p1.getX() && p2.getY() <= p1.getY()) {
+            this.p1 = p2;
+            this.p2 = p1;
+        } else {
             this.p1 = p1;
             this.p2 = p2;
-//        }
+        }
     }
 
     /**
@@ -65,6 +65,7 @@ public abstract class CircuitElm{
 
     public void setP1(SimplePoint p1) {
         this.p1 = p1;
+        preserveInvariant();
     }
 
     public SimplePoint getP2() {
@@ -73,6 +74,15 @@ public abstract class CircuitElm{
 
     public void setP2(SimplePoint p2) {
         this.p2 = p2;
+        preserveInvariant();
+    }
+
+    public void preserveInvariant(){
+        if(p2.isCloserToOriginThan(p1)){
+            SimplePoint temp = p1;
+            p1 = p2;
+            p2 = temp;
+        }
     }
 
     @Override
