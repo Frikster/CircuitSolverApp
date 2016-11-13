@@ -2,6 +2,7 @@ package com.cpen321.circuitsolver.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,6 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
@@ -25,6 +27,7 @@ import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.io.File;
+import java.io.IOException;
 
 public class EditActivity extends AppCompatActivity {
     public static String TAG = "EditActivity";
@@ -39,8 +42,11 @@ public class EditActivity extends AppCompatActivity {
     private Button solveCircuitButton;
     private TextView currentAndVoltageText;
     private String currentAndVoltageString;
+    private ImageView cvBitmap;
     private double computedCurrent;
     private double computedResistance;
+
+    private CircuitProject circuitProject;
 
     private CircuitElm tappedElement;
 
@@ -101,8 +107,10 @@ public class EditActivity extends AppCompatActivity {
             File test = new File(dataLocation);
             if (dataLocation.contains("example"))
                 this.circuitDisplay = new CircuitDisplay(getApplicationContext());
-            else
-                this.circuitDisplay = new CircuitDisplay(getApplicationContext(), new CircuitProject(test));
+            else {
+                this.circuitProject = new CircuitProject(test);
+                this.circuitDisplay = new CircuitDisplay(getApplicationContext(), this.circuitProject);
+            }
         } else {
             this.circuitDisplay = new CircuitDisplay(getApplicationContext());
         }
@@ -125,6 +133,14 @@ public class EditActivity extends AppCompatActivity {
         this.analysisActivity = (FloatingActionButton) findViewById(R.id.component_analysis);
         this.initElements();
         this.tappedElement = this.circuitDisplay.getRandomElement();
+        this.cvBitmap = (ImageView) findViewById(R.id.cvImage);
+        try {
+            this.cvBitmap.setImageBitmap(this.circuitProject.getProcessedImage());
+            Log.i("edit", "after setting bitmap");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
         //this.displayElement();
     }
 
