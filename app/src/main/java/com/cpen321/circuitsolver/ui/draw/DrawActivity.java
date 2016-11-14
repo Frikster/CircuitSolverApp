@@ -27,7 +27,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Button componentMenuButton;
 
-    private static  ArrayList<CircuitElm> components = new ArrayList<CircuitElm>();
+    private static  ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
     private static final ReentrantLock lock = new ReentrantLock();
     ;
@@ -44,8 +44,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return lock;
     }
 
-    public static ArrayList<CircuitElm> getComponents() {
-        return components;
+    public static ArrayList<CircuitElm> getCircuitElms() {
+        return circuitElms;
     }
 
     public TouchState getTouchState() {
@@ -150,18 +150,44 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             case MotionEvent.ACTION_UP:
                 endX = x;
                 endY = y;
+                for(CircuitElm circuitElm : circuitElms) {
+                    //check to see if the new points we are drawing are near existing ones, if so connect them
+                    int threshHold = 50;
+                    SimplePoint p1 = circuitElm.getP1();
+                    SimplePoint p2 = circuitElm.getP2();
+                    int p1X = p1.getX();
+                    int p1Y = p1.getY();
+                    int p2X = p2.getX();
+                    int p2Y = p2.getY();
+                    if(getDistance(startX, startY, p1X, p1Y) < threshHold) {
+                        startX = p1X;
+                        startY = p1Y;
+                    }
+                    if(getDistance(startX, startY, p2X, p2Y) < threshHold) {
+                        startX = p2X;
+                        startY = p2Y;
+                    }
+                    if(getDistance(endX, endY, p1X, p1Y) < threshHold) {
+                        endX = p1X;
+                        endY = p1Y;
+                    }
+                    if(getDistance(endX, endY, p2X, p2Y) < threshHold) {
+                        endX = p2X;
+                        endY = p2Y;
+                    }
+                }
                 SimplePoint startPoint = new SimplePoint(startX, startY);
                 SimplePoint endPoint = new SimplePoint(endX, endY);
                 lock.lock();
                 switch(componentState) {
                     case DC_SOURCE:
-                        components.add(new VoltageElm(startPoint, endPoint, 10));
+                        circuitElms.add(new VoltageElm(startPoint, endPoint, 10));
                         break;
                     case RESISTOR:
-                        components.add(new ResistorElm(startPoint, endPoint, 10));
+                        circuitElms.add(new ResistorElm(startPoint, endPoint, 10));
                         break;
                     case WIRE:
-                        components.add(new WireElm(startPoint, endPoint));
+                        circuitElms.add(new WireElm(startPoint, endPoint));
                         break;
                     default:
                         break;
@@ -171,6 +197,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 break;
         }
         return true;
+    }
+
+    private int getDistance(int x1, int y1, int x2, int y2) {
+        return (int) Math.hypot(x1-x2, y1-y2);
     }
 
 
