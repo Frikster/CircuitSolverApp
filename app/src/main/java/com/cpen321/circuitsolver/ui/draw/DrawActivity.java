@@ -152,28 +152,35 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 endY = y;
                 for(CircuitElm circuitElm : circuitElms) {
                     //check to see if the new points we are drawing are near existing ones, if so connect them
-                    int threshHold = 50;
+                    int threshHold = 60;
                     SimplePoint p1 = circuitElm.getP1();
                     SimplePoint p2 = circuitElm.getP2();
                     int p1X = p1.getX();
                     int p1Y = p1.getY();
                     int p2X = p2.getX();
                     int p2Y = p2.getY();
+                    MinDistanceHelper startPointHelper = minSegmentToPointDistance(p1X, p1Y, p2X, p2Y, startX, startY);
                     if(getDistance(startX, startY, p1X, p1Y) < threshHold) {
                         startX = p1X;
                         startY = p1Y;
-                    }
-                    if(getDistance(startX, startY, p2X, p2Y) < threshHold) {
+                    } else if(getDistance(startX, startY, p2X, p2Y) < threshHold) {
                         startX = p2X;
                         startY = p2Y;
+                    } else if(startPointHelper.getMin() < threshHold) {
+                        startX = startPointHelper.getX();
+                        startY = startPointHelper.getY();
                     }
+
+                    MinDistanceHelper endPointHelper =  minSegmentToPointDistance(p1X, p1Y, p2X, p2Y, endX, endY);
                     if(getDistance(endX, endY, p1X, p1Y) < threshHold) {
                         endX = p1X;
                         endY = p1Y;
-                    }
-                    if(getDistance(endX, endY, p2X, p2Y) < threshHold) {
+                    } else if(getDistance(endX, endY, p2X, p2Y) < threshHold) {
                         endX = p2X;
                         endY = p2Y;
+                    } else if(startPointHelper.getMin() < threshHold) {
+                        endX = startPointHelper.getX();
+                        endY = startPointHelper.getY();
                     }
                 }
                 SimplePoint startPoint = new SimplePoint(startX, startY);
@@ -203,5 +210,50 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return (int) Math.hypot(x1-x2, y1-y2);
     }
 
+    /**
+     * Find the shortest distance between a point and a line segment
+     * @param segX1 x coordinate of start of line segment
+     * @param segY1 y coordinate of start of line segment
+     * @param segX2 x coordinate of end of line segment
+     * @param segY2 y coordinate of end of line segment
+     * @param pX x coordinate of point
+     * @param pY y coordinate of point
+     * @return the minimum distance between the point and the line segment, and the location on the line segment
+     */
+    public MinDistanceHelper minSegmentToPointDistance(int segX1, int segY1, int segX2, int segY2, int pX, int pY) {
+        double lengthSquared = Math.pow(segX1-segX2,2) + Math.pow(segY1-segY2,2);
+        if(lengthSquared == 0) {
+            return new MinDistanceHelper(segX1, segY1, getDistance(segX1, segY1, pX, pY));
+        }
+        double dotProduct = (pX-segX1)*(segX2-segX1)+(pY-segY1)*(segY2-segY1);
+        double t = Math.max(0, Math.min(1, dotProduct/lengthSquared));
+        double projectionX = segX1 + t*(segX2-segX1);
+        double projectionY = segY1 + t*(segY2-segY1);
+        int distance = getDistance((int)pX, (int) pY, (int) projectionX, (int) projectionY);
+        return new MinDistanceHelper((int) projectionX, (int) projectionY, distance);
+    }
 
+    private class MinDistanceHelper {
+        private final int x;
+        private final int y;
+        private final int min;
+        MinDistanceHelper(int x, int y, int min) {
+            this.x = x;
+            this.y = y;
+            this.min = min;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getMin() {
+            return min;
+        }
+
+    }
 }
