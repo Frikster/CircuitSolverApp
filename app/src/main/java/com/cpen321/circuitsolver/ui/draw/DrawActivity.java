@@ -1,48 +1,80 @@
 package com.cpen321.circuitsolver.ui.draw;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.ui.EditActivity;
+import com.cpen321.circuitsolver.model.components.ResistorElm;
+import com.cpen321.circuitsolver.model.components.VoltageElm;
+import com.cpen321.circuitsolver.model.components.WireElm;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
+
+import static com.cpen321.circuitsolver.ui.draw.AddComponentState.*;
+import static com.cpen321.circuitsolver.ui.draw.TouchState.UP;
 
 public class DrawActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private Button componentMenuButton;
-    private ArrayList<CircuitElm> components;
+
+    private static  ArrayList<CircuitElm> components = new ArrayList<CircuitElm>();
+
+    private static final ReentrantLock lock = new ReentrantLock();
+    ;
     private CircuitView circuitView;
-    private static int x;
-    private static int y;
-    private FrameLayout container;
+    private AddComponentState componentState = DC_SOURCE;
+
+    private TouchState touchState = UP;
+    private static int startX = 0;
+    private static int startY = 0;
+    private static int endX = 0;
+    private static int endY = 0;
+
+    public static ReentrantLock getLock() {
+        return lock;
+    }
+
+    public static ArrayList<CircuitElm> getComponents() {
+        return components;
+    }
+
+    public TouchState getTouchState() {
+        return touchState;
+    }
+
+    public static int getEndY() {
+        return endY;
+    }
+
+    public static int getStartX() {
+        return startX;
+    }
+
+    public static int getStartY() {
+        return startY;
+    }
+
+    public static int getEndX() {
+        return endX;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
-        componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
-        components = new ArrayList<CircuitElm>();
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
-
-
+        componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         circuitView.setOnTouchListener(this);
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +94,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                                 "You Clicked : " + item.getTitle(),
                                 Toast.LENGTH_SHORT
                         ).show();
+                        switch (item.getItemId()) {
+                            case R.id.dropDownSourceButton:
+                                componentState = DC_SOURCE;
+                                break;
+                            case R.id.dropDownResistorButton:
+                                componentState = RESISTOR;
+                                break;
+                            case R.id.dropDownWireButton:
+                                componentState = WIRE;
+                                break;
+                            default:
+                                break;
+                        }
                         return true;
                     }
                 });
@@ -85,30 +130,48 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        x = (int) event.getX();
-        y = (int) event.getY();
-        Context context = getApplicationContext();
+        int x = (int) event.getX();
+        int y = (int) event.getY();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                startX = x;
+                startY = y;
+                endX = x;
+                endY = y;
                 Log.i("TAG", "touched down");
                 CharSequence text = "Touched (" + x + "," + y + ")";
                 break;
             case MotionEvent.ACTION_MOVE:
+                endX = x;
+                endY = y;
                 Log.i("TAG", "moving: (" + x + ", " + y + ")");
                 break;
             case MotionEvent.ACTION_UP:
+                endX = x;
+                endY = y;
+                SimplePoint startPoint = new SimplePoint(startX, startY);
+                SimplePoint endPoint = new SimplePoint(endX, endY);
+                lock.lock();
+                switch(componentState) {
+                    case DC_SOURCE:
+                        components.add(new VoltageElm(startPoint, endPoint, 10));
+                        break;
+                    case RESISTOR:
+                        components.add(new ResistorElm(startPoint, endPoint, 10));
+                        break;
+                    case WIRE:
+                        components.add(new WireElm(startPoint, endPoint));
+                        break;
+                    default:
+                        break;
+                }
+                lock.unlock();
                 Log.i("TAG", "touched up");
                 break;
         }
         return true;
     }
 
-    public static int getX() {
-        return x;
-    }
 
-    public static int getY() {
-        return y;
-    }
 }

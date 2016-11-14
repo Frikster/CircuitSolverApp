@@ -8,6 +8,11 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.cpen321.circuitsolver.model.SimplePoint;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
+
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by lotus on 14/11/16.
  */
@@ -25,7 +30,7 @@ public class CircuitView extends SurfaceView implements Runnable {
         paint = new Paint();
         run = false;
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(6f);
+        paint.setStrokeWidth(10);
     }
 
     @Override
@@ -36,7 +41,15 @@ public class CircuitView extends SurfaceView implements Runnable {
             }
             Canvas canvas = holder.lockCanvas();
             canvas.drawColor(Color.WHITE);
-            canvas.drawCircle(DrawActivity.getX(), DrawActivity.getY(), 20,paint);
+            ReentrantLock lock = DrawActivity.getLock();
+            lock.lock();
+            for(CircuitElm circuitElm : DrawActivity.getComponents()) {
+                SimplePoint start = circuitElm.getP1();
+                SimplePoint end = circuitElm.getP2();
+                canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
+            }
+            lock.unlock();
+            canvas.drawLine(DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
             holder.unlockCanvasAndPost(canvas);
         }
     }

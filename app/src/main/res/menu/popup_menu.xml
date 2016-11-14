@@ -11,5 +11,5 @@
 
     <item
         android:id="@+id/dropDownSourceButton"
-        android:title="Source"/>
+        android:title="DC Source"/>
 </menu>
