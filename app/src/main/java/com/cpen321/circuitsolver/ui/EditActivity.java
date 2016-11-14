@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
@@ -29,7 +31,7 @@ import com.cpen321.circuitsolver.util.Constants;
 import java.io.File;
 import java.io.IOException;
 
-public class EditActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity{
     public static String TAG = "EditActivity";
 
     private CircuitDisplay circuitDisplay;
@@ -53,6 +55,9 @@ public class EditActivity extends AppCompatActivity {
     private FloatingActionButton rotateFab;
     private FloatingActionButton analysisActivity;
 
+    private int prevX;
+    private int prevY;
+
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -65,13 +70,18 @@ public class EditActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_DOWN:
                     Log.i("TAG", "touched down");
                     CharSequence text = "Touched (" + x + "," + y + ")";
+                    EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
+                    prevX = x;
+                    prevY = y;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                    circuitDisplay.move(tappedElement, x, y);
+                    //circuitDisplay.moveCorner(new SimplePoint(prevX, prevY), new SimplePoint(x,y));
                     break;
                 case MotionEvent.ACTION_UP:
                     Log.i("TAG", "touched up");
-                    EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
+                    //EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
                     break;
             }
             //EditActivity.this.tappedElement = null;
@@ -80,6 +90,7 @@ public class EditActivity extends AppCompatActivity {
             return true;
         }
     };
+
 
     @Override
     public void onBackPressed() {
