@@ -53,6 +53,12 @@ public class MainOpencv {
     private int bitMapWidth = 500;
     private int bitMapHeight = 800;
 
+    public Bitmap houghLines(Bitmap bMap, boolean test){
+        if(!test)
+            return houghLines(bMap);
+        return bMap;
+    }
+
     /**Method to detect the components,main method of this class
      *
      * @return the bitmap with the detected lines and a circle around the components
@@ -346,18 +352,38 @@ public class MainOpencv {
     }
 
     public String getCircuitText(){
-//        String circStr = "$ 500 800\n" +
-//                "l 300 300 500 300 10.0\n" +
-//                "w 500 300 700 500\n" +
-//                "c 700 500 700 700 10.0 \n" +
-//                "w 500 900 700 700\n" +
-//                "r 500 900 300 900 10.0 \n" +
-//                "w 300 900 300 700 \n" +
-//                "v 300 700 300 500 10.0 \n" +
-//                "w 300 500 300 300 \n";
+//        String circStr = "$ 10 10\n" +
+//                "r 3 3 8 3 10.0\n" +
+//                "w 3 3 3 8 10.0\n" +
+//                "w 8 3 8 8 10.0\n" +
+//                "v 3 8 8 8 10.0 \n";
+
+//                String circStr = "$ 10 10\n" +
+//                "r 5 3 8 6 10.0\n" +
+//                "r 5 3 2 6 10.0\n" +
+//                "v 2 6 8 6 10.0 \n";
 
         CircuitDefParser parser = new CircuitDefParser();
         String circStr = parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
+
+        return circStr;
+    }
+
+
+    public String getCircuitText(boolean test){
+        //        String circStr = "$ 10 10\n" +
+//                "r 3 3 8 3 10.0\n" +
+//                "w 3 3 3 8 10.0\n" +
+//                "w 8 3 8 8 10.0\n" +
+//                "v 3 8 8 8 10.0 \n";
+
+        if(!test)
+            return getCircuitText();
+
+        String circStr = "$ 10 10\n" +
+                "r 5 3 8 6 10.0\n" +
+                "r 5 3 2 6 10.0\n" +
+                "v 2 6 8 6 10.0 \n";
 
         return circStr;
     }
