@@ -152,7 +152,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 endY = y;
                 for(CircuitElm circuitElm : circuitElms) {
                     //check to see if the new points we are drawing are near existing ones, if so connect them
-                    int threshHold = 60;
+                    int threshHold = 40;
                     SimplePoint p1 = circuitElm.getP1();
                     SimplePoint p2 = circuitElm.getP2();
                     int p1X = p1.getX();
@@ -178,7 +178,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     } else if(getDistance(endX, endY, p2X, p2Y) < threshHold) {
                         endX = p2X;
                         endY = p2Y;
-                    } else if(startPointHelper.getMin() < threshHold) {
+                    } else if(endPointHelper.getMin() < threshHold) {
                         endX = startPointHelper.getX();
                         endY = startPointHelper.getY();
                     }
