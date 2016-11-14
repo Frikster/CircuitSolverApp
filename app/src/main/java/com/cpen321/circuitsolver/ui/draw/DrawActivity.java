@@ -18,6 +18,7 @@ import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.*;
@@ -26,13 +27,15 @@ import static com.cpen321.circuitsolver.ui.draw.TouchState.UP;
 public class DrawActivity extends AppCompatActivity implements View.OnTouchListener {
 
     private Button componentMenuButton;
+    private Button eraseButton;
 
-    private static  ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
+    private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
     private static final ReentrantLock lock = new ReentrantLock();
     ;
     private CircuitView circuitView;
-    private AddComponentState componentState = DC_SOURCE;
+
+    private static AddComponentState componentState = DC_SOURCE;
 
     private TouchState touchState = UP;
     private static int startX = 0;
@@ -46,6 +49,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     public static ArrayList<CircuitElm> getCircuitElms() {
         return circuitElms;
+    }
+
+    public static AddComponentState getComponentState() {
+        return componentState;
     }
 
     public TouchState getTouchState() {
@@ -75,6 +82,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_draw);
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
+        eraseButton = (Button) findViewById(R.id.eraseButton);
         circuitView.setOnTouchListener(this);
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -94,6 +102,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                                 "You Clicked : " + item.getTitle(),
                                 Toast.LENGTH_SHORT
                         ).show();
+                        startX = 0;
+                        startY = 0;
+                        endX = 0;
+                        endY = 0;
                         switch (item.getItemId()) {
                             case R.id.dropDownSourceButton:
                                 componentState = DC_SOURCE;
@@ -114,6 +126,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }); //closing the setOnClickListener method
 
+        eraseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                componentState = ERASE;
+            }
+        });
+
     }
 
     @Override
@@ -133,6 +152,17 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         int x = (int) event.getX();
         int y = (int) event.getY();
 
+        if (componentState == ERASE) {
+            Iterator<CircuitElm> iter = circuitElms.iterator();
+            while (iter.hasNext()) {
+                CircuitElm circuitElm = iter.next();
+                if (isOnElement(x, y, circuitElm)) {
+                    iter.remove();
+                    break;
+                }
+            }
+        }
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 startX = x;
@@ -150,7 +180,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             case MotionEvent.ACTION_UP:
                 endX = x;
                 endY = y;
-                for(CircuitElm circuitElm : circuitElms) {
+                for (CircuitElm circuitElm : circuitElms) {
                     //check to see if the new points we are drawing are near existing ones, if so connect them
                     int threshHold = 50;
                     SimplePoint p1 = circuitElm.getP1();
@@ -159,19 +189,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     int p1Y = p1.getY();
                     int p2X = p2.getX();
                     int p2Y = p2.getY();
-                    if(getDistance(startX, startY, p1X, p1Y) < threshHold) {
+                    if (getDistance(startX, startY, p1X, p1Y) < threshHold) {
                         startX = p1X;
                         startY = p1Y;
                     }
-                    if(getDistance(startX, startY, p2X, p2Y) < threshHold) {
+                    if (getDistance(startX, startY, p2X, p2Y) < threshHold) {
                         startX = p2X;
                         startY = p2Y;
                     }
-                    if(getDistance(endX, endY, p1X, p1Y) < threshHold) {
+                    if (getDistance(endX, endY, p1X, p1Y) < threshHold) {
                         endX = p1X;
                         endY = p1Y;
                     }
-                    if(getDistance(endX, endY, p2X, p2Y) < threshHold) {
+                    if (getDistance(endX, endY, p2X, p2Y) < threshHold) {
                         endX = p2X;
                         endY = p2Y;
                     }
@@ -179,7 +209,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 SimplePoint startPoint = new SimplePoint(startX, startY);
                 SimplePoint endPoint = new SimplePoint(endX, endY);
                 lock.lock();
-                switch(componentState) {
+                switch (componentState) {
                     case DC_SOURCE:
                         circuitElms.add(new VoltageElm(startPoint, endPoint, 10));
                         break;
@@ -200,15 +230,16 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private int getDistance(int x1, int y1, int x2, int y2) {
-        return (int) Math.hypot(x1-x2, y1-y2);
+        return (int) Math.hypot(x1 - x2, y1 - y2);
     }
 
     private boolean isOnElement(int x, int y, CircuitElm e) {
+        int threshHold = 10;
         int eStartX = e.getP1().getX();
         int eStartY = e.getP1().getY();
         int eEndX = e.getP2().getX();
         int eEndY = e.getP2().getY();
-        if(getDistance(eStartX, eStartY, x, y) + getDistance(x, y, eEndX, eEndY) == getDistance(eStartX, eStartY, eEndX, eEndY)) {
+        if (Math.abs(getDistance(eStartX, eStartY, x, y) + getDistance(x, y, eEndX, eEndY) - getDistance(eStartX, eStartY, eEndX, eEndY)) < 40) {
             return true;
         } else {
             return false;
