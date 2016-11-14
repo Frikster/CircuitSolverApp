@@ -90,15 +90,11 @@ public class InductorElm extends CircuitElm implements SpiceElm {
         rpaint.setColor(Color.GREEN);
         rpaint.setStyle(Paint.Style.STROKE);
 
-
-//        if (startY > endY) {
-//            canvas.drawLine(startX, startY, endX, startY, paint);
-//            canvas.drawLine(startX, endY, startX, startY, paint);
-//        } else{
-        //canvas.drawLine(startX, startY, endX, startY, rpaint);
-        //canvas.drawLine(endX, endY, endX, startY, rpaint);
         canvas.drawLine(startX, startY, endX, endY, rpaint);
 
+        if (isSelected()){
+            showSelected(canvas);
+        }
 
     }
 

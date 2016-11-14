@@ -98,13 +98,9 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
         rpaint.setStyle(Paint.Style.STROKE);
         canvas.drawLine(startX, startY, endX, endY, rpaint);
 
-
-//        if (startY > endY) {
-//            canvas.drawLine(startX, startY, endX, startY, paint);
-//            canvas.drawLine(startX, endY, startX, startY, paint);
-//        } else{
-        //canvas.drawLine(startX, startY, endX, startY, rpaint);
-        //canvas.drawLine(endX, endY, endX, startY, rpaint);
+        if (isSelected()){
+            showSelected(canvas);
+        }
 
     }
 

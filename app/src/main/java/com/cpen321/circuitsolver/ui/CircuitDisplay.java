@@ -105,6 +105,7 @@ public class CircuitDisplay extends View {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void rectifyComponents() {
@@ -188,7 +189,7 @@ public class CircuitDisplay extends View {
         for (CircuitElm circuitElm : this.components) {
             if (circuitElm == null)
                 continue;
-            circuitElm.onDraw(canvas, this.circuitPaint, 50);
+            circuitElm.onDraw(canvas, this.circuitPaint, 50,true);
         }
     }
 
