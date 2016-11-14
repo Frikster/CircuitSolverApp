@@ -43,7 +43,7 @@ public class CircuitView extends SurfaceView implements Runnable {
             canvas.drawColor(Color.WHITE);
             ReentrantLock lock = DrawActivity.getLock();
             lock.lock();
-            for(CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
+            for(CircuitElm circuitElm : DrawActivity.getComponents()) {
                 SimplePoint start = circuitElm.getP1();
                 SimplePoint end = circuitElm.getP2();
                 canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
