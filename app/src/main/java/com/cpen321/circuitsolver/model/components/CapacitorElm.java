@@ -73,6 +73,32 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
         isSelected = !isSelected;
     }
 
+    /**
+     * Draws capacitor element as a cyan coloured wire
+     * @param canvas
+     * @param paint
+     * @param disp
+     * @param test
+     */
+    public void onDraw(Canvas canvas, Paint paint, int disp, boolean test){
+
+        int startX = this.getPoint(0).getX();
+        int startY = this.getPoint(0).getY();
+        int endX = this.getPoint(1).getX();
+        int endY = this.getPoint(1).getY();
+        Paint rpaint = new Paint();
+        rpaint.setColor(Color.CYAN);
+        rpaint.setStyle(Paint.Style.STROKE);
+
+
+//        if (startY > endY) {
+//            canvas.drawLine(startX, startY, endX, startY, paint);
+//            canvas.drawLine(startX, endY, startX, startY, paint);
+//        } else{
+        canvas.drawLine(startX, startY, endX, startY, rpaint);
+        canvas.drawLine(endX, endY, endX, startY, rpaint);
+
+    }
     @Override
     public void onDraw(Canvas canvas, Paint paint,
                        int disp) {

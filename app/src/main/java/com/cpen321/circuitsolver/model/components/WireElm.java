@@ -35,6 +35,10 @@ public class WireElm extends CircuitElm {
         return Constants.WIRE;
     }
 
+    public void onDraw(Canvas canvas, Paint paint, int yDisp, boolean test){
+        onDraw(canvas, paint, yDisp);
+    }
+
     @Override
     public void onDraw(Canvas canvas, Paint paint, int yDisp) {
         int startX = this.getPoint(0).getX();
