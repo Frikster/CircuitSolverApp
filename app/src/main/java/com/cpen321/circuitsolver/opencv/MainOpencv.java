@@ -92,7 +92,7 @@ public class MainOpencv {
 
         int maxLinesToBeChunk = 3;
         int radius = 5;
-        int minPoints = 21;
+        int minPoints = 20;
 
 
         List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
@@ -1045,27 +1045,32 @@ public class MainOpencv {
             double endX = line[2];
             double endY = line[3];
             if(same == 'x'){
-                //There is a line that has same X than the first point
-                if(Math.abs(x1-startX)<threshold && Math.abs(endX-x1)<threshold){
-                    //There is a line that has same X than the second point
-                    if(Math.abs(x2-startX)<threshold && Math.abs(endX-x2)<threshold){
-                        //This line is between the two points in terms of y
-                        if((startY < y1 && endY <y1 && startY > y2 && endY >y2) || (startY < y2 && endY <y2 && startY > y1 && endY >y1)){
-                            foundOne = true;
-                            break;
+                //There is a vertical
+                if(startX == endX) {
+                    //There is a line that has same X than the first point
+                    if (Math.abs(x1 - startX) < threshold && Math.abs(endX - x1) < threshold) {
+                        //There is a line that has same X than the second point
+                        if (Math.abs(x2 - startX) < threshold && Math.abs(endX - x2) < threshold) {
+                            //This line is between the two points in terms of y
+                            if ((startY < y1 && endY < y1 && startY > y2 && endY > y2) || (startY < y2 && endY < y2 && startY > y1 && endY > y1)) {
+                                foundOne = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
             if(same == 'y'){
-                //There is a line that has same Y than the first point
-                if(Math.abs(y1-startY)<threshold && Math.abs(endY-y1)<threshold){
-                    //There is a line that has same Y than the second point
-                    if(Math.abs(y2-startY)<threshold && Math.abs(endY-y2)<threshold){
-                        //This line is between the two points in terms of X
-                        if((startX < x1 && endX <x1 && startX > x2 && endX >x2) || (startX < x2 && endX <x2 && startX > x1 && endX >x1)){
-                            foundOne = true;
-                            break;
+                if(startY == endY) {
+                    //There is a line that has same Y than the first point
+                    if (Math.abs(y1 - startY) < threshold && Math.abs(endY - y1) < threshold) {
+                        //There is a line that has same Y than the second point
+                        if (Math.abs(y2 - startY) < threshold && Math.abs(endY - y2) < threshold) {
+                            //This line is between the two points in terms of X
+                            if ((startX < x1 && endX < x1 && startX > x2 && endX > x2) || (startX < x2 && endX < x2 && startX > x1 && endX > x1)) {
+                                foundOne = true;
+                                break;
+                            }
                         }
                     }
                 }
