@@ -46,12 +46,14 @@ public class WireElm extends CircuitElm {
         int endX = this.getPoint(1).getX();
         int endY = this.getPoint(1).getY();
 
+        canvas.drawLine(startX, startY, endX, endY, paint);
+
 //        if (startY > endY) {
 //            canvas.drawLine(startX, startY, endX, startY, paint);
 //            canvas.drawLine(startX, endY, startX, startY, paint);
 //        } else{
-            canvas.drawLine(startX, startY, endX, startY, paint);
-            canvas.drawLine(endX, endY, endX, startY, paint);
+            //canvas.drawLine(startX, startY, endX, startY, paint);
+            //canvas.drawLine(endX, endY, endX, startY, paint);
 //        }
     }
 
