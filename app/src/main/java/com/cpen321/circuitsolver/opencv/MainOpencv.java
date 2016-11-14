@@ -84,15 +84,15 @@ public class MainOpencv {
         Imgproc.HoughLinesP(tmp2,lines,1,Math.PI/180,0);
 
         cvtColor(tmp2, tmp3, COLOR_GRAY2BGR);
-        
+
 
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
 
         int maxLinesToBeChunk = 3;
-        int radius = 4;
-        int minPoints = 20;
+        int radius = 5;
+        int minPoints = 17;
 
 
         List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
@@ -114,7 +114,7 @@ public class MainOpencv {
 
         int twoCornersTooNear = 15;
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
-        int tooNearFromComponent = 4;
+        int tooNearFromComponent = 12;
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
 
         if(validCorners.size() == 0){
@@ -146,7 +146,7 @@ public class MainOpencv {
 
             System.out.println("Coord of corner : "+x1+" , "+y1);
         }
-        int thresholdXY = 7;
+        int thresholdXY = 10;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
         List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY);
@@ -181,65 +181,17 @@ public class MainOpencv {
         }
         separatedComponents = completeMissingEndings(separatedComponents, thresholdXY);
         System.out.println("After completing missing Endings : "+separatedComponents.size());
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
 
-            }
-        }
         separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents);
         System.out.println("After adding orphans to the wires : "+separatedComponents.size());
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
 
-            }
-        }
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
         System.out.println("After add missing wires : "+separatedComponents.size());
 
-        //Prints the found wires
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
-
-            }
-        }
 
         separatedComponents = removeDuplicateWires(separatedComponents);
         System.out.println("After remove duplicates : "+separatedComponents.size());
 
-        //Prints the found wires
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
-
-            }
-        }
 
         List<CircuitElm> myelement = getCircuitElements();
         for(CircuitElm c : myelement){
@@ -807,7 +759,9 @@ public class MainOpencv {
     private List<List<Element>> separateComponents(List<List<Element>> wires){
         List<List<Element>> newWires = new ArrayList<>(wires);
         List<List<Element>> result = new ArrayList<>();
-        while(!noTwoAdjacentComponent(newWires)){
+        boolean g=true;
+        while(TwoAdjacentComponent(newWires)){
+
             result = new ArrayList<>();
             for(List<Element> wire : newWires){
 
@@ -823,13 +777,14 @@ public class MainOpencv {
 
                             List<Element> newWire2 = new ArrayList<>();
                             newWire2.add(newCorner);
-                            newWire2.add(wire.get(i+1));
-                            //If a corner detection went wrong, we need to place an if
-                            if(wire.size()>i+2) {
-                                newWire2.add(wire.get(i + 2));
+
+                            for(int e = i+1 ; e<wire.size();e++){
+                                newWire2.add(wire.get(e));
                             }
+
                             result.add(newWire1);
                             result.add(newWire2);
+                            break;
 
                         }
                     }
@@ -849,17 +804,17 @@ public class MainOpencv {
      * @param wires
      * @return true if all standardized
      */
-    private boolean noTwoAdjacentComponent(List<List<Element>> wires){
+    private boolean TwoAdjacentComponent(List<List<Element>> wires){
         for(List<Element> wire : wires){
             for(int i=0; i<wire.size();i++){
                 if(i!= wire.size()-1){
                     if(wire.get(i) instanceof Component && wire.get(i+1) instanceof Component){
-                        return false;
+                        return true;
                     }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     /**Recursive function to detect all the wires
