@@ -22,7 +22,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_home" />
+    <include layout="@layout/content_home"
+        android:id="@+id/include" />
 
 
     <android.support.design.widget.FloatingActionButton
@@ -52,6 +53,15 @@
         app:backgroundTint="@color/delete_brown"
         android:visibility="gone"
         app:srcCompat="@drawable/delete" />
+
+    <Button
+        android:text="Draw Circuit"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:id="@+id/drawCircuitButton"
+        android:layout_gravity="top|left"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="center_vertical|right" />
 
 
 </android.support.design.widget.CoordinatorLayout>

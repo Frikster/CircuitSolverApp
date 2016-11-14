@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/dropDownWireButton"
+        android:title="Wire"/>
+
+    <item
+        android:id="@+id/dropDownResistorButton"
+        android:title="Resistor"/>
+
+    <item
+        android:id="@+id/dropDownSourceButton"
+        android:title="Source"/>
+</menu>
