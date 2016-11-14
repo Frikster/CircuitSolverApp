@@ -14,6 +14,7 @@ import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.Constants;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -29,6 +30,9 @@ import java.util.Set;
 
 import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
+import static org.opencv.core.Core.NORM_MINMAX;
+import static org.opencv.core.CvType.CV_32FC1;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -58,7 +62,7 @@ public class MainOpencv {
      * @return the bitmap with the detected lines and a circle around the components
      */
     public Bitmap houghLines(Bitmap bMap){
-        System.out.println("couc");
+
 
         //Convert to a canny edge detector grayscale mat
         System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
@@ -66,9 +70,12 @@ public class MainOpencv {
         bitMapWidth = bMap.getWidth();
 
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+        Mat tmp1 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
-        Imgproc.Canny(tmp, tmp2, 50, 200);
+
+        //cvtColor(tmp,tmp2,COLOR_BGR2GRAY);
+        Imgproc.Canny(tmp, tmp2, 40, 200);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
 
@@ -77,6 +84,7 @@ public class MainOpencv {
         Imgproc.HoughLinesP(tmp2,lines,1,Math.PI/180,0);
 
         cvtColor(tmp2, tmp3, COLOR_GRAY2BGR);
+        
 
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
@@ -799,14 +807,14 @@ public class MainOpencv {
     private List<List<Element>> separateComponents(List<List<Element>> wires){
         List<List<Element>> newWires = new ArrayList<>(wires);
         List<List<Element>> result = new ArrayList<>();
-        while(!allWiresMax3(newWires)){
+        while(!noTwoAdjacentComponent(newWires)){
             result = new ArrayList<>();
             for(List<Element> wire : newWires){
-                if(wire.size()>3){
-                    //Search for the two adjacent components
 
+                    boolean brokeWire = false;
                     for(int i =1; i<wire.size()-1;i++){
                         if(wire.get(i) instanceof Component && wire.get(i+1) instanceof Component){
+                            brokeWire = true;
                             List<Element> newWire1 = new ArrayList<>();
                             newWire1.add(wire.get(i-1));
                             newWire1.add(wire.get(i));
@@ -825,10 +833,11 @@ public class MainOpencv {
 
                         }
                     }
-                }
-                else{
+                if(!brokeWire){
                     result.add(wire);
                 }
+
+
             }
             newWires = new ArrayList<>(result);
         }
@@ -840,10 +849,14 @@ public class MainOpencv {
      * @param wires
      * @return true if all standardized
      */
-    private boolean allWiresMax3(List<List<Element>> wires){
+    private boolean noTwoAdjacentComponent(List<List<Element>> wires){
         for(List<Element> wire : wires){
-            if(wire.size()>3){
-                return false;
+            for(int i=0; i<wire.size();i++){
+                if(i!= wire.size()-1){
+                    if(wire.get(i) instanceof Component && wire.get(i+1) instanceof Component){
+                        return false;
+                    }
+                }
             }
         }
         return true;
@@ -857,9 +870,9 @@ public class MainOpencv {
      */
     private void detectWires(List<Element> elements, Corner currCorner, int thresholdXY){
         //Threshold : so that two points have sameX or sameY
-        System.out.println("Current corner "+currCorner.getX()+" , "+currCorner.getY());
-        if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
 
+        if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
+            System.out.println("Current corner "+currCorner.getX()+" , "+currCorner.getY());
             //get same horizontal and vertical components
             List<Element> sameY = getSameYElements(elements,currCorner,thresholdXY);
             List<Element> sameX = getSameXElements(elements,currCorner,thresholdXY);
