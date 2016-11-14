@@ -210,7 +210,8 @@ public class MainOpencv {
 
         List<CircuitElm> myelement = getCircuitElements();
         for(CircuitElm c : myelement){
-            System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
+            //System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
+            System.out.println(c);
         }
         /*
         //Draw the found lines

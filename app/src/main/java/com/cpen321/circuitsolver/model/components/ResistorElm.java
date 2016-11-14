@@ -96,13 +96,15 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
         rpaint.setColor(Color.RED);
         rpaint.setStyle(Paint.Style.STROKE);
 
+        canvas.drawLine(startX, startY, endX, endY, rpaint);
+
 
 //        if (startY > endY) {
 //            canvas.drawLine(startX, startY, endX, startY, paint);
 //            canvas.drawLine(startX, endY, startX, startY, paint);
 //        } else{
-        canvas.drawLine(startX, startY, endX, startY, rpaint);
-        canvas.drawLine(endX, endY, endX, startY, rpaint);
+        //canvas.drawLine(startX, startY, endX, startY, rpaint);
+        //canvas.drawLine(endX, endY, endX, startY, rpaint);
 
     }
 
