@@ -177,6 +177,10 @@ public abstract class CircuitElm{
 
     }
 
+    public void onDraw(Canvas canvas, Paint paint, int yDisp, boolean test) {
+
+    }
+
     public boolean isSelected(){
         return isSelected;
     }
