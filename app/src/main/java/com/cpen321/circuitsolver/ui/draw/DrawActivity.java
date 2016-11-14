@@ -203,5 +203,18 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return (int) Math.hypot(x1-x2, y1-y2);
     }
 
+    private boolean isOnElement(int x, int y, CircuitElm e) {
+        int eStartX = e.getP1().getX();
+        int eStartY = e.getP1().getY();
+        int eEndX = e.getP2().getX();
+        int eEndY = e.getP2().getY();
+        if(getDistance(eStartX, eStartY, x, y) + getDistance(x, y, eEndX, eEndY) == getDistance(eStartX, eStartY, eEndX, eEndY)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 
 }
