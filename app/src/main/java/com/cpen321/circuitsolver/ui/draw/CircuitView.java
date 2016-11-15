@@ -13,8 +13,6 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.cpen321.circuitsolver.ui.draw.AddComponentState.ERASE;
-import static com.cpen321.circuitsolver.ui.draw.AddComponentState.SELECT;
 
 /**
  * Created by lotus on 14/11/16.
@@ -44,16 +42,26 @@ public class CircuitView extends SurfaceView implements Runnable {
             }
             Canvas canvas = holder.lockCanvas();
             canvas.drawColor(Color.WHITE);
-            ReentrantLock lock = DrawActivity.getLock();
+            ReentrantLock lock = DrawActivity.getCircuitElmsLock();
             lock.lock();
+            paint.setColor(Color.BLACK);
             for(CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
                 SimplePoint start = circuitElm.getP1();
                 SimplePoint end = circuitElm.getP2();
                 canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
             }
             lock.unlock();
+            CircuitElm selected = DrawActivity.getSelectedElm();
+            if(selected != null) {
+                SimplePoint start = selected.getP1();
+                SimplePoint end = selected.getP2();
+                paint.setColor(Color.RED);
+                canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
+            }
             AddComponentState state = DrawActivity.getComponentState();
-            if(state != ERASE && state != SELECT) {
+            paint.setColor(Color.RED);
+            int threshHold = 25;
+            if(getDistance(DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY()) > threshHold) {
                 canvas.drawLine(DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
             }
             holder.unlockCanvasAndPost(canvas);
@@ -77,5 +85,9 @@ public class CircuitView extends SurfaceView implements Runnable {
         run = true;
         thread = new Thread(this);
         thread.start();
+    }
+
+    private int getDistance(int x1, int y1, int x2, int y2) {
+        return (int) Math.hypot(x1 - x2, y1 - y2);
     }
 }

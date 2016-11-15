@@ -2,6 +2,8 @@ package com.cpen321.circuitsolver.ui.draw;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -18,6 +20,8 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.ui.EditActivity;
+import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -30,15 +34,14 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Button componentMenuButton;
     private Button eraseButton;
-    private Button selectButton;
     private TextView unitsText;
     private EditText componentValueText;
 
 
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
-    private static final ReentrantLock lock = new ReentrantLock();
-    ;
+    private static final ReentrantLock circuitElmsLock = new ReentrantLock();
+
     private CircuitView circuitView;
 
     private static AddComponentState componentState = DC_SOURCE;
@@ -49,8 +52,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private static int endX = 0;
     private static int endY = 0;
 
-    public static ReentrantLock getLock() {
-        return lock;
+    private static CircuitElm selectedElm = null;
+
+    public static ReentrantLock getCircuitElmsLock() {
+        return circuitElmsLock;
     }
 
     public static ArrayList<CircuitElm> getCircuitElms() {
@@ -81,6 +86,14 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return endX;
     }
 
+    /**
+     * Get selected element
+     * @return selected element, or null
+     */
+    public static CircuitElm getSelectedElm() {
+        return selectedElm;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +102,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         eraseButton = (Button) findViewById(R.id.eraseButton);
-        selectButton = (Button) findViewById(R.id.selectButton);
         circuitView.setOnTouchListener(this);
         unitsText= (TextView) findViewById(R.id.units_display);
         componentValueText = (EditText) findViewById(R.id.component_value);
@@ -135,14 +147,41 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         eraseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                componentState = ERASE;
+                if(selectedElm != null) {
+                    circuitElmsLock.lock();
+                    circuitElms.remove(selectedElm);
+                    circuitElmsLock.unlock();
+                    selectedElm = null;
+                }
             }
         });
 
-        selectButton.setOnClickListener(new View.OnClickListener() {
+        componentValueText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onClick(View view) {
-                componentState = SELECT;
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (selectedElm == null)
+                    return;
+
+                String newValue = componentValueText.getText().toString();
+
+                if (newValue.isEmpty())
+                    return;
+
+                if (newValue.equals("--")) {
+                    return;
+                }
+
+                selectedElm.setValue(Double.valueOf(newValue));
             }
         });
     }
@@ -163,18 +202,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onTouch(View v, MotionEvent event) {
         int x = (int) event.getX();
         int y = (int) event.getY();
-
-        if (componentState == ERASE) {
-            lock.lock();
-            CircuitElm toRemove = getSelected(x, y);
-            if(toRemove != null) {
-                circuitElms.remove(toRemove);
-            }
-            lock.unlock();
-        }
+        int lengthThreshHold = 25;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                selectedElm = getSelected(x,y);
                 startX = x;
                 startY = y;
                 endX = x;
@@ -185,6 +217,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             case MotionEvent.ACTION_MOVE:
                 endX = x;
                 endY = y;
+                if(getDistance(startX, startY, endX, endY) > lengthThreshHold) {
+                    selectedElm = null;
+                }
                 Log.i("TAG", "moving: (" + x + ", " + y + ")");
                 break;
             case MotionEvent.ACTION_UP:
@@ -216,32 +251,36 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         endY = p2Y;
                     }
                 }
-                int lengthThreshHold = 35;
                 int length = getDistance(startX, startY, endX, endY);
                 //don't create a circuit element if it is too short
                 if(length > lengthThreshHold) {
                     SimplePoint startPoint = new SimplePoint(startX, startY);
                     SimplePoint endPoint = new SimplePoint(endX, endY);
-                    lock.lock();
+                    CircuitElm elm = null;
                     switch (componentState) {
                         case DC_SOURCE:
-                            circuitElms.add(new VoltageElm(startPoint, endPoint, 10));
+                            elm = new VoltageElm(startPoint, endPoint, 10);
                             break;
                         case RESISTOR:
-                            circuitElms.add(new ResistorElm(startPoint, endPoint, 10));
+                            elm = new ResistorElm(startPoint, endPoint, 10);
                             break;
                         case WIRE:
-                            circuitElms.add(new WireElm(startPoint, endPoint));
+                            elm = new WireElm(startPoint, endPoint);
                             break;
                         default:
+                            elm = new WireElm(startPoint, endPoint);
                             break;
                     }
-                    lock.unlock();
+                    selectedElm = elm;
+                    circuitElmsLock.lock();
+                    circuitElms.add(elm);
+                    circuitElmsLock.unlock();
                 }
                 Log.i("TAG", "touched up");
                 resetCoordinates();
                 break;
         }
+        displayElementInfo();
         return true;
     }
 
@@ -255,7 +294,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         int eStartY = e.getP1().getY();
         int eEndX = e.getP2().getX();
         int eEndY = e.getP2().getY();
-        if (Math.abs(getDistance(eStartX, eStartY, x, y) + getDistance(x, y, eEndX, eEndY) - getDistance(eStartX, eStartY, eEndX, eEndY)) < 40) {
+        if (Math.abs(getDistance(eStartX, eStartY, x, y) + getDistance(x, y, eEndX, eEndY) - getDistance(eStartX, eStartY, eEndX, eEndY)) < threshHold) {
             return true;
         } else {
             return false;
@@ -284,6 +323,38 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         startY = 0;
         endX = 0;
         endY = 0;
+    }
+
+    private void displayElementInfo() {
+        if (selectedElm == null) {
+            unitsText.setText(Constants.NOTHING_SELECTED);
+            componentValueText.setText("--");
+            return;
+        }
+        componentValueText.setText(Double.toString(selectedElm.getValue()));
+        switch (selectedElm.getType()) {
+            case Constants.CAPACITOR: {
+                unitsText.setText(Constants.CAPACITOR_UNITS);
+                break;
+            }
+            case Constants.RESISTOR: {
+                unitsText.setText(Constants.RESISTOR_UNITS);
+                break;
+            }
+            case Constants.DC_VOLTAGE: {
+                unitsText.setText(Constants.VOLTAGE_UNITS);
+                break;
+            }
+            case Constants.INDUCTOR: {
+                unitsText.setText(Constants.INDUCTOR_UNTIS);
+                break;
+            }
+            case Constants.WIRE: {
+                unitsText.setText(Constants.WIRE_UNTIS);
+                componentValueText.setText("--");
+                break;
+            }
+        }
     }
 
 
