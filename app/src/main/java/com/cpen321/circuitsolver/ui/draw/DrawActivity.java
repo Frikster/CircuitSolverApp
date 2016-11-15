@@ -7,7 +7,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
@@ -28,6 +30,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Button componentMenuButton;
     private Button eraseButton;
+    private TextView unitsText;
+    private EditText componentValueText;
 
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
@@ -84,6 +88,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         eraseButton = (Button) findViewById(R.id.eraseButton);
         circuitView.setOnTouchListener(this);
+        unitsText= (TextView) findViewById(R.id.units_display);
+        componentValueText = (EditText) findViewById(R.id.component_value);
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -153,6 +159,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         int y = (int) event.getY();
 
         if (componentState == ERASE) {
+            lock.lock();
             Iterator<CircuitElm> iter = circuitElms.iterator();
             while (iter.hasNext()) {
                 CircuitElm circuitElm = iter.next();
@@ -161,6 +168,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     break;
                 }
             }
+            lock.unlock();
         }
 
         switch (event.getAction()) {
