@@ -14,6 +14,7 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.ERASE;
+import static com.cpen321.circuitsolver.ui.draw.AddComponentState.SELECT;
 
 /**
  * Created by lotus on 14/11/16.
@@ -51,7 +52,8 @@ public class CircuitView extends SurfaceView implements Runnable {
                 canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
             }
             lock.unlock();
-            if(DrawActivity.getComponentState() != ERASE) {
+            AddComponentState state = DrawActivity.getComponentState();
+            if(state != ERASE && state != SELECT) {
                 canvas.drawLine(DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
             }
             holder.unlockCanvasAndPost(canvas);

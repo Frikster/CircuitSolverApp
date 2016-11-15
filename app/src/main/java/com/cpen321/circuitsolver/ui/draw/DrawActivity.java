@@ -30,8 +30,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private Button componentMenuButton;
     private Button eraseButton;
+    private Button selectButton;
     private TextView unitsText;
     private EditText componentValueText;
+
 
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
@@ -87,6 +89,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         eraseButton = (Button) findViewById(R.id.eraseButton);
+        selectButton = (Button) findViewById(R.id.selectButton);
         circuitView.setOnTouchListener(this);
         unitsText= (TextView) findViewById(R.id.units_display);
         componentValueText = (EditText) findViewById(R.id.component_value);
@@ -108,10 +111,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                                 "You Clicked : " + item.getTitle(),
                                 Toast.LENGTH_SHORT
                         ).show();
-                        startX = 0;
-                        startY = 0;
-                        endX = 0;
-                        endY = 0;
+                        resetCoordinates();
                         switch (item.getItemId()) {
                             case R.id.dropDownSourceButton:
                                 componentState = DC_SOURCE;
@@ -139,6 +139,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
         });
 
+        selectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                componentState = SELECT;
+            }
+        });
     }
 
     @Override
@@ -160,13 +166,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
         if (componentState == ERASE) {
             lock.lock();
-            Iterator<CircuitElm> iter = circuitElms.iterator();
-            while (iter.hasNext()) {
-                CircuitElm circuitElm = iter.next();
-                if (isOnElement(x, y, circuitElm)) {
-                    iter.remove();
-                    break;
-                }
+            CircuitElm toRemove = getSelected(x, y);
+            if(toRemove != null) {
+                circuitElms.remove(toRemove);
             }
             lock.unlock();
         }
@@ -214,24 +216,30 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         endY = p2Y;
                     }
                 }
-                SimplePoint startPoint = new SimplePoint(startX, startY);
-                SimplePoint endPoint = new SimplePoint(endX, endY);
-                lock.lock();
-                switch (componentState) {
-                    case DC_SOURCE:
-                        circuitElms.add(new VoltageElm(startPoint, endPoint, 10));
-                        break;
-                    case RESISTOR:
-                        circuitElms.add(new ResistorElm(startPoint, endPoint, 10));
-                        break;
-                    case WIRE:
-                        circuitElms.add(new WireElm(startPoint, endPoint));
-                        break;
-                    default:
-                        break;
+                int lengthThreshHold = 35;
+                int length = getDistance(startX, startY, endX, endY);
+                //don't create a circuit element if it is too short
+                if(length > lengthThreshHold) {
+                    SimplePoint startPoint = new SimplePoint(startX, startY);
+                    SimplePoint endPoint = new SimplePoint(endX, endY);
+                    lock.lock();
+                    switch (componentState) {
+                        case DC_SOURCE:
+                            circuitElms.add(new VoltageElm(startPoint, endPoint, 10));
+                            break;
+                        case RESISTOR:
+                            circuitElms.add(new ResistorElm(startPoint, endPoint, 10));
+                            break;
+                        case WIRE:
+                            circuitElms.add(new WireElm(startPoint, endPoint));
+                            break;
+                        default:
+                            break;
+                    }
+                    lock.unlock();
                 }
-                lock.unlock();
                 Log.i("TAG", "touched up");
+                resetCoordinates();
                 break;
         }
         return true;
@@ -252,8 +260,32 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         } else {
             return false;
         }
-
     }
+
+    /**
+     * Get the circuit element which passes point x,y
+     * @param x coordinate
+     * @param y coordinate
+     * @return the circuitElm touched, or null if non were touched
+     */
+    private CircuitElm getSelected(int x, int y) {
+        Iterator<CircuitElm> iter = circuitElms.iterator();
+        while (iter.hasNext()) {
+            CircuitElm circuitElm = iter.next();
+            if (isOnElement(x, y, circuitElm)) {
+                return circuitElm;
+            }
+        }
+        return null;
+    }
+
+    private void resetCoordinates() {
+        startX = 0;
+        startY = 0;
+        endX = 0;
+        endY = 0;
+    }
+
 
 
 }
