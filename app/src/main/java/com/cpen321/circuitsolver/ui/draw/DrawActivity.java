@@ -238,7 +238,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         y =  (int) (event.getRawY() - location[1]);
         x = (x >> truncateBits) << truncateBits;
         y = (y >> truncateBits) << truncateBits;
-        int lengthThreshHold = 25;
+        int lengthThreshHold = 40;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
