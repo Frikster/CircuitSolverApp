@@ -232,9 +232,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onTouch(View v, MotionEvent event) {
         int x;
         int y;
+        int truncateBits = 6;
         v.getLocationOnScreen(location);
         x = (int) (event.getRawX() - location[0]);
         y =  (int) (event.getRawY() - location[1]);
+        x = (x >> truncateBits) << truncateBits;
+        y = (y >> truncateBits) << truncateBits;
         int lengthThreshHold = 25;
 
         switch (event.getAction()) {
@@ -244,6 +247,23 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 startY = y;
                 endX = x;
                 endY = y;
+                for (CircuitElm circuitElm : circuitElms) {
+                    //check to see if the new points we are drawing are near existing ones, if so connect them
+                    int threshHold = 50;
+                    SimplePoint p1 = circuitElm.getP1();
+                    SimplePoint p2 = circuitElm.getP2();
+                    int p1X = p1.getX();
+                    int p1Y = p1.getY();
+                    int p2X = p2.getX();
+                    int p2Y = p2.getY();
+                    if (getDistance(startX, startY, p1X, p1Y) < threshHold) {
+                        startX = p1X;
+                        startY = p1Y;
+                    } else if (getDistance(startX, startY, p2X, p2Y) < threshHold) {
+                        startX = p2X;
+                        startY = p2Y;
+                    }
+                }
                 Log.i("TAG", "touched down");
                 CharSequence text = "Touched (" + x + "," + y + ")";
                 break;
@@ -269,19 +289,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     int p1Y = p1.getY();
                     int p2X = p2.getX();
                     int p2Y = p2.getY();
-                    if (getDistance(startX, startY, p1X, p1Y) < threshHold) {
-                        startX = p1X;
-                        startY = p1Y;
-                    }
-                    if (getDistance(startX, startY, p2X, p2Y) < threshHold) {
-                        startX = p2X;
-                        startY = p2Y;
-                    }
                     if (getDistance(endX, endY, p1X, p1Y) < threshHold) {
                         endX = p1X;
                         endY = p1Y;
-                    }
-                    if (getDistance(endX, endY, p2X, p2Y) < threshHold) {
+                    } else if (getDistance(endX, endY, p2X, p2Y) < threshHold) {
                         endX = p2X;
                         endY = p2Y;
                     }
