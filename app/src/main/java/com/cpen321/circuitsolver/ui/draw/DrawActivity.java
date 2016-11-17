@@ -1,5 +1,6 @@
 package com.cpen321.circuitsolver.ui.draw;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,6 +26,8 @@ import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.*;
@@ -51,6 +54,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private static int startY = 0;
     private static int endX = 0;
     private static int endY = 0;
+    private static int eraserX = 0;
+    private static int eraserY = 0;
 
     private static CircuitElm selectedElm = null;
 
@@ -85,6 +90,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     public static int getEndX() {
         return endX;
     }
+
+    private AddComponentState prevComponentState;
 
     /**
      * Get selected element
@@ -144,15 +151,35 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }); //closing the setOnClickListener method
 
-        eraseButton.setOnClickListener(new View.OnClickListener() {
+        eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onTouch(View v, MotionEvent event) {
+                eraserX = (int) (event.getRawX() - location[0]);
+                eraserY =  (int) (event.getRawY() - location[1]);
                 if(selectedElm != null) {
                     circuitElmsLock.lock();
                     circuitElms.remove(selectedElm);
-                    circuitElmsLock.unlock();
                     selectedElm = null;
+                    circuitElmsLock.unlock();
                 }
+                CircuitElm toRemove = getSelected(eraserX,eraserY);
+                if(toRemove != null) {
+                    circuitElmsLock.lock();
+                    circuitElms.remove(toRemove);
+                    circuitElmsLock.unlock();
+                }
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.i("TAG", "Erase touched down");
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.i("TAG", "Erase moving: (" + eraserX + ", " + eraserY + ")");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.i("TAG", "Erase touched up");
+                        break;
+                }
+                return true;
             }
         });
 
@@ -198,15 +225,21 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView.resume();
     }
 
+    private int[] location = new int[2];
+
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int x = (int) event.getX();
-        int y = (int) event.getY();
+        int x;
+        int y;
+        v.getLocationOnScreen(location);
+        x = (int) (event.getRawX() - location[0]);
+        y =  (int) (event.getRawY() - location[1]);
         int lengthThreshHold = 25;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                selectedElm = getSelected(x,y);
+                selectedElm = getSelected(x, y);
                 startX = x;
                 startY = y;
                 endX = x;
@@ -217,8 +250,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             case MotionEvent.ACTION_MOVE:
                 endX = x;
                 endY = y;
-                if(getDistance(startX, startY, endX, endY) > lengthThreshHold) {
+                if (getDistance(startX, startY, endX, endY) > lengthThreshHold) {
+                    circuitElmsLock.lock();
                     selectedElm = null;
+                    circuitElmsLock.unlock();
                 }
                 Log.i("TAG", "moving: (" + x + ", " + y + ")");
                 break;
@@ -253,7 +288,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 int length = getDistance(startX, startY, endX, endY);
                 //don't create a circuit element if it is too short
-                if(length > lengthThreshHold) {
+                if (length > lengthThreshHold && componentState != ERASE) {
                     SimplePoint startPoint = new SimplePoint(startX, startY);
                     SimplePoint endPoint = new SimplePoint(endX, endY);
                     CircuitElm elm = null;
@@ -280,6 +315,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 resetCoordinates();
                 break;
         }
+
         displayElementInfo();
         return true;
     }
