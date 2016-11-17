@@ -232,7 +232,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     public boolean onTouch(View v, MotionEvent event) {
         int x;
         int y;
-        int truncateBits = 6;
+        int truncateBits = 5;
         v.getLocationOnScreen(location);
         x = (int) (event.getRawX() - location[0]);
         y =  (int) (event.getRawY() - location[1]);
