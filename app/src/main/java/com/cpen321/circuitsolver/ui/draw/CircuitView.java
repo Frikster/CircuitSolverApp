@@ -10,6 +10,7 @@ import android.view.SurfaceView;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -54,14 +55,7 @@ public class CircuitView extends SurfaceView implements Runnable {
             for(CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
                 SimplePoint start = circuitElm.getP1();
                 SimplePoint end = circuitElm.getP2();
-                //draw resistor
-                if(state == RESISTOR) {
-                    drawResistor(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
-                }else if(state == DC_SOURCE){
-                    canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
-                }else{
-                    canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
-                }
+                drawCircuitElm(canvas, circuitElm.getType(), start.getX(), start.getY(), end.getX(), end.getY(), paint);
             }
             lock.unlock();
             CircuitElm selected = DrawActivity.getSelectedElm();
@@ -69,13 +63,14 @@ public class CircuitView extends SurfaceView implements Runnable {
                 SimplePoint start = selected.getP1();
                 SimplePoint end = selected.getP2();
                 paint.setColor(Color.RED);
-                canvas.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
+                drawCircuitElm(canvas, selected.getType(), start.getX(), start.getY(), end.getX(), end.getY(), paint);
             }
             //AddComponentState state = DrawActivity.getComponentState();
             paint.setColor(Color.RED);
             int threshHold = 25;
             if((getDistance(DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY()) > threshHold) && state != ERASE) {
-                canvas.drawLine(DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
+                String type = convertStateToType(DrawActivity.getComponentState());
+                drawCircuitElm(canvas, type, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
             }
             holder.unlockCanvasAndPost(canvas);
         }
@@ -102,6 +97,31 @@ public class CircuitView extends SurfaceView implements Runnable {
 
     private int getDistance(int x1, int y1, int x2, int y2) {
         return (int) Math.hypot(x1 - x2, y1 - y2);
+    }
+
+    //this is just a terrible workaround cause no time to change old code
+    private String convertStateToType(AddComponentState state) {
+        switch(state) {
+            case DC_SOURCE:
+                return Constants.DC_VOLTAGE;
+            case RESISTOR:
+                return Constants.RESISTOR;
+            case WIRE:
+                return Constants.WIRE;
+            default:
+                return Constants.WIRE;
+        }
+    }
+
+    private void drawCircuitElm(Canvas canvas, String type, int startX, int startY, int stopX, int stopY, Paint paint) {
+        //draw resistor
+        if(type.equals(Constants.RESISTOR)) {
+            drawResistor(canvas, startX, startY, stopX, stopY, paint);
+        }else if(type.equals(Constants.DC_VOLTAGE)){
+            canvas.drawLine(startX, startY, stopX, stopY, paint);
+        }else{
+            canvas.drawLine(startX, startY, stopX, stopY, paint);
+        }
     }
 
     private void drawResistor(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint){
