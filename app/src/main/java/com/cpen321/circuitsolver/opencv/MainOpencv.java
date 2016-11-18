@@ -203,10 +203,8 @@ public class MainOpencv {
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
         System.out.println("After add missing wires : "+separatedComponents.size());
 
-
         separatedComponents = removeDuplicateWires(separatedComponents);
         System.out.println("After remove duplicates : "+separatedComponents.size());
-
 
         List<CircuitElm> myelement = getCircuitElements();
         for(CircuitElm c : myelement){
@@ -234,7 +232,6 @@ public class MainOpencv {
             else{
                 Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
             }
-
         }
         */
         int x=0;
@@ -260,7 +257,6 @@ public class MainOpencv {
                 Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
             }
             x++;
-
         }
         //Create and return the final bitmap
         Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
