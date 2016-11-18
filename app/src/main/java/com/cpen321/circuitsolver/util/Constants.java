@@ -24,7 +24,8 @@ public final class Constants {
     public static final String INDUCTOR_UNTIS = "henrys";
     public static final String CAPACITOR_UNITS = "farads";
     public static final String VOLTAGE_UNITS = "volts";
-    public static final String NOTHING_SELECTED = "N/A";
+    public static final String NOTHING_SELECTED = "--";
+    public static final String WIRE_UNTIS = "--";
 
 
 }
