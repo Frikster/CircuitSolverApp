@@ -14,6 +14,7 @@ import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.Constants;
 
 import org.opencv.android.Utils;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -29,6 +30,9 @@ import java.util.Set;
 
 import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
+import static org.opencv.core.Core.NORM_MINMAX;
+import static org.opencv.core.CvType.CV_32FC1;
+import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -53,12 +57,18 @@ public class MainOpencv {
     private int bitMapWidth = 500;
     private int bitMapHeight = 800;
 
+    public Bitmap houghLines(Bitmap bMap, boolean test){
+        if(!test)
+            return houghLines(bMap);
+        return bMap;
+    }
+
     /**Method to detect the components,main method of this class
      *
      * @return the bitmap with the detected lines and a circle around the components
      */
     public Bitmap houghLines(Bitmap bMap){
-        System.out.println("couc");
+
 
         //Convert to a canny edge detector grayscale mat
         System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
@@ -66,9 +76,12 @@ public class MainOpencv {
         bitMapWidth = bMap.getWidth();
 
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+        Mat tmp1 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
-        Imgproc.Canny(tmp, tmp2, 50, 200);
+
+        //cvtColor(tmp,tmp2,COLOR_BGR2GRAY);
+        Imgproc.Canny(tmp, tmp2, 40, 200);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
 
@@ -78,12 +91,13 @@ public class MainOpencv {
 
         cvtColor(tmp2, tmp3, COLOR_GRAY2BGR);
 
+
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
 
         int maxLinesToBeChunk = 3;
-        int radius = 4;
+        int radius = 5;
         int minPoints = 20;
 
 
@@ -96,6 +110,15 @@ public class MainOpencv {
 
 
         List<double[]> residualLinesWithoutChunk= removeChunks(residualLines, maxLinesToBeChunk);
+
+        System.out.println("Residual lines");
+        for(double[] line : residualLinesWithoutChunk){
+            double x1 = line[0];
+            double y1 = line[1];
+            double x2 = line[2];
+            double y2 = line[3];
+            System.out.println(x1+" , "+y1+" -> "+x2+" , "+y2);
+        }
         //List<double[]> withoutBorders = removeImageBorder(residualLinesWithoutChunk);
         List<double[]> withoutBorders = residualLinesWithoutChunk;
         List<double[]> verticalLines = verticalLines(withoutBorders);
@@ -106,7 +129,7 @@ public class MainOpencv {
 
         int twoCornersTooNear = 15;
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
-        int tooNearFromComponent = 4;
+        int tooNearFromComponent = 10;
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
 
         if(validCorners.size() == 0){
@@ -138,10 +161,10 @@ public class MainOpencv {
 
             System.out.println("Coord of corner : "+x1+" , "+y1);
         }
-        int thresholdXY = 7;
+        int thresholdXY = 10;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
         List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
-        detectWires(objectizedCompAndCorners,firstCorner, thresholdXY);
+        detectWires(objectizedCompAndCorners,firstCorner, thresholdXY,residualLinesWithoutChunk);
         System.out.println("Finding wires after the first time : "+wires.size());
         //Prints the found wires
         for(List<Element> wire : wires){
@@ -173,69 +196,20 @@ public class MainOpencv {
         }
         separatedComponents = completeMissingEndings(separatedComponents, thresholdXY);
         System.out.println("After completing missing Endings : "+separatedComponents.size());
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
 
-            }
-        }
         separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents);
         System.out.println("After adding orphans to the wires : "+separatedComponents.size());
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
 
-            }
-        }
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
         System.out.println("After add missing wires : "+separatedComponents.size());
-
-        //Prints the found wires
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
-
-            }
-        }
 
         separatedComponents = removeDuplicateWires(separatedComponents);
         System.out.println("After remove duplicates : "+separatedComponents.size());
 
-        //Prints the found wires
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
-
-            }
-        }
-
         List<CircuitElm> myelement = getCircuitElements();
         for(CircuitElm c : myelement){
-            System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
+            //System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
+            System.out.println(c);
         }
         /*
         //Draw the found lines
@@ -258,7 +232,6 @@ public class MainOpencv {
             else{
                 Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
             }
-
         }
         */
         int x=0;
@@ -284,7 +257,6 @@ public class MainOpencv {
                 Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
             }
             x++;
-
         }
         //Create and return the final bitmap
         Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
@@ -346,18 +318,38 @@ public class MainOpencv {
     }
 
     public String getCircuitText(){
-//        String circStr = "$ 500 800\n" +
-//                "l 300 300 500 300 10.0\n" +
-//                "w 500 300 700 500\n" +
-//                "c 700 500 700 700 10.0 \n" +
-//                "w 500 900 700 700\n" +
-//                "r 500 900 300 900 10.0 \n" +
-//                "w 300 900 300 700 \n" +
-//                "v 300 700 300 500 10.0 \n" +
-//                "w 300 500 300 300 \n";
+//        String circStr = "$ 10 10\n" +
+//                "r 3 3 8 3 10.0\n" +
+//                "w 3 3 3 8 10.0\n" +
+//                "w 8 3 8 8 10.0\n" +
+//                "v 3 8 8 8 10.0 \n";
+
+//                String circStr = "$ 10 10\n" +
+//                "r 5 3 8 6 10.0\n" +
+//                "r 5 3 2 6 10.0\n" +
+//                "v 2 6 8 6 10.0 \n";
 
         CircuitDefParser parser = new CircuitDefParser();
         String circStr = parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
+
+        return circStr;
+    }
+
+
+    public String getCircuitText(boolean test){
+        //        String circStr = "$ 10 10\n" +
+//                "r 3 3 8 3 10.0\n" +
+//                "w 3 3 3 8 10.0\n" +
+//                "w 8 3 8 8 10.0\n" +
+//                "v 3 8 8 8 10.0 \n";
+
+        if(!test)
+            return getCircuitText();
+
+        String circStr = "$ 10 10\n" +
+                "r 5 3 8 6 10.0\n" +
+                "r 5 3 2 6 10.0\n" +
+                "v 2 6 8 6 10.0 \n";
 
         return circStr;
     }
@@ -549,22 +541,22 @@ public class MainOpencv {
 
     private List<List<Element>> addOrphansToWires(List<List<Element>> wires, List<Component> allComponents){
 
-        System.out.println("in adding orphans :");
+
 
         int distanceFromComponent = 12;
         List<List<Element>> orphans = new ArrayList<>();
         List<List<Element>> wiresWithorphans = new ArrayList<>(wires);
         for(Component e : allComponents){
 
-                System.out.println("comp analyzed:"+e.getX()+" , "+e.getY());
+
                 boolean foundOrphan = true;
                 for (List<Element> wire : wires) {
-                    System.out.println("wire analyzed : ");
+
                     for(Element c : wire){
                         System.out.println(c.getX()+" , "+c.getY());
                     }
                     if(containsElement(wire,e)){
-                        System.out.println("Is not an orphan anymore ! ");
+
                         foundOrphan = false;
                         break;
                     }
@@ -659,11 +651,13 @@ public class MainOpencv {
                         }
                     }
                 }
-                List<Element> newWireUnc = new ArrayList<>();
-                newWireUnc.add(c);
-                newWireUnc.add(currentCornerUnc);
-                wiresWithMissing.add(newWireUnc);
-                alreadyWiredCorners.add(currentCornerUnc);
+                if(foundAnUnconnected) {
+                    List<Element> newWireUnc = new ArrayList<>();
+                    newWireUnc.add(c);
+                    newWireUnc.add(currentCornerUnc);
+                    wiresWithMissing.add(newWireUnc);
+                    alreadyWiredCorners.add(currentCornerUnc);
+                }
 
 
                 //Go and look through all corners
@@ -799,14 +793,16 @@ public class MainOpencv {
     private List<List<Element>> separateComponents(List<List<Element>> wires){
         List<List<Element>> newWires = new ArrayList<>(wires);
         List<List<Element>> result = new ArrayList<>();
-        while(!allWiresMax3(newWires)){
+        boolean g=true;
+        while(TwoAdjacentComponent(newWires)){
+
             result = new ArrayList<>();
             for(List<Element> wire : newWires){
-                if(wire.size()>3){
-                    //Search for the two adjacent components
 
+                    boolean brokeWire = false;
                     for(int i =1; i<wire.size()-1;i++){
                         if(wire.get(i) instanceof Component && wire.get(i+1) instanceof Component){
+                            brokeWire = true;
                             List<Element> newWire1 = new ArrayList<>();
                             newWire1.add(wire.get(i-1));
                             newWire1.add(wire.get(i));
@@ -815,20 +811,22 @@ public class MainOpencv {
 
                             List<Element> newWire2 = new ArrayList<>();
                             newWire2.add(newCorner);
-                            newWire2.add(wire.get(i+1));
-                            //If a corner detection went wrong, we need to place an if
-                            if(wire.size()>i+2) {
-                                newWire2.add(wire.get(i + 2));
+
+                            for(int e = i+1 ; e<wire.size();e++){
+                                newWire2.add(wire.get(e));
                             }
+
                             result.add(newWire1);
                             result.add(newWire2);
+                            break;
 
                         }
                     }
-                }
-                else{
+                if(!brokeWire){
                     result.add(wire);
                 }
+
+
             }
             newWires = new ArrayList<>(result);
         }
@@ -840,13 +838,17 @@ public class MainOpencv {
      * @param wires
      * @return true if all standardized
      */
-    private boolean allWiresMax3(List<List<Element>> wires){
+    private boolean TwoAdjacentComponent(List<List<Element>> wires){
         for(List<Element> wire : wires){
-            if(wire.size()>3){
-                return false;
+            for(int i=0; i<wire.size();i++){
+                if(i!= wire.size()-1){
+                    if(wire.get(i) instanceof Component && wire.get(i+1) instanceof Component){
+                        return true;
+                    }
+                }
             }
         }
-        return true;
+        return false;
     }
 
     /**Recursive function to detect all the wires
@@ -855,11 +857,11 @@ public class MainOpencv {
      * @param currCorner The corner from which we look for wires
      * Changes a global field of the class
      */
-    private void detectWires(List<Element> elements, Corner currCorner, int thresholdXY){
+    private void detectWires(List<Element> elements, Corner currCorner, int thresholdXY, List<double[]> residualLines){
         //Threshold : so that two points have sameX or sameY
-        System.out.println("Current corner "+currCorner.getX()+" , "+currCorner.getY());
-        if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
 
+        if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
+            System.out.println("Current corner "+currCorner.getX()+" , "+currCorner.getY());
             //get same horizontal and vertical components
             List<Element> sameY = getSameYElements(elements,currCorner,thresholdXY);
             List<Element> sameX = getSameXElements(elements,currCorner,thresholdXY);
@@ -896,15 +898,17 @@ public class MainOpencv {
                 for(int f = j-1; f>=0;f--){
 
                     Element elem = sameY.get(f);
-                    aWire.add(elem);
-                    if(elem instanceof Component){
-                        elements.remove(elem);
-                    }
-                    if(elem instanceof Corner){
-                        ((Corner)elem).exploredDirections.remove('e');
+                    if(existsALineBetweenTwoPoints(currCorner,elem,residualLines,'y',thresholdXY)) {
+                        aWire.add(elem);
+                        if (elem instanceof Component) {
+                            elements.remove(elem);
+                        }
+                        if (elem instanceof Corner) {
+                            ((Corner) elem).exploredDirections.remove('e');
 
-                        detectWires(elements,(Corner)elem, thresholdXY);
-                        break;
+                            detectWires(elements, (Corner) elem, thresholdXY, residualLines);
+                            break;
+                        }
                     }
                 }
                 if(aWire.size() > 1){
@@ -921,16 +925,17 @@ public class MainOpencv {
 
                 for(int f = j+1; f<sameY.size();f++){
                     Element elem = sameY.get(f);
+                    if(existsALineBetweenTwoPoints(currCorner,elem,residualLines,'y',thresholdXY)) {
+                        aWire.add(elem);
+                        if (elem instanceof Component) {
+                            elements.remove(elem);
+                        }
+                        if (elem instanceof Corner) {
+                            ((Corner) elem).exploredDirections.remove('w');
 
-                    aWire.add(elem);
-                    if(elem instanceof Component){
-                        elements.remove(elem);
-                    }
-                    if(elem instanceof Corner){
-                        ((Corner)elem).exploredDirections.remove('w');
-
-                        detectWires(elements,(Corner)elem, thresholdXY);
-                        break;
+                            detectWires(elements, (Corner) elem, thresholdXY, residualLines);
+                            break;
+                        }
                     }
                 }
                 if(aWire.size() > 1){
@@ -947,16 +952,17 @@ public class MainOpencv {
 
                 for(int f = i-1; f>=0;f--){
                     Element elem = sameX.get(f);
+                    if(existsALineBetweenTwoPoints(currCorner,elem,residualLines,'x',thresholdXY)) {
+                        aWire.add(elem);
+                        if (elem instanceof Component) {
+                            elements.remove(elem);
+                        }
+                        if (elem instanceof Corner) {
+                            ((Corner) elem).exploredDirections.remove('s');
 
-                    aWire.add(elem);
-                    if(elem instanceof Component){
-                        elements.remove(elem);
-                    }
-                    if(elem instanceof Corner){
-                        ((Corner)elem).exploredDirections.remove('s');
-
-                        detectWires(elements,(Corner)elem, thresholdXY);
-                        break;
+                            detectWires(elements, (Corner) elem, thresholdXY, residualLines);
+                            break;
+                        }
                     }
                 }
                 if(aWire.size() > 1){
@@ -973,16 +979,17 @@ public class MainOpencv {
 
                 for(int f = i+1; f<sameX.size();f++){
                     Element elem = sameX.get(f);
+                    if(existsALineBetweenTwoPoints(currCorner,elem,residualLines,'x',thresholdXY)) {
+                        aWire.add(elem);
+                        if (elem instanceof Component) {
+                            elements.remove(elem);
+                        }
+                        if (elem instanceof Corner) {
+                            ((Corner) elem).exploredDirections.remove('n');
 
-                    aWire.add(elem);
-                    if(elem instanceof Component){
-                        elements.remove(elem);
-                    }
-                    if(elem instanceof Corner){
-                        ((Corner)elem).exploredDirections.remove('n');
-
-                        detectWires(elements,(Corner)elem, thresholdXY);
-                        break;
+                            detectWires(elements, (Corner) elem, thresholdXY, residualLines);
+                            break;
+                        }
                     }
                 }
                 if(aWire.size() > 1){
@@ -1061,27 +1068,32 @@ public class MainOpencv {
             double endX = line[2];
             double endY = line[3];
             if(same == 'x'){
-                //There is a line that has same X than the first point
-                if(Math.abs(x1-startX)<threshold && Math.abs(endX-x1)<threshold){
-                    //There is a line that has same X than the second point
-                    if(Math.abs(x2-startX)<threshold && Math.abs(endX-x2)<threshold){
-                        //This line is between the two points in terms of y
-                        if((startY < y1 && endY <y1 && startY > y2 && endY >y2) || (startY < y2 && endY <y2 && startY > y1 && endY >y1)){
-                            foundOne = true;
-                            break;
+                //There is a vertical
+                if(startX == endX) {
+                    //There is a line that has same X than the first point
+                    if (Math.abs(x1 - startX) < threshold && Math.abs(endX - x1) < threshold) {
+                        //There is a line that has same X than the second point
+                        if (Math.abs(x2 - startX) < threshold && Math.abs(endX - x2) < threshold) {
+                            //This line is between the two points in terms of y
+                            if ((startY < y1 && endY < y1 && startY > y2 && endY > y2) || (startY < y2 && endY < y2 && startY > y1 && endY > y1)) {
+                                foundOne = true;
+                                break;
+                            }
                         }
                     }
                 }
             }
             if(same == 'y'){
-                //There is a line that has same Y than the first point
-                if(Math.abs(y1-startX)<threshold && Math.abs(endX-y1)<threshold){
-                    //There is a line that has same Y than the second point
-                    if(Math.abs(y2-startX)<threshold && Math.abs(endX-y2)<threshold){
-                        //This line is between the two points in terms of X
-                        if((startY < x1 && endY <x1 && startY > x2 && endY >x2) || (startY < x2 && endY <x2 && startY > x1 && endY >x1)){
-                            foundOne = true;
-                            break;
+                if(startY == endY) {
+                    //There is a line that has same Y than the first point
+                    if (Math.abs(y1 - startY) < threshold && Math.abs(endY - y1) < threshold) {
+                        //There is a line that has same Y than the second point
+                        if (Math.abs(y2 - startY) < threshold && Math.abs(endY - y2) < threshold) {
+                            //This line is between the two points in terms of X
+                            if ((startX < x1 && endX < x1 && startX > x2 && endX > x2) || (startX < x2 && endX < x2 && startX > x1 && endX > x1)) {
+                                foundOne = true;
+                                break;
+                            }
                         }
                     }
                 }

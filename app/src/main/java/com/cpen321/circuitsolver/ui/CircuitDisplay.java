@@ -105,6 +105,7 @@ public class CircuitDisplay extends View {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private void rectifyComponents() {
@@ -188,7 +189,7 @@ public class CircuitDisplay extends View {
         for (CircuitElm circuitElm : this.components) {
             if (circuitElm == null)
                 continue;
-            circuitElm.onDraw(canvas, this.circuitPaint, 50);
+            circuitElm.onDraw(canvas, this.circuitPaint, 50,true);
         }
     }
 
@@ -289,5 +290,47 @@ public class CircuitDisplay extends View {
         element.setP2(newEnd);
 
         return element;
+    }
+
+    public void move(CircuitElm elmToMove, int destX, int destY){
+//        int xP1Diff = elmToMove.getP1().getX() - originX;
+//        int yP1Diff = elmToMove.getP1().getY() - originY;
+//        int xP2Diff = elmToMove.getP1().getX() - originX;
+//        int yP2Diff = elmToMove.getP1().getY() - originY;
+
+//        SimplePoint destinationP1 = new SimplePoint(destX + xP1Diff, destY + yP1Diff);
+//        SimplePoint destinationP2 = new SimplePoint(destX + xP2Diff, destY + yP2Diff);
+
+//
+//        moveCorner(elmToMove.getP1(), destinationP1);
+//        moveCorner(elmToMove.getP1(), destinationP2);
+        if(elmToMove == null){
+            return;
+        }
+
+        int dx = elmToMove.getP1().getX() - elmToMove.getP2().getX();
+        int dy = elmToMove.getP1().getY() - elmToMove.getP2().getY();
+
+        moveCorner(elmToMove.getP1(), new SimplePoint(destX, destY));
+        moveCorner(elmToMove.getP2(), new SimplePoint(destX + dx, destY + dy));
+
+    }
+
+    public void moveCorner(SimplePoint originPoint, SimplePoint destinationPoint){
+        //Find all elements corresponding to a point and update them to destination point
+        for(CircuitElm elm: components){
+            if(elm.correspondsToPoint(originPoint)){
+                if(elm.getP1().equals(originPoint)){
+                    elm.setP1(destinationPoint);
+                }
+                else{
+                    elm.setP2(destinationPoint);
+                }
+            }
+        }
+    }
+
+    public void deleteElement(CircuitElm elm){
+        components.remove(elm);
     }
 }

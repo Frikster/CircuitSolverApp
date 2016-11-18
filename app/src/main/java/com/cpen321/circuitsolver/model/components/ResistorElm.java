@@ -74,17 +74,32 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
         return this.resistance;
     }
 
-    @Override
-    public boolean isSelected(){
-        return isSelected;
+    /**
+     * Draws resistor as a red line
+     * @param canvas
+     * @param paint
+     * @param disp
+     * @param test
+     */
+    public void onDraw(Canvas canvas, Paint paint, int disp, boolean test){
+
+        int startX = this.getPoint(0).getX();
+        int startY = this.getPoint(0).getY();
+        int endX = this.getPoint(1).getX();
+        int endY = this.getPoint(1).getY();
+        Paint rpaint = new Paint();
+        rpaint.setColor(Color.RED);
+        rpaint.setStyle(Paint.Style.STROKE);
+
+        canvas.drawLine(startX, startY, endX, endY, rpaint);
+
+        if (isSelected()){
+            showSelected(canvas);
+        }
+
     }
 
-    @Override
-    public void toggleIsSelected(){
-        Log.i("RECT", "CORRECT");
-        Log.i("RECT", this.getType());
-        isSelected = !isSelected;
-    }
+
 
     @Override
     public void onDraw(Canvas canvas, Paint paint,

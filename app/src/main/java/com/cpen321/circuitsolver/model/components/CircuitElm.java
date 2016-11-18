@@ -11,6 +11,8 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by Jennifer on 10/10/2016.
  */
@@ -177,6 +179,11 @@ public abstract class CircuitElm{
 
     }
 
+    public void onDraw(Canvas canvas, Paint paint, int yDisp, boolean test) {
+
+
+    }
+
     public boolean isSelected(){
         return isSelected;
     }
@@ -185,6 +192,45 @@ public abstract class CircuitElm{
     public void toggleIsSelected(){
         Log.i("RECT", "in CircuitElm toggleIsSelected");
         isSelected = !isSelected;
+    }
+
+    protected void showSelected(Canvas canvas) {
+        SimplePoint p1 = this.getP1();
+        SimplePoint p2 = this.getP2();
+
+        float left, right, top, bottom;
+        float quarterLength = 20;
+
+
+        if(p1.getY() == p2.getY()){
+            if(p1.getX() < p2.getX()){
+                left = p1.getX();
+                right = p2.getX();
+            }
+            else{
+                left = p2.getX();
+                right = p1.getX();
+            }
+            top = p1.getY() - quarterLength;
+            bottom = p1.getY() + quarterLength;
+        }
+        else{
+            if(p1.getY() < p2.getY()){
+                top = p1.getY();
+                bottom = p2.getY();
+            }
+            else{
+                top = p2.getY();
+                bottom = p1.getY();
+            }
+            left = p1.getX() - quarterLength;
+            right = p1.getX() + quarterLength;
+
+        }
+        Paint rectPaint = new Paint();
+        rectPaint.setColor(Color.RED);
+        rectPaint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(left, top, right, bottom, rectPaint);
     }
 
     public double getValue() {

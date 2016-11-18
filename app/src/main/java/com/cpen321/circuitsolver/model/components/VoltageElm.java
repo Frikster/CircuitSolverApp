@@ -80,6 +80,30 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
         isSelected = !isSelected;
     }
 
+    /**
+     * Draws voltage element as a yellow coloured wire
+     * @param canvas
+     * @param paint
+     * @param disp
+     * @param test
+     */
+    public void onDraw(Canvas canvas, Paint paint, int disp, boolean test){
+
+        int startX = this.getPoint(0).getX();
+        int startY = this.getPoint(0).getY();
+        int endX = this.getPoint(1).getX();
+        int endY = this.getPoint(1).getY();
+        Paint rpaint = new Paint();
+        rpaint.setColor(Color.YELLOW);
+        rpaint.setStyle(Paint.Style.STROKE);
+        canvas.drawLine(startX, startY, endX, endY, rpaint);
+
+        if (isSelected()){
+            showSelected(canvas);
+        }
+
+    }
+
     @Override
     public void onDraw(Canvas canvas, Paint paint, int disp) {
         SimplePoint p1 = this.getPoint(0);

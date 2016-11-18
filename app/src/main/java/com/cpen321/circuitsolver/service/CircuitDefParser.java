@@ -35,7 +35,9 @@ public class CircuitDefParser {
             }
             //Ignore lines starting with #
             else if(!str.startsWith("#")){
-                CircuitElm elm = parseCircuitElmLine(str, originalWidth, originalHeight, scaleToWidth, scaleToHeight);
+                //CircuitElm elm = parseCircuitElmLine(str, originalWidth, originalHeight, scaleToWidth, scaleToHeight);
+                CircuitElm elm = parseCircuitElmLine(str);
+
 
                 elements.add(elm);
             }
@@ -123,7 +125,7 @@ public class CircuitDefParser {
             //Column 4 is x2
             sb.append(p2.getX() + " ");
             //Column 5 is y2
-            sb.append(p2.getX() + " ");
+            sb.append(p2.getY() + " ");
 
             if(!elm.isWire()){
                 sb.append(elm.getValue());
@@ -135,7 +137,7 @@ public class CircuitDefParser {
     }
 
     private CircuitElm parseCircuitElmLine(String line){
-        return parseCircuitElmLine(line, 1, 1, 1, 1);
+        return parseCircuitElmLine(line, 1, 1, 5, 5);
     }
 
     private CircuitElm parseCircuitElmLine(String line, int originalWidth, int originalHeight, int scaleToWidth, int scaleToHeight){

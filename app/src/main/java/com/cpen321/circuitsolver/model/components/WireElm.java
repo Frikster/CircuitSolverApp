@@ -35,6 +35,10 @@ public class WireElm extends CircuitElm {
         return Constants.WIRE;
     }
 
+    public void onDraw(Canvas canvas, Paint paint, int yDisp, boolean test){
+        onDraw(canvas, paint, yDisp);
+    }
+
     @Override
     public void onDraw(Canvas canvas, Paint paint, int yDisp) {
         int startX = this.getPoint(0).getX();
@@ -42,13 +46,12 @@ public class WireElm extends CircuitElm {
         int endX = this.getPoint(1).getX();
         int endY = this.getPoint(1).getY();
 
-//        if (startY > endY) {
-//            canvas.drawLine(startX, startY, endX, startY, paint);
-//            canvas.drawLine(startX, endY, startX, startY, paint);
-//        } else{
-            canvas.drawLine(startX, startY, endX, startY, paint);
-            canvas.drawLine(endX, endY, endX, startY, paint);
-//        }
+        canvas.drawLine(startX, startY, endX, endY, paint);
+
+        if (isSelected()){
+            showSelected(canvas);
+        }
+
     }
 
     public boolean isWire(){
