@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -29,6 +31,10 @@ public class CircuitView extends SurfaceView implements Runnable {
     Paint paint;
     boolean run;
 
+    private Canvas canvas;
+    private float scale;
+    private Point zoomPoint;
+
     public CircuitView(Context context, AttributeSet attrs) {
         super(context, attrs);
         thread = null;
@@ -37,6 +43,8 @@ public class CircuitView extends SurfaceView implements Runnable {
         run = false;
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(10);
+
+        this.scale = 1;
     }
 
     @Override
@@ -50,7 +58,10 @@ public class CircuitView extends SurfaceView implements Runnable {
             } catch(InterruptedException e) {
                 e.printStackTrace();
             }
-            Canvas canvas = holder.lockCanvas();
+            this.canvas = holder.lockCanvas();
+            if (this.zoomPoint != null)
+                this.canvas.scale(this.scale, this.scale,
+                    this.zoomPoint.x, this.zoomPoint.y);
             canvas.drawColor(Color.WHITE);
             ReentrantLock lock = DrawActivity.getCircuitElmsLock();
             lock.lock();
@@ -79,6 +90,11 @@ public class CircuitView extends SurfaceView implements Runnable {
             }
             holder.unlockCanvasAndPost(canvas);
         }
+    }
+
+    public void control(DrawController controller) {
+        this.scale = (controller.getZoomScale() + this.scale) / 2f;
+        this.zoomPoint = controller.getMiddlePoint();
     }
 
     public void pause() {

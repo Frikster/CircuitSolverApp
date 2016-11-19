@@ -50,4 +50,9 @@ public class SimplePoint {
     public String toString(){
         return "(" + x + "," + y + ")";
     }
+
+    public double distanceFrom(SimplePoint point2) {
+        return Math.hypot(point2.getX() - this.getX(),
+                point2.getY()-this.getY());
+    }
 }
