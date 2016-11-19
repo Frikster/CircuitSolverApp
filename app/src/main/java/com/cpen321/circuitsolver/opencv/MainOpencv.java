@@ -1,24 +1,18 @@
 package com.cpen321.circuitsolver.opencv;
 
 import android.graphics.Bitmap;
-import android.provider.Settings;
-
 
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.model.components.ResistorElm;
-import com.cpen321.circuitsolver.model.components.VoltageElm;
-import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.service.CircuitDefParser;
-import com.cpen321.circuitsolver.util.Constants;
 
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -27,12 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
-import static org.opencv.core.Core.NORM_MINMAX;
-import static org.opencv.core.CvType.CV_32FC1;
-import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -95,7 +84,7 @@ public class MainOpencv {
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
-
+        Size s;
         int maxLinesToBeChunk = 3;
         int radius = 5;
         int minPoints = 20;
