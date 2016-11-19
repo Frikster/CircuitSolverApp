@@ -1,10 +1,13 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,16 +19,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.ui.EditActivity;
+import com.cpen321.circuitsolver.ui.HomeActivity;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
@@ -39,6 +50,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private Button eraseButton;
     private TextView unitsText;
     private EditText componentValueText;
+    private CircuitProject circuitProject;
+    private CircuitDefParser parser = new CircuitDefParser();
+
+    private int screenHeight = 1280;
+    private int screenWidth = 800;
 
 
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
@@ -112,6 +128,40 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView.setOnTouchListener(this);
         unitsText= (TextView) findViewById(R.id.units_display);
         componentValueText = (EditText) findViewById(R.id.component_value);
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        screenHeight = displaymetrics.heightPixels;
+        screenWidth = displaymetrics.widthPixels;
+
+        //For loading previous circuit or new openCV interpreted circuit
+        Bundle extras = getIntent().getExtras();
+        String dataLocation = null;
+        if(extras != null){
+            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+        }
+        if(dataLocation != null){
+            File circuitFolder = new File(dataLocation);
+            this.circuitProject = new CircuitProject(circuitFolder);
+            if(dataLocation.contains("example")){
+                generateExampleCircuitElms();
+            }
+            else{
+
+                try {
+                    String circStr = circuitProject.getCircuitText();
+                    int scaleToX = screenWidth;
+                    int scaleToY = screenHeight;
+                    circuitElms.clear();
+                    circuitElms.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else{
+
+        }
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,6 +261,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 selectedElm.setValue(Double.valueOf(newValue));
             }
         });
+    }
+
+
+    @Override
+    public void onBackPressed(){
+
+        // Convert list of elements to a circuit def file to save
+        String circStr = parser.elementsToTxt(circuitElms, screenHeight, screenWidth);
+        circuitProject.saveCircuitDefinitionFile(circStr);
+
+        Intent backToHomeIntent = new Intent(this, HomeActivity.class);
+        startActivity(backToHomeIntent);
+        finish();
     }
 
     @Override
@@ -402,6 +465,25 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 break;
             }
         }
+    }
+
+    private void generateExampleCircuitElms(){
+        ResetComponents.resetNumComponents();
+        this.circuitElms.add(new WireElm(new SimplePoint(300, 200),
+                new SimplePoint(300, 500)));
+        this.circuitElms.add(new WireElm(new SimplePoint(500, 300),
+                new SimplePoint(700, 500)));
+        this.circuitElms.add(new WireElm(new SimplePoint(700, 200),
+                new SimplePoint(700, 500)));
+        this.circuitElms.add(new WireElm(new SimplePoint(700, 500),
+                new SimplePoint(700, 800)));
+        this.circuitElms.add(new ResistorElm(new SimplePoint(300, 200),
+                new SimplePoint(700, 200), 10));
+        this.circuitElms.add(new ResistorElm(new SimplePoint(300, 500),
+                new SimplePoint(700, 500), 50));
+        this.circuitElms.add(new VoltageElm(new SimplePoint(300, 800),
+                new SimplePoint(700, 800), 12));
+
     }
 
 
