@@ -16,14 +16,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
+import com.cpen321.circuitsolver.ngspice.NgSpice;
+import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
+import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
 import com.cpen321.circuitsolver.ui.EditActivity;
 import com.cpen321.circuitsolver.util.Constants;
 
+import org.w3c.dom.Text;
+
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Timer;
@@ -34,10 +41,14 @@ import static com.cpen321.circuitsolver.ui.draw.AddComponentState.*;
 import static com.cpen321.circuitsolver.ui.draw.TouchState.UP;
 
 public class DrawActivity extends AppCompatActivity implements View.OnTouchListener {
+    public static final String TAG ="DrawActivity";
 
     private Button componentMenuButton;
     private Button eraseButton;
+    private Button solveButton;
     private TextView unitsText;
+    private TextView voltageText;
+    private TextView currentText;
     private EditText componentValueText;
 
 
@@ -91,7 +102,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return endX;
     }
 
-    private AddComponentState prevComponentState;
+    private AddComponentState prevComponentState = DC_SOURCE;
 
     /**
      * Get selected element
@@ -109,6 +120,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         eraseButton = (Button) findViewById(R.id.eraseButton);
+        solveButton = (Button) findViewById(R.id.solveButton);
+        voltageText = (TextView) findViewById(R.id.voltageText);
+        currentText = (TextView) findViewById(R.id.currentText);
         circuitView.setOnTouchListener(this);
         unitsText= (TextView) findViewById(R.id.units_display);
         componentValueText = (EditText) findViewById(R.id.component_value);
@@ -157,6 +171,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 eraserX = (int) (event.getRawX() - location[0]);
                 eraserY =  (int) (event.getRawY() - location[1]);
                 if(selectedElm != null) {
+                    if(componentState == SOLVED) {
+                        componentState = prevComponentState;
+                    }
                     circuitElmsLock.lock();
                     circuitElms.remove(selectedElm);
                     selectedElm = null;
@@ -164,25 +181,46 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 CircuitElm toRemove = getSelected(eraserX,eraserY);
                 if(toRemove != null) {
+                    if(componentState == SOLVED) {
+                        componentState = prevComponentState;
+                    }
                     circuitElmsLock.lock();
                     circuitElms.remove(toRemove);
                     circuitElmsLock.unlock();
                 }
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        Log.i("TAG", "Erase touched down");
+                        Log.i(TAG, "Erase touched down");
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        Log.i("TAG", "Erase moving: (" + eraserX + ", " + eraserY + ")");
+                        Log.i(TAG, "Erase moving: (" + eraserX + ", " + eraserY + ")");
                         break;
                     case MotionEvent.ACTION_UP:
-                        Log.i("TAG", "Erase touched up");
+                        Log.i(TAG, "Erase touched up");
                         break;
                 }
                 return true;
             }
         });
 
+        solveButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(componentState != SOLVED) {
+                    prevComponentState = componentState;
+                }
+                componentState = SOLVED;
+                ResetComponents.resetNumComponents();
+                AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(circuitElms);
+                circuit.init();
+                SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
+                interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this));
+                displayElementInfo();
+                return true;
+            }
+        });
+
+        componentValueText.setTag("not null");
         componentValueText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -209,6 +247,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
 
                 selectedElm.setValue(Double.valueOf(newValue));
+
+                if(componentState == SOLVED && componentValueText.getTag() != null) {
+                    componentState = prevComponentState;
+                }
+
+                componentValueText.setTag("not null");
             }
         });
     }
@@ -239,6 +283,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         x = (x >> truncateBits) << truncateBits;
         y = (y >> truncateBits) << truncateBits;
         int lengthThreshHold = 40;
+        Log.d(TAG, "State: " + componentState.toString());
+        Log.d(TAG, "Prev State: " + prevComponentState.toString());
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -264,7 +310,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         startY = p2Y;
                     }
                 }
-                Log.i("TAG", "touched down");
+                Log.i(TAG, "touched down");
                 CharSequence text = "Touched (" + x + "," + y + ")";
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -275,7 +321,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     selectedElm = null;
                     circuitElmsLock.unlock();
                 }
-                Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                Log.i(TAG, "moving: (" + x + ", " + y + ")");
                 break;
             case MotionEvent.ACTION_UP:
                 endX = x;
@@ -303,6 +349,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     SimplePoint startPoint = new SimplePoint(startX, startY);
                     SimplePoint endPoint = new SimplePoint(endX, endY);
                     CircuitElm elm = null;
+                    if(componentState == SOLVED) {
+                        componentState = prevComponentState;
+                    }
                     switch (componentState) {
                         case DC_SOURCE:
                             elm = new VoltageElm(startPoint, endPoint, 10);
@@ -322,7 +371,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     circuitElms.add(elm);
                     circuitElmsLock.unlock();
                 }
-                Log.i("TAG", "touched up");
+                Log.i(TAG, "touched up");
                 resetCoordinates();
                 break;
         }
@@ -376,33 +425,45 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         if (selectedElm == null) {
             unitsText.setText(Constants.NOTHING_SELECTED);
             componentValueText.setText("--");
-            return;
+            voltageText.setText("--");
+            currentText.setText("--");
+        } else {
+            componentValueText.setTag(null); //Used to distinguish between whether editText was changed by user, or pragmatically
+            componentValueText.setText(Double.toString(selectedElm.getValue()));
+            switch (selectedElm.getType()) {
+                case Constants.CAPACITOR: {
+                    unitsText.setText(Constants.CAPACITOR_UNITS);
+                    break;
+                }
+                case Constants.RESISTOR: {
+                    unitsText.setText(Constants.RESISTOR_UNITS);
+                    break;
+                }
+                case Constants.DC_VOLTAGE: {
+                    unitsText.setText(Constants.VOLTAGE_UNITS);
+                    break;
+                }
+                case Constants.INDUCTOR: {
+                    unitsText.setText(Constants.INDUCTOR_UNTIS);
+                    break;
+                }
+                case Constants.WIRE: {
+                    unitsText.setText(Constants.WIRE_UNTIS);
+                    componentValueText.setText("--");
+                    break;
+                }
+            }
         }
-        componentValueText.setText(Double.toString(selectedElm.getValue()));
-        switch (selectedElm.getType()) {
-            case Constants.CAPACITOR: {
-                unitsText.setText(Constants.CAPACITOR_UNITS);
-                break;
-            }
-            case Constants.RESISTOR: {
-                unitsText.setText(Constants.RESISTOR_UNITS);
-                break;
-            }
-            case Constants.DC_VOLTAGE: {
-                unitsText.setText(Constants.VOLTAGE_UNITS);
-                break;
-            }
-            case Constants.INDUCTOR: {
-                unitsText.setText(Constants.INDUCTOR_UNTIS);
-                break;
-            }
-            case Constants.WIRE: {
-                unitsText.setText(Constants.WIRE_UNTIS);
-                componentValueText.setText("--");
-                break;
-            }
+
+        if(componentState == SOLVED && selectedElm != null && selectedElm.getType() != Constants.WIRE) {
+            voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
+            currentText.setText(Double.toString(selectedElm.getCurrent()) + " A");
+        } else {
+            voltageText.setText("--");
+            currentText.setText("--");
         }
     }
+
 
 
 
