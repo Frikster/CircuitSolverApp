@@ -288,6 +288,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                circuitView.resume();
                 selectedElm = getSelected(x, y);
                 startX = x;
                 startY = y;
@@ -373,6 +374,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 Log.i(TAG, "touched up");
                 resetCoordinates();
+                circuitView.pause();
                 break;
         }
 

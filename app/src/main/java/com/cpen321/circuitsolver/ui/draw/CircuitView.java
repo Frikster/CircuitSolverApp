@@ -45,6 +45,11 @@ public class CircuitView extends SurfaceView implements Runnable {
             if(!holder.getSurface().isValid()) {
                 continue;
             }
+            try {
+                Thread.sleep(50);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
             Canvas canvas = holder.lockCanvas();
             canvas.drawColor(Color.WHITE);
             ReentrantLock lock = DrawActivity.getCircuitElmsLock();
