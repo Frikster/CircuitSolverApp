@@ -2,16 +2,13 @@ package com.cpen321.circuitsolver.service;
 
 
 import com.cpen321.circuitsolver.model.CircuitNode;
-import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by jen on 2016-10-13.
@@ -20,7 +17,6 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
 
     private List<CircuitNode> nodes;
     private List<CircuitElm> elements;
-
 
     /**
      * Note that list of elements may be modified by AnalyzeCircuitImpl instance in its other methods
@@ -35,20 +31,13 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
      */
     public void init(){
         nodes = new ArrayList<CircuitNode>();
-        ResetComponents.resetNumComponents();
-        createAndInitializeNodesForElements();
-        linkNodesWithCorrespondingElements();
 
-    }
-
-    private void createAndInitializeNodesForElements() {
         for(CircuitElm e: elements){
-            CircuitNode cn = new CircuitNode();
             //Wire elements are technically part of one node (voltage is the same at both ends)
             if(e.getType().equals(Constants.WIRE)){
                 SimplePoint p1 = e.getPoint(0);
                 SimplePoint p2 = e.getPoint(1);
-
+                CircuitNode cn;
                 //if p1 corresponds to node but p2 doesn't, then add p2 to corresponding node
                 if(nodesContainPoint(p1) && !nodesContainPoint(p2)) {
                     cn = getNodeWithPoint(p1);
@@ -86,6 +75,7 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
             else{
                 for(int i = 0; i < e.getNumPoints(); i++){
                     SimplePoint p = e.getPoint(i);
+                    CircuitNode cn;
                     if(nodesContainPoint(p)){
                         cn = getNodeWithPoint(p);
                         e.setNode(i, cn);
@@ -100,16 +90,6 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
                 }
             }
 
-        }
-    }
-
-    /**
-     * This initializes the elements attribute in CircuitNode class so the node knows what elements it is connected to
-     */
-    private void linkNodesWithCorrespondingElements(){
-        for(CircuitElm e : elements){
-            e.getNode(0).addElement(e);
-            e.getNode(1).addElement(e);
         }
 
     }
@@ -135,22 +115,10 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
         return null;
     }
 
-    private List<CircuitElm> getElmsWithPoint(SimplePoint p){
-        List<CircuitElm> elmList = new ArrayList<CircuitElm>();
-        for(CircuitElm elm: elements){
-            if(elm.correspondsToPoint(p))
-                elmList.add(elm);
-        }
-        return elmList;
-    }
-
     private CircuitNode mergeNodes(CircuitNode n1, CircuitNode n2){
         //Add all the points corresponding to n2 to n1
         for(SimplePoint p: n2.getPoints()){
             n1.addPoint(p);
-        }
-        for(CircuitElm e: n2.getElements()){
-            n1.addElement(e);
         }
         //Update all elements pointing to n2 to point to n1
         for(CircuitElm e: elements){
@@ -163,21 +131,6 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
         nodes.remove(n2);
         return n1;
     }
-
-    /**
-     * Returns circuit node that is connected to these elements, or null if no node is connected to all the given elements
-     * @param elmList
-     * @return
-     */
-//    public CircuitNode getNodeConnectedToElements(List<CircuitElm> elmList){
-//        Set elmSet = new HashSet<CircuitElm>(elmList);
-//        for(CircuitNode node: nodes){
-//            Set nodeSet = new HashSet<CircuitElm>(node.getElements());
-//            if(nodeSet.containsAll(elmSet))
-//                return node;
-//        }
-//        return null;
-//    }
 
     @Override
     public double getVoltageDiff(CircuitElm elm){

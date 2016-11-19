@@ -124,6 +124,8 @@ public class CircuitView extends SurfaceView implements Runnable {
         }
     }
 
+    //TODO move draw methods into the circuitElm classes themselves
+
     private void drawResistor(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint){
         //simple lines sections
         float p1X = startX + (float)0.25*(stopX - startX);
