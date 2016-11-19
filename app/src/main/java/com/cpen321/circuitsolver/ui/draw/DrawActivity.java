@@ -265,11 +265,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView.pause();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        circuitView.resume();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        circuitView.resume();
+//    }
 
     private int[] location = new int[2];
 
