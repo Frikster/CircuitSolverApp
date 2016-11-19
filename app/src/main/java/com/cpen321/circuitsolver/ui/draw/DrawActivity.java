@@ -168,6 +168,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                circuitView.resume();
                 eraserX = (int) (event.getRawX() - location[0]);
                 eraserY =  (int) (event.getRawY() - location[1]);
                 if(selectedElm != null) {
@@ -199,6 +200,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         Log.i(TAG, "Erase touched up");
                         break;
                 }
+                circuitView.pause();
                 return true;
             }
         });
