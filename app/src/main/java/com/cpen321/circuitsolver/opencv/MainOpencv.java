@@ -19,6 +19,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import java.util.Set;
 
 import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
+import static org.opencv.core.Core.BORDER_DEFAULT;
+import static org.opencv.core.Core.addWeighted;
+import static org.opencv.core.Core.convertScaleAbs;
 import static org.opencv.core.Core.NORM_MINMAX;
 import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
@@ -68,6 +72,45 @@ public class MainOpencv {
      * @return the bitmap with the detected lines and a circle around the components
      */
     public Bitmap houghLines(Bitmap bMap){
+        // Sobel Edge Detection - theoretically it should be worse
+//        //Convert to a canny edge detector grayscale mat
+//        System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
+//        bitMapHeight = bMap.getHeight();
+//        bitMapWidth = bMap.getWidth();
+//
+//        Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Utils.bitmapToMat(bMap, tmp);
+//        Mat grad_x = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat grad_y = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat abs_grad_x = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat abs_grad_y = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat src_gray = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//
+//        int scale = 1;
+//        int delta = 0;
+//        int ddepth = CvType.CV_16S;
+//
+//        Imgproc.GaussianBlur( tmp, tmp, new Size(3,3), 0, 0, BORDER_DEFAULT );
+//
+//        /// Convert it to gray
+//        cvtColor( tmp, src_gray, COLOR_GRAY2BGR);
+//
+//        /// Gradient X
+//        //Scharr( src_gray, grad_x, ddepth, 1, 0, scale, delta, BORDER_DEFAULT );
+//        Imgproc.Sobel( src_gray, grad_x, ddepth, 1, 0, 3, scale, delta, BORDER_DEFAULT );
+//        convertScaleAbs( grad_x, abs_grad_x );
+//
+//        /// Gradient Y
+//        //Scharr( src_gray, grad_y, ddepth, 0, 1, scale, delta, BORDER_DEFAULT );
+//        Imgproc.Sobel( src_gray, grad_y, ddepth, 0, 1, 3, scale, delta, BORDER_DEFAULT );
+//        convertScaleAbs( grad_y, abs_grad_y );
+//
+//        /// Total Gradient (approximate)
+//        addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, tmp2 );
+//
+//        //cvtColor(tmp,tmp2,COLOR_BGR2GRAY);
+//        //Imgproc.Canny(tmp, tmp2, 40, 200);
 
 
         //Convert to a canny edge detector grayscale mat
@@ -76,7 +119,6 @@ public class MainOpencv {
         bitMapWidth = bMap.getWidth();
 
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-        Mat tmp1 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
 
@@ -84,6 +126,7 @@ public class MainOpencv {
         Imgproc.Canny(tmp, tmp2, 40, 200);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+
 
         //Execute the hough transform on the canny edge detector
         Mat lines = new Mat();
@@ -234,6 +277,7 @@ public class MainOpencv {
             }
         }
         */
+        // Print out the bitmap (for debugging)
         int x=0;
         for (List<Element> wire : separatedComponents)
         {
@@ -540,8 +584,6 @@ public class MainOpencv {
     }
 
     private List<List<Element>> addOrphansToWires(List<List<Element>> wires, List<Component> allComponents){
-
-
 
         int distanceFromComponent = 12;
         List<List<Element>> orphans = new ArrayList<>();
