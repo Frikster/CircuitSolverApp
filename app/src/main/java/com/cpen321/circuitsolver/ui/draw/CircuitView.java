@@ -83,7 +83,7 @@ public class CircuitView extends SurfaceView implements Runnable {
 
     public void pause() {
         run = false;
-        while(true) {
+        while(true && thread != null) {
             try {
                 thread.join();
                 break;
