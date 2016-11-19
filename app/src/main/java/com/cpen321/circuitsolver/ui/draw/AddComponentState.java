@@ -5,5 +5,5 @@ package com.cpen321.circuitsolver.ui.draw;
  */
 
 public enum AddComponentState {
-    DC_SOURCE, RESISTOR, WIRE, ERASE
+    DC_SOURCE, RESISTOR, WIRE, ERASE, SOLVED
 }
