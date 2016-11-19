@@ -46,8 +46,8 @@ public class MainOpencv {
     //########MODIFIED ###############
     //MainOpenCV
     //##############TODO :#################
-    //Control there exists a line before adding
     //Integration with tenserflow
+    //Javadoc
     //##########################################
 
 
@@ -267,7 +267,12 @@ public class MainOpencv {
         return bm;
     }
 
-
+    /**
+     *
+     * @param corners A list of corners, each corner beeing represented by an array of length 2, X, Y
+     * @param components  A list of components, each component beeing represented by an array of length 2, X, Y
+     * @return list of instances of Element
+     */
     private List<Element> objectizeCompAndCorner(List<double[]> corners, List<double[]> components){
         List<Corner> cornerObjects = objectizeCorners(corners);
         List<Component> componentObjects = objectizeComponents(components);
@@ -278,7 +283,11 @@ public class MainOpencv {
     }
 
 
-
+    /**
+     *
+     * @return The final result of opencv, beeing passed to the next part of CircuitSolver
+     * The final result is a collection of wires and components, each having a starting and an end point
+     */
     public List<CircuitElm> getCircuitElements(){
         CircuitElmFactory factory= new CircuitElmFactory();
         List<CircuitElm> circuitElements = new ArrayList<>();
@@ -539,6 +548,12 @@ public class MainOpencv {
         return components;
     }
 
+    /**
+     *
+     * @param wires All the current wires that are connected with corners
+     * @param allComponents All the components that have originally been detected
+     * @return All the wires and the previously unconnected components in a list of wires
+     */
     private List<List<Element>> addOrphansToWires(List<List<Element>> wires, List<Component> allComponents){
 
 
@@ -581,6 +596,11 @@ public class MainOpencv {
     }
 
 
+    /**Utilitary method to return a closed circuit
+     * Finds all points that are not part of a closed circuit (points that don't have two wires going in opposite direction)
+     * @param wires All the wires detected
+     * @return The points that need to be connected
+     */
 
     private List<Corner> findCornersToWire(List<List<Element>> wires){
         List<Corner> toFindAnOther = new ArrayList<>();
@@ -602,6 +622,11 @@ public class MainOpencv {
     }
 
 
+    /**
+     * Makes sure there isn't a wire in one direction, and the same in the opposite direction
+     * @param wires All the found wires
+     * @return A list of unique wires
+     */
     private List<List<Element>> removeDuplicateWires (List<List<Element>> wires){
         List<List<Element>> singleWires = new ArrayList<>();
         for(int i=0; i<wires.size();i++){
@@ -628,6 +653,14 @@ public class MainOpencv {
         return singleWires;
     }
 
+    /**Connects all the missing wires to form a closed component
+     * Note that this method usies the simple assumption to connect the unconnected points to the closest unconnected points
+     * This function could just be removed from the pipeline, and let the user complete the missing wires
+     *
+     * @param wires All the detected wires
+     * @param cornersToWire The points/corners that need to be connected to another point
+     * @return A list of wires representing a closed circuit
+     */
     private List<List<Element>> addMisingWires(List<List<Element>> wires, List<Corner> cornersToWire){
         List<List<Element>> wiresWithMissing = new ArrayList<>(wires);
         List<Corner> allCorners = getCornersFromWires(wires);
@@ -684,6 +717,11 @@ public class MainOpencv {
     }
 
 
+    /**Gets all the corners once from a list of wires
+     *
+     * @param wires The found wires
+     * @return The corners present in wires
+     */
 
     private List<Corner> getCornersFromWires(List<List<Element>> wires){
         List<Corner> corners = new ArrayList<>();
@@ -712,6 +750,12 @@ public class MainOpencv {
         return corners;
     }
 
+    /**Utilitary function to know if an element is contained in a list of Element
+     *
+     * @param element list of Element to search in
+     * @param e The element to look for
+     * @return true if e is contained in Element
+     */
     private boolean containsElement(List<Element> element, Element e){
         for(Element e1 : element){
             if(e1.getX() == e.getX() && e1.getY()==e.getY()){
@@ -720,14 +764,13 @@ public class MainOpencv {
         }
         return false;
     }
-    private boolean containsComponent(List<Component> alreadyAdded, Component corner){
-        for(Component c : alreadyAdded){
-            if(c.getX() == corner.getX() && c.getY()==corner.getY()){
-                return true;
-            }
-        }
-        return false;
-    }
+
+    /**Utilitary function to know if a Corner is contained in a list of Corner
+     *
+     * @param alreadyAdded list of Corner to search in
+     * @param corner The Corner to look for
+     * @return true if corner is contained in alreadyAdded
+     */
     private boolean containsCorner(List<Corner> alreadyAdded, Corner corner){
         for(Corner c : alreadyAdded){
             if(c.getX() == corner.getX() && c.getY()==corner.getY()){
@@ -740,7 +783,7 @@ public class MainOpencv {
 
     /**Takes all the wires as a parameter and adds a Corner at the end if it finishes by a Component
      *
-     * @param wires
+     * @param wires The detected wires
      * @return
      */
 
@@ -787,6 +830,9 @@ public class MainOpencv {
 
     /**Function to make from [Corner, Component1, Component2,...., ComponentN, Corner] => [Corner, Component1, Corner] , [Corner, Component2, Corner],... [Corner, ComponentN, Corner]
      *Separates two adjacent corners
+     * Important note: After this function, it is sure that a wire is of max size 3, and that if it is of size 3, it starts and ends with a Corner.
+     * If it is of size 2 , it starts and ends with a Corner.
+     * This comes from the fact that the param wires comes from the detectWires() function, and thus each List<Element> in wires starts with a Corner
      * @param wires The initial wires found
      * @return The components separated
      */
@@ -852,6 +898,8 @@ public class MainOpencv {
     }
 
     /**Recursive function to detect all the wires
+     * This is the main function to detect wires from components and Corners.
+     * It always starts with a corner, and searches in an horizontal and vertical way to find other components and/or corners
      *
      * @param elements The elements to detect from
      * @param currCorner The corner from which we look for wires
@@ -1056,6 +1104,15 @@ public class MainOpencv {
         return result;
     }
 
+    /**Utilitary function for detectWires. makes sure there is a line between two vertically or horizontal Elements
+     *
+     * @param e1 element 1
+     * @param e2 element 2
+     * @param lines The list of found lines
+     * @param same Character to say if we're interested in horizontal or vertically alignes elements
+     * @param threshold The XY threshold to consider two elements as aligned
+     * @return true if a line was found in lines between the two elements
+     */
     private boolean existsALineBetweenTwoPoints(Element e1, Element e2, List<double[]> lines, char same, int threshold){
         double x1 = e1.getX();
         double y1 = e1.getY();
@@ -1362,7 +1419,7 @@ public class MainOpencv {
         return lineOneRound;
     }
 
-    /**
+    /**Makes from a lot of horizontal chunks one nice line
      *
      * @param lines found from the original hough transform
      * @return the lines, smoothed
