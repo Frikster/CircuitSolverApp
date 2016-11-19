@@ -126,7 +126,8 @@ public class MainOpencv {
         Imgproc.Canny(tmp, tmp2, 40, 200);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-
+        Bitmap tmp2_bm_postCanny = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp2, tmp2_bm_postCanny);
 
         //Execute the hough transform on the canny edge detector
         Mat lines = new Mat();
@@ -170,16 +171,18 @@ public class MainOpencv {
 
 
 
-        int twoCornersTooNear = 15;
+        int twoCornersTooNear = 15*4;
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
-        int tooNearFromComponent = 10;
+        int tooNearFromComponent = 10*4;
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
 
         if(validCorners.size() == 0){
             validCorners = new ArrayList<>(singleCorners);
         }
-        drawCircles(tmp3,validCorners, new Scalar(0,255,0),10);
-        drawCircles(tmp3,components, new Scalar(255,0,0),10);
+        drawCircles(tmp3,validCorners, new Scalar(0,255,0),10*4);
+        drawCircles(tmp3,components, new Scalar(255,0,0),10*4);
+        Bitmap tmp3_bm_postCircles = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp3, tmp3_bm_postCircles);
 
         System.out.println("Nr of corners : "+validCorners.size());
         System.out.println("Nr of components : "+components.size());
