@@ -62,8 +62,6 @@ public class CircuitView extends SurfaceView implements Runnable {
             if (this.zoomPoint != null)
                 this.canvas.scale(this.scale, this.scale);
             canvas.drawColor(Color.WHITE);
-            ReentrantLock lock = DrawActivity.getCircuitElmsLock();
-            lock.lock();
             paint.setColor(Color.BLACK);
             //get component state
             AddComponentState state = DrawActivity.getComponentState();
@@ -71,8 +69,7 @@ public class CircuitView extends SurfaceView implements Runnable {
                 SimplePoint start = circuitElm.getP1();
                 SimplePoint end = circuitElm.getP2();
                 drawCircuitElm(canvas, circuitElm.getType(), start.getX(), start.getY(), end.getX(), end.getY(), paint);
-            }
-            lock.unlock();
+            };
             CircuitElm selected = DrawActivity.getSelectedElm();
             if(selected != null) {
                 SimplePoint start = selected.getP1();
