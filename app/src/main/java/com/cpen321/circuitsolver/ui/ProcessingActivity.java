@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.opencv.MainOpencv;
+import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
@@ -18,8 +19,6 @@ import com.cpen321.circuitsolver.util.ImageUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 
 public class ProcessingActivity extends AppCompatActivity {
 
@@ -79,7 +78,7 @@ public class ProcessingActivity extends AppCompatActivity {
     }
 
     private void displayOutputImage() {
-        // Intent displayIntent = new Intent(getApplicationContext(), EditActivity.class);
+
         Intent displayIntent = new Intent(getApplicationContext(), DrawActivity.class);
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
         startActivity(displayIntent);

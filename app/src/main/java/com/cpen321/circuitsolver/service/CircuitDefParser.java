@@ -35,10 +35,7 @@ public class CircuitDefParser {
             }
             //Ignore lines starting with #
             else if(!str.startsWith("#")){
-                //CircuitElm elm = parseCircuitElmLine(str, originalWidth, originalHeight, scaleToWidth, scaleToHeight);
-                CircuitElm elm = parseCircuitElmLine(str);
-
-
+                CircuitElm elm = parseCircuitElmLine(str, originalWidth, originalHeight, scaleToWidth, scaleToHeight);
                 elements.add(elm);
             }
             else{
@@ -108,7 +105,7 @@ public class CircuitDefParser {
      * Writes List of circuit elements into list of circuit elements
      * @param elements
      */
-    public String elementsToTxt(List<CircuitElm> elements, int originalHeight, int originalWidth){
+    public String elementsToTxt(List<CircuitElm> elements, int originalWidth, int originalHeight){
         StringBuilder sb = new StringBuilder();
         sb.append("$ " + originalHeight + " " + originalWidth + "\n");
         for(CircuitElm elm : elements){

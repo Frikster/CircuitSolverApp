@@ -1,10 +1,13 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -25,14 +28,21 @@ import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.ngspice.NgSpice;
 import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
 import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.ui.EditActivity;
+import com.cpen321.circuitsolver.ui.HomeActivity;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,11 +56,21 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private Button componentMenuButton;
     private Button eraseButton;
     private Button solveButton;
+    private Button moveModeButton;
     private TextView unitsText;
     private TextView voltageText;
     private TextView currentText;
     private EditText componentValueText;
+    private CircuitProject circuitProject;
+    private CircuitDefParser parser = new CircuitDefParser();
 
+    private int screenHeight;
+    private int screenWidth;
+
+    private DrawController drawController;
+
+    private boolean moveMode = false;
+    private boolean firstZoom = true;
 
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
@@ -120,12 +140,48 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         eraseButton = (Button) findViewById(R.id.eraseButton);
+        moveModeButton = (Button) findViewById(R.id.moveButton);
         solveButton = (Button) findViewById(R.id.solveButton);
         voltageText = (TextView) findViewById(R.id.voltageText);
         currentText = (TextView) findViewById(R.id.currentText);
         circuitView.setOnTouchListener(this);
         unitsText= (TextView) findViewById(R.id.units_display);
         componentValueText = (EditText) findViewById(R.id.component_value);
+        this.drawController = new DrawController();
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        screenHeight = displaymetrics.heightPixels;
+        screenWidth = displaymetrics.widthPixels;
+
+        //For loading previous circuit or new openCV interpreted circuit
+        Bundle extras = getIntent().getExtras();
+        String dataLocation = null;
+        if(extras != null){
+            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+        }
+        if(dataLocation != null){
+            File circuitFolder = new File(dataLocation);
+            this.circuitProject = new CircuitProject(circuitFolder);
+            if(dataLocation.contains("example")){
+                generateExampleCircuitElms();
+            }
+            else{
+
+                try {
+                    String circStr = circuitProject.getCircuitText();
+                    int scaleToX = screenWidth;
+                    int scaleToY = screenHeight;
+                    circuitElms.clear();
+                    circuitElms.addAll(parser.parseElements(circStr, scaleToX, scaleToY));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        else{
+            System.out.println("We should never get here");
+        }
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +220,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 popup.show(); //showing popup menu
             }
         }); //closing the setOnClickListener method
+
+        this.moveModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveMode = !moveMode;
+            }
+        });
 
         eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -257,6 +320,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         });
     }
 
+
+    @Override
+    public void onBackPressed(){
+
+        // Convert list of elements to a circuit def file to save
+        String circStr = parser.elementsToTxt(circuitElms, screenHeight, screenWidth);
+        circuitProject.saveCircuitDefinitionFile(circStr);
+
+        Intent backToHomeIntent = new Intent(this, HomeActivity.class);
+        startActivity(backToHomeIntent);
+        finish();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -274,110 +350,152 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int x;
-        int y;
-        int truncateBits = 5;
-        v.getLocationOnScreen(location);
-        x = (int) (event.getRawX() - location[0]);
-        y =  (int) (event.getRawY() - location[1]);
-        x = (x >> truncateBits) << truncateBits;
-        y = (y >> truncateBits) << truncateBits;
-        int lengthThreshHold = 40;
-        Log.d(TAG, "State: " + componentState.toString());
-        Log.d(TAG, "Prev State: " + prevComponentState.toString());
+        if (this.moveMode) {
+            if (event.getPointerCount() == 2)
+            {
+                SimplePoint fingerOne = new SimplePoint((int) event.getX(0), (int) event.getY(0));
+                SimplePoint fingerTwo = new SimplePoint((int) event.getX(1),(int)  event.getY(1));
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE: {
+                        if (this.firstZoom) {
+                            this.firstZoom = false;
+                            this.drawController.setStartFingerOne(fingerOne);
+                            this.drawController.setStartFingerTwo(fingerTwo);
+                        } else {
+                            this.drawController.setFingerOne(fingerOne);
+                            this.drawController.setFingerTwo(fingerTwo);
+                        }
+                        break;
+                    }
+                    case MotionEvent.ACTION_POINTER_UP: {
+                        this.firstZoom = true;
+                    }
+                    default: {
+                        this.drawController.setFingerOne(fingerOne);
+                        this.drawController.setFingerTwo(fingerTwo);
+                    }
+                }
+                this.circuitView.control(this.drawController);
+            } else if (event.getPointerCount() == 1) {
+//                this.drawController.setFingerOne(fingerOne);
+            }
+            return true;
+        } else {
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                selectedElm = getSelected(x, y);
-                startX = x;
-                startY = y;
-                endX = x;
-                endY = y;
-                for (CircuitElm circuitElm : circuitElms) {
-                    //check to see if the new points we are drawing are near existing ones, if so connect them
-                    int threshHold = 50;
-                    SimplePoint p1 = circuitElm.getP1();
-                    SimplePoint p2 = circuitElm.getP2();
-                    int p1X = p1.getX();
-                    int p1Y = p1.getY();
-                    int p2X = p2.getX();
-                    int p2Y = p2.getY();
-                    if (getDistance(startX, startY, p1X, p1Y) < threshHold) {
-                        startX = p1X;
-                        startY = p1Y;
-                    } else if (getDistance(startX, startY, p2X, p2Y) < threshHold) {
-                        startX = p2X;
-                        startY = p2Y;
+            int x;
+            int y;
+            int truncateBits = 5;
+            v.getLocationOnScreen(location);
+            x = (int) ((event.getRawX() - location[0]) / this.circuitView.scale);
+            y = (int) ((event.getRawY() - location[1]) / this.circuitView.scale);
+//            if (this.circuitView.zoomPoint != null){
+//                x -= this.circuitView.zoomPoint.x;
+//                y -= this.circuitView.zoomPoint.y;
+//            }
+            x = (x >> truncateBits) << truncateBits;
+            y = (y >> truncateBits) << truncateBits;
+            int lengthThreshHold = 40;
+            Log.d(TAG, "State: " + componentState.toString());
+            Log.d(TAG, "Prev State: " + prevComponentState.toString());
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    //circuitView.resume();
+
+                    selectedElm = getSelected(x, y);
+                    startX = x;
+                    startY = y;
+                    endX = x;
+                    endY = y;
+                    for (CircuitElm circuitElm : circuitElms) {
+                        //check to see if the new points we are drawing are near existing ones, if so connect them
+                        int threshHold = 50;
+                        SimplePoint p1 = circuitElm.getP1();
+                        SimplePoint p2 = circuitElm.getP2();
+                        int p1X = p1.getX();
+                        int p1Y = p1.getY();
+                        int p2X = p2.getX();
+                        int p2Y = p2.getY();
+                        if (getDistance(startX, startY, p1X, p1Y) < threshHold) {
+                            startX = p1X;
+                            startY = p1Y;
+                        } else if (getDistance(startX, startY, p2X, p2Y) < threshHold) {
+                            startX = p2X;
+                            startY = p2Y;
+                        }
                     }
-                }
-                Log.i(TAG, "touched down");
-                CharSequence text = "Touched (" + x + "," + y + ")";
-                break;
-            case MotionEvent.ACTION_MOVE:
-                endX = x;
-                endY = y;
-                if (getDistance(startX, startY, endX, endY) > lengthThreshHold) {
-                    circuitElmsLock.lock();
-                    selectedElm = null;
-                    circuitElmsLock.unlock();
-                }
-                Log.i(TAG, "moving: (" + x + ", " + y + ")");
-                break;
-            case MotionEvent.ACTION_UP:
-                endX = x;
-                endY = y;
-                for (CircuitElm circuitElm : circuitElms) {
-                    //check to see if the new points we are drawing are near existing ones, if so connect them
-                    int threshHold = 50;
-                    SimplePoint p1 = circuitElm.getP1();
-                    SimplePoint p2 = circuitElm.getP2();
-                    int p1X = p1.getX();
-                    int p1Y = p1.getY();
-                    int p2X = p2.getX();
-                    int p2Y = p2.getY();
-                    if (getDistance(endX, endY, p1X, p1Y) < threshHold) {
-                        endX = p1X;
-                        endY = p1Y;
-                    } else if (getDistance(endX, endY, p2X, p2Y) < threshHold) {
-                        endX = p2X;
-                        endY = p2Y;
+                    Log.i(TAG, "touched down");
+                    CharSequence text = "Touched (" + x + "," + y + ")";
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    endX = x;
+                    endY = y;
+                    if (getDistance(startX, startY, endX, endY) > lengthThreshHold) {
+                        circuitElmsLock.lock();
+                        selectedElm = null;
+                        circuitElmsLock.unlock();
                     }
-                }
-                int length = getDistance(startX, startY, endX, endY);
-                //don't create a circuit element if it is too short
-                if (length > lengthThreshHold && componentState != ERASE) {
-                    SimplePoint startPoint = new SimplePoint(startX, startY);
-                    SimplePoint endPoint = new SimplePoint(endX, endY);
-                    CircuitElm elm = null;
-                    if(componentState == SOLVED) {
-                        componentState = prevComponentState;
+                    Log.i(TAG, "moving: (" + x + ", " + y + ")");
+                    break;
+                case MotionEvent.ACTION_UP:
+                    endX = x;
+                    endY = y;
+                    for (CircuitElm circuitElm : circuitElms) {
+                        //check to see if the new points we are drawing are near existing ones, if so connect them
+                        int threshHold = 50;
+                        SimplePoint p1 = circuitElm.getP1();
+                        SimplePoint p2 = circuitElm.getP2();
+                        int p1X = p1.getX();
+                        int p1Y = p1.getY();
+                        int p2X = p2.getX();
+                        int p2Y = p2.getY();
+                        if (getDistance(endX, endY, p1X, p1Y) < threshHold) {
+                            endX = p1X;
+                            endY = p1Y;
+                        } else if (getDistance(endX, endY, p2X, p2Y) < threshHold) {
+                            endX = p2X;
+                            endY = p2Y;
+                        }
                     }
-                    switch (componentState) {
-                        case DC_SOURCE:
-                            elm = new VoltageElm(startPoint, endPoint, 10);
-                            break;
-                        case RESISTOR:
-                            elm = new ResistorElm(startPoint, endPoint, 10);
-                            break;
-                        case WIRE:
-                            elm = new WireElm(startPoint, endPoint);
-                            break;
-                        default:
-                            elm = new WireElm(startPoint, endPoint);
-                            break;
+                    int length = getDistance(startX, startY, endX, endY);
+                    //don't create a circuit element if it is too short
+                    if (length > lengthThreshHold && componentState != ERASE) {
+                        SimplePoint startPoint = new SimplePoint(startX, startY);
+                        SimplePoint endPoint = new SimplePoint(endX, endY);
+                        CircuitElm elm = null;
+                        if(componentState == SOLVED) {
+                            componentState = prevComponentState;
+                        }
+                        switch (componentState) {
+                            case DC_SOURCE:
+                                elm = new VoltageElm(startPoint, endPoint, 10);
+                                break;
+                            case RESISTOR:
+                                elm = new ResistorElm(startPoint, endPoint, 10);
+                                break;
+                            case WIRE:
+                                elm = new WireElm(startPoint, endPoint);
+                                break;
+                            default:
+                                elm = new WireElm(startPoint, endPoint);
+                                break;
+                        }
+                        selectedElm = elm;
+                        circuitElmsLock.lock();
+                        circuitElms.add(elm);
+                        circuitElmsLock.unlock();
                     }
-                    selectedElm = elm;
-                    circuitElmsLock.lock();
-                    circuitElms.add(elm);
-                    circuitElmsLock.unlock();
-                }
-                Log.i(TAG, "touched up");
-                resetCoordinates();
-                break;
+                    Log.i(TAG, "touched up");
+                    resetCoordinates();
+                    //circuitView.pause();
+
+                    break;
+            }
+
+            displayElementInfo();
+            return true;
+
         }
-
-        displayElementInfo();
-        return true;
     }
 
     private int getDistance(int x1, int y1, int x2, int y2) {
@@ -464,7 +582,24 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
 
+    private void generateExampleCircuitElms(){
+        ResetComponents.resetNumComponents();
+        this.circuitElms.add(new WireElm(new SimplePoint(300, 200),
+                new SimplePoint(300, 500)));
+        this.circuitElms.add(new WireElm(new SimplePoint(500, 300),
+                new SimplePoint(700, 500)));
+        this.circuitElms.add(new WireElm(new SimplePoint(700, 200),
+                new SimplePoint(700, 500)));
+        this.circuitElms.add(new WireElm(new SimplePoint(700, 500),
+                new SimplePoint(700, 800)));
+        this.circuitElms.add(new ResistorElm(new SimplePoint(300, 200),
+                new SimplePoint(700, 200), 10));
+        this.circuitElms.add(new ResistorElm(new SimplePoint(300, 500),
+                new SimplePoint(700, 500), 50));
+        this.circuitElms.add(new VoltageElm(new SimplePoint(300, 800),
+                new SimplePoint(700, 800), 12));
 
+    }
 
 
 }

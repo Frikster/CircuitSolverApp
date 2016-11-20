@@ -44,6 +44,14 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/eraseButton"
         android:layout_toEndOf="@+id/eraseButton" />
+    <Button
+        android:text="Move/Edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/moveButton"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/solveButton"
+        android:layout_toEndOf="@+id/solveButton" />
 
     </LinearLayout>
 
