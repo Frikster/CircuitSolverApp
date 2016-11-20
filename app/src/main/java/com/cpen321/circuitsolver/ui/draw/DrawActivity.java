@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
@@ -269,7 +270,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     prevComponentState = componentState;
                 }
                 componentState = SOLVED;
-                ResetComponents.resetNumComponents();
+                CircuitNode.resetNumNodes();
                 AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(circuitElms);
                 circuit.init();
                 SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
@@ -377,7 +378,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
             return true;
         } else {
-
             int x;
             int y;
             int truncateBits = 5;
