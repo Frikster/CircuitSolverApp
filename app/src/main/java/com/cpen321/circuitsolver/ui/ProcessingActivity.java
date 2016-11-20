@@ -83,5 +83,4 @@ public class ProcessingActivity extends AppCompatActivity {
         startActivity(displayIntent);
 
     }
-
 }
