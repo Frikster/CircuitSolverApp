@@ -138,8 +138,8 @@ public class HomeActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
+//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                 startActivity(displayIntent);
                 finish();
             }

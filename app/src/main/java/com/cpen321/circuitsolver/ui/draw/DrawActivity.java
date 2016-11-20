@@ -377,7 +377,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
             return true;
         } else {
-
             int x;
             int y;
             int truncateBits = 5;
