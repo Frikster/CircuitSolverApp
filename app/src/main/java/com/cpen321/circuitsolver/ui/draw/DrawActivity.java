@@ -75,10 +75,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private static CircuitElm selectedElm = null;
 
-    public static ReentrantLock getCircuitElmsLock() {
-        return circuitElmsLock;
-    }
-
     public static ArrayList<CircuitElm> getCircuitElms() {
         return circuitElms;
     }
@@ -188,19 +184,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     if(componentState == SOLVED) {
                         componentState = prevComponentState;
                     }
-                    circuitElmsLock.lock();
+                    circuitView.pause();
                     circuitElms.remove(selectedElm);
                     selectedElm = null;
-                    circuitElmsLock.unlock();
+                    circuitView.resume();
                 }
                 CircuitElm toRemove = getSelected(eraserX,eraserY);
                 if(toRemove != null) {
                     if(componentState == SOLVED) {
                         componentState = prevComponentState;
                     }
-                    circuitElmsLock.lock();
+                    circuitView.pause();
                     circuitElms.remove(toRemove);
-                    circuitElmsLock.unlock();
+                    circuitView.resume();
                 }
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
@@ -369,9 +365,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     endX = x;
                     endY = y;
                     if (getDistance(startX, startY, endX, endY) > lengthThreshHold) {
-                        circuitElmsLock.lock();
+                        circuitView.pause();
                         selectedElm = null;
-                        circuitElmsLock.unlock();
+                        circuitView.resume();
                     }
                     Log.i(TAG, "moving: (" + x + ", " + y + ")");
                     break;
@@ -419,20 +415,16 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                                 break;
                         }
                         selectedElm = elm;
-                        circuitElmsLock.lock();
+                        circuitView.pause();
                         circuitElms.add(elm);
-                        circuitElmsLock.unlock();
+                        circuitView.resume();
                     }
                     Log.i(TAG, "touched up");
                     resetCoordinates();
-                    //circuitView.pause();
-
                     break;
             }
-
             displayElementInfo();
             return true;
-
         }
     }
 
