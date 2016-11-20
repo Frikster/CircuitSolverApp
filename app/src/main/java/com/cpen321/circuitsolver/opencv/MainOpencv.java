@@ -58,8 +58,8 @@ public class MainOpencv {
     List<List<Element>> wires = new ArrayList<>();
     List<List<Element>> separatedComponents = new ArrayList<>();
 
-    private int bitMapWidth = 500;
-    private int bitMapHeight = 800;
+    private int bitMapWidth;
+    private int bitMapHeight;
 
     public Bitmap houghLines(Bitmap bMap, boolean test){
         if(!test)
