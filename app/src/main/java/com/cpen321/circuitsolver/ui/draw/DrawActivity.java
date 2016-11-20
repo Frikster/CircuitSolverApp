@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
@@ -344,6 +345,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private int[] location = new int[2];
 
+    private static CircuitElm candidate = null;
+
+    public static CircuitElm getCandidate() {
+        return candidate;
+    }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -430,6 +436,23 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         circuitView.pause();
                         selectedElm = null;
                         circuitView.resume();
+                        if(componentState == SOLVED) {
+                            componentState = prevComponentState;
+                        }
+                        switch (componentState) {
+                            case DC_SOURCE:
+                                candidate = new VoltageElm();
+                                break;
+                            case RESISTOR:
+                                candidate = new ResistorElm();
+                                break;
+                            case WIRE:
+                                candidate = new WireElm();
+                                break;
+                            default:
+                                candidate = new WireElm();
+                                break;
+                        }
                     }
                     Log.i(TAG, "moving: (" + x + ", " + y + ")");
                     break;
@@ -458,28 +481,15 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     if (length > lengthThreshHold && componentState != ERASE) {
                         SimplePoint startPoint = new SimplePoint(startX, startY);
                         SimplePoint endPoint = new SimplePoint(endX, endY);
-                        CircuitElm elm = null;
-                        if(componentState == SOLVED) {
-                            componentState = prevComponentState;
+                        if(candidate != null) {
+                            candidate.setP1(startPoint);
+                            candidate.setP2(endPoint);
+                            candidate.setValue(10);
+                            circuitView.pause();
+                            circuitElms.add(candidate);
+                            circuitView.resume();
+                            candidate = null;
                         }
-                        switch (componentState) {
-                            case DC_SOURCE:
-                                elm = new VoltageElm(startPoint, endPoint, 10);
-                                break;
-                            case RESISTOR:
-                                elm = new ResistorElm(startPoint, endPoint, 10);
-                                break;
-                            case WIRE:
-                                elm = new WireElm(startPoint, endPoint);
-                                break;
-                            default:
-                                elm = new WireElm(startPoint, endPoint);
-                                break;
-                        }
-                        selectedElm = elm;
-                        circuitView.pause();
-                        circuitElms.add(elm);
-                        circuitView.resume();
                     }
                     Log.i(TAG, "touched up");
                     resetCoordinates();

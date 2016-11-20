@@ -22,6 +22,10 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
     private String name;
     private boolean isSelected;
 
+    public ResistorElm() {
+        super();
+    }
+
     public ResistorElm(SimplePoint p1, SimplePoint p2){
         super(p1, p2);
         this.resistance = 10;
@@ -100,6 +104,125 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
     }
 
 
+    @Override
+    public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        //Edit WIDTH and MAX_LENGTH as needed
+        float WIDTH = 35;
+        float MAX_LENGTH = 100;
+        float x = stopX - startX;
+        float y = stopY - startY;
+        float slope = y / x;
+        float b = stopY - slope * stopX;
+        float hypotenuse = (float) Math.hypot(x, y);
+        float d = (hypotenuse - MAX_LENGTH) / 2;
+        float angle = (float) Math.atan(slope);
+        float perpAngle = (float) Math.atan(x / y);
+        float innerD = (hypotenuse - 2 * d) / 5;
+
+        float x3, x4, x5, x6, x7, x8, y3, y4, y5, y6, y7, y8;
+        float x5i, x6i, x7i, x8i, y3i, y4i, y5i, y6i, y7i, y8i;
+
+        //when length of entire resistor is less than MAX_LENGTH
+        if (hypotenuse < MAX_LENGTH) {
+            MAX_LENGTH = MAX_LENGTH / 2;
+            d = (hypotenuse - MAX_LENGTH) / 2;
+            innerD = (hypotenuse - 2 * d) / 5;
+        }
+        //when drawn from left to right
+        if (x > 0) {
+            x3 = stopX - (MAX_LENGTH + d) * ((float) Math.cos(angle));
+            y3 = stopY - (MAX_LENGTH + d) * ((float) Math.sin(angle));
+            x4 = stopX - (d) * ((float) Math.cos(angle));
+            y4 = stopY - (d) * ((float) Math.sin(angle));
+
+            x5i = stopX - (MAX_LENGTH + d - innerD) * ((float) Math.cos(angle));
+            x5 = x5i - WIDTH * ((float) Math.cos(perpAngle));
+            y5i = stopY - (MAX_LENGTH + d - innerD) * ((float) Math.sin(angle));
+            y5 = y5i + WIDTH * ((float) Math.sin(perpAngle));
+
+            x6i = stopX - (MAX_LENGTH + d - 2 * innerD) * ((float) Math.cos(angle));
+            x6 = x6i + WIDTH * ((float) Math.cos(perpAngle));
+            y6i = stopY - (MAX_LENGTH + d - 2 * innerD) * ((float) Math.sin(angle));
+            y6 = y6i - WIDTH * ((float) Math.sin(perpAngle));
+
+            x7i = stopX - (MAX_LENGTH + d - 3 * innerD) * ((float) Math.cos(angle));
+            x7 = x7i - WIDTH * ((float) Math.cos(perpAngle));
+            y7i = stopY - (MAX_LENGTH + d - 3 * innerD) * ((float) Math.sin(angle));
+            y7 = y7i + WIDTH * ((float) Math.sin(perpAngle));
+
+            x8i = stopX - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.cos(angle));
+            x8 = x8i + WIDTH * ((float) Math.cos(perpAngle));
+            y8i = stopY - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.sin(angle));
+            y8 = y8i - WIDTH * ((float) Math.sin(perpAngle));
+        }
+        //when drawn right to left
+        else if (x < 0) {
+            x3 = startX - (d) * ((float) Math.cos(angle));
+            y3 = startY - (d) * ((float) Math.sin(angle));
+            x4 = startX - (MAX_LENGTH + d) * ((float) Math.cos(angle));
+            y4 = startY - (MAX_LENGTH + d) * ((float) Math.sin(angle));
+
+            x5i = startX - (d + innerD) * ((float) Math.cos(angle));
+            x5 = x5i - WIDTH * ((float) Math.cos(perpAngle));
+            y5i = startY - (d + innerD) * ((float) Math.sin(angle));
+            y5 = y5i + WIDTH * ((float) Math.sin(perpAngle));
+
+            x6i = startX - (d + 2 * innerD) * ((float) Math.cos(angle));
+            x6 = x6i + WIDTH * ((float) Math.cos(perpAngle));
+            y6i = startY - (d + 2 * innerD) * ((float) Math.sin(angle));
+            y6 = y6i - WIDTH * ((float) Math.sin(perpAngle));
+
+            x7i = startX - (d + 3 * innerD) * ((float) Math.cos(angle));
+            x7 = x7i - WIDTH * ((float) Math.cos(perpAngle));
+            y7i = startY - (d + 3 * innerD) * ((float) Math.sin(angle));
+            y7 = y7i + WIDTH * ((float) Math.sin(perpAngle));
+
+            x8i = startX - (d + 4 * innerD) * ((float) Math.cos(angle));
+            x8 = x8i + WIDTH * ((float) Math.cos(perpAngle));
+            y8i = startY - (d + 4 * innerD) * ((float) Math.sin(angle));
+            y8 = y8i - WIDTH * ((float) Math.sin(perpAngle));
+        }
+        //when drawn vertically pointing down
+        else if (y > 0) {
+            x3 = stopX;
+            y3 = startY + d;
+            x4 = stopX;
+            y4 = stopY - d;
+            y5 = startY + d + innerD;
+            y6 = startY + d + 2 * innerD;
+            y7 = startY + d + 3 * innerD;
+            y8 = startY + d + 4 * innerD;
+            x5 = startX - WIDTH;
+            x6 = startX + WIDTH;
+            x7 = startX - WIDTH;
+            x8 = startX + WIDTH;
+        }
+        //when drawn vertically pointing up
+        else {
+            x3 = stopX;
+            y3 = startY - d;
+            x4 = stopX;
+            y4 = stopY + d;
+            y5 = startY - d - innerD;
+            y6 = startY - d - 2 * innerD;
+            y7 = startY - d - 3 * innerD;
+            y8 = startY - d - 4 * innerD;
+            x5 = startX - WIDTH;
+            x6 = startX + WIDTH;
+            x7 = startX - WIDTH;
+            x8 = startX + WIDTH;
+        }
+        //draw wire section
+        canvas.drawLine(startX, startY, x3, y3, paint);
+        canvas.drawLine(x4, y4, stopX, stopY, paint);
+
+        //draw zigzag part
+        canvas.drawLine(x3, y3, x5, y5, paint);
+        canvas.drawLine(x5, y5, x6, y6, paint);
+        canvas.drawLine(x6, y6, x7, y7, paint);
+        canvas.drawLine(x7, y7, x8, y8, paint);
+        canvas.drawLine(x8, y8, x4, y4, paint);
+    }
 
     @Override
     public void onDraw(Canvas canvas, Paint paint,

@@ -39,6 +39,10 @@ public abstract class CircuitElm{
 
     private double current;
 
+    public CircuitElm() {
+
+    }
+
     public CircuitElm(SimplePoint p1, SimplePoint p2){
 //        if (p2.getX() <= p1.getX() && p2.getY() <= p1.getY()) {
 //            this.p1 = p2;
@@ -48,6 +52,7 @@ public abstract class CircuitElm{
             this.p2 = p2;
 //        }
     }
+
 
     /**
      * Returns true if node corresponds to the given point, false otherwise
@@ -183,6 +188,8 @@ public abstract class CircuitElm{
 
 
     }
+
+    public abstract void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint);
 
     public boolean isSelected(){
         return isSelected;

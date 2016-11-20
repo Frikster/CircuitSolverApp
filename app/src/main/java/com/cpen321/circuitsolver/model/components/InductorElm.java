@@ -98,6 +98,12 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
     }
 
+
+    @Override
+    public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        //TODO implement inductor draw
+    }
+
     @Override
     public void onDraw(Canvas canvas, Paint paint,
                        int disp) {

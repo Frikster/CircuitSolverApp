@@ -12,6 +12,10 @@ import com.cpen321.circuitsolver.util.Constants;
  */
 public class WireElm extends CircuitElm {
 
+    public WireElm() {
+        super();
+    }
+
     public WireElm(SimplePoint p1, SimplePoint p2) {
         super(p1, p2);
     }
@@ -33,6 +37,11 @@ public class WireElm extends CircuitElm {
     @Override
     public String getType() {
         return Constants.WIRE;
+    }
+
+    @Override
+    public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        canvas.drawLine(startX, startY, stopX, stopY, paint);
     }
 
     public void onDraw(Canvas canvas, Paint paint, int yDisp, boolean test){
