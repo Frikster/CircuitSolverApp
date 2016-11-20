@@ -9,8 +9,10 @@ import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by lotus on 05/11/16.
@@ -38,17 +40,28 @@ public class SpiceInterfacer {
         this.elements = elements;
         circuitNodeMap = new HashMap<String, CircuitNode>();
         circuitElmMap = new HashMap<String, CircuitElm>();
+        for(CircuitNode node : nodes) {
+            if(node.getSpiceLabel().equals("0")) {
+                return;
+            }
+        }
+        nodes.get(0).setSpiceLabel("0");
     }
 
     /**
      * Updates nodes with voltage values, and voltage sources with current values
      * @param ngSpice
+     * @return true if successful
      */
-    public void solveCircuit(NgSpice ngSpice) {
+    public boolean solveCircuit(NgSpice ngSpice) {
         String input = getNgSpiceInput();
         String spiceOutput = ngSpice.callNgSpice(input);
+        if(spiceOutput.contains("failed")) {
+            return false;
+        }
         populateMaps();
         callNgOutputParser(spiceOutput, circuitNodeMap, circuitElmMap);
+        return true;
     }
 
     //TODO every mothid below this point should be private later or removed

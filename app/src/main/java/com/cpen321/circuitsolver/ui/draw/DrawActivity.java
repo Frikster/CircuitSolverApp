@@ -275,7 +275,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(circuitElms);
                 circuit.init();
                 SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
-                interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this));
+                if(interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))){
+                    Toast.makeText(DrawActivity.this, "solve successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(DrawActivity.this, "invalid circuit", Toast.LENGTH_SHORT).show();
+                }
                 displayElementInfo();
                 return true;
             }
