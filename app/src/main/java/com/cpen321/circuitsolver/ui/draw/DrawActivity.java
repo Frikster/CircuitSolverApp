@@ -160,7 +160,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
         else{
-
+            System.out.println("We should never get here");
         }
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
