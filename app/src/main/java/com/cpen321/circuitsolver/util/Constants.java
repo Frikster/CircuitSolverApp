@@ -10,7 +10,7 @@ public final class Constants {
     public static final String OUTPUT_BITMAP = "hough_lines_output_bitmap";
     public static final String PROCESSING_DATA_LOCATION_KEY = "processing_data_location_key";
 
-    public static final int PROCESSING_WIDTH = 125;
+    public static final int PROCESSING_WIDTH = 500;
 
     //TODO change many of these things to enum for type safety
     public static final String RESISTOR = "r";

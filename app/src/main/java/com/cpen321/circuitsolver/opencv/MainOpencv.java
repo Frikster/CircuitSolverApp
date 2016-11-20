@@ -19,6 +19,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -30,6 +31,9 @@ import java.util.Set;
 
 import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
+import static org.opencv.core.Core.BORDER_DEFAULT;
+import static org.opencv.core.Core.addWeighted;
+import static org.opencv.core.Core.convertScaleAbs;
 import static org.opencv.core.Core.NORM_MINMAX;
 import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
@@ -46,16 +50,16 @@ public class MainOpencv {
     //########MODIFIED ###############
     //MainOpenCV
     //##############TODO :#################
-    //Control there exists a line before adding
     //Integration with tenserflow
+    //Javadoc
     //##########################################
 
 
     List<List<Element>> wires = new ArrayList<>();
     List<List<Element>> separatedComponents = new ArrayList<>();
 
-    private int bitMapWidth = 500;
-    private int bitMapHeight = 800;
+    private int bitMapWidth;
+    private int bitMapHeight;
 
     public Bitmap houghLines(Bitmap bMap, boolean test){
         if(!test)
@@ -68,6 +72,54 @@ public class MainOpencv {
      * @return the bitmap with the detected lines and a circle around the components
      */
     public Bitmap houghLines(Bitmap bMap){
+        // Sobel Edge Detection - theoretically it should be worse
+//        //Convert to a canny edge detector grayscale mat
+//        System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
+//        bitMapHeight = bMap.getHeight();
+//        bitMapWidth = bMap.getWidth();
+//
+//        Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Utils.bitmapToMat(bMap, tmp);
+//        Mat grad_x = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat grad_y = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat abs_grad_x = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat abs_grad_y = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat src_gray = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//        Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+//
+//        int scale = 1;
+//        int delta = 0;
+//        int ddepth = CvType.CV_16S;
+//
+//        Imgproc.GaussianBlur( tmp, tmp, new Size(3,3), 0, 0, BORDER_DEFAULT );
+//
+//        /// Convert it to gray
+//        cvtColor( tmp, src_gray, COLOR_GRAY2BGR);
+//
+//        /// Gradient X
+//        //Scharr( src_gray, grad_x, ddepth, 1, 0, scale, delta, BORDER_DEFAULT );
+//        Imgproc.Sobel( src_gray, grad_x, ddepth, 1, 0, 3, scale, delta, BORDER_DEFAULT );
+//        convertScaleAbs( grad_x, abs_grad_x );
+//
+//        /// Gradient Y
+//        //Scharr( src_gray, grad_y, ddepth, 0, 1, scale, delta, BORDER_DEFAULT );
+//        Imgproc.Sobel( src_gray, grad_y, ddepth, 0, 1, 3, scale, delta, BORDER_DEFAULT );
+//        convertScaleAbs( grad_y, abs_grad_y );
+//
+//        /// Total Gradient (approximate)
+//        addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, tmp2 );
+//
+//        //cvtColor(tmp,tmp2,COLOR_BGR2GRAY);
+//        //Imgproc.Canny(tmp, tmp2, 40, 200);
+
+        // "Constants" found by trial and error (i.e. blood and tears)
+        int distanceFromComponent = 12*4;
+        int maxLinesToBeChunk = 3;
+        int radius = 5*6;
+        int minPoints = 20*6;
+        int twoCornersTooNear = 15*4;
+        int thresholdXY = 10*4;
+
 
 
         //Convert to a canny edge detector grayscale mat
@@ -76,7 +128,6 @@ public class MainOpencv {
         bitMapWidth = bMap.getWidth();
 
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-        Mat tmp1 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
 
@@ -84,6 +135,8 @@ public class MainOpencv {
         Imgproc.Canny(tmp, tmp2, 40, 200);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+        Bitmap tmp2_bm_postCanny = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp2, tmp2_bm_postCanny);
 
         //Execute the hough transform on the canny edge detector
         Mat lines = new Mat();
@@ -95,19 +148,15 @@ public class MainOpencv {
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
-
-        int maxLinesToBeChunk = 3;
-        int radius = 5;
-        int minPoints = 20;
-
-
-        List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
+        // diagonal set of points from Houghlines/Canny = "a chunk"
+        // first line assumes component is only made of diagonals
+        //List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,maxLinesToBeChunk), tmp3, radius, minPoints);
+        // second line only assumes components are made of many lines (hori, vert, or diagonal)
+        List<PointDB> assPoints = dbscan(smoothedLines, tmp3, radius, minPoints);
         List<PointDB> assignedPoints = assignedPoints(assPoints);
         TuplePoints residAssigned = dbToArray(assignedPoints , smoothedLines, maxLinesToBeChunk);
         List<double[]> residualLines = residAssigned.getFirst();
         List<double[]> components = residAssigned.getSecond();
-
-
 
         List<double[]> residualLinesWithoutChunk= removeChunks(residualLines, maxLinesToBeChunk);
 
@@ -125,18 +174,17 @@ public class MainOpencv {
         List<double[]> horizontalLines = horizontalLines(withoutBorders);
         List<double[]> corners = findCorners(verticalLines,horizontalLines,10);
 
-
-
-        int twoCornersTooNear = 15;
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
-        int tooNearFromComponent = 10;
+        int tooNearFromComponent = 10*4;
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
 
         if(validCorners.size() == 0){
             validCorners = new ArrayList<>(singleCorners);
         }
-        drawCircles(tmp3,validCorners, new Scalar(0,255,0),10);
-        drawCircles(tmp3,components, new Scalar(255,0,0),10);
+        drawCircles(tmp3,validCorners, new Scalar(0,255,0), 10*4);
+        drawCircles(tmp3,components, new Scalar(255,0,0), 10*4);
+        Bitmap tmp3_bm_postCircles = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp3, tmp3_bm_postCircles);
 
         System.out.println("Nr of corners : "+validCorners.size());
         System.out.println("Nr of components : "+components.size());
@@ -161,9 +209,9 @@ public class MainOpencv {
 
             System.out.println("Coord of corner : "+x1+" , "+y1);
         }
-        int thresholdXY = 10;
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
         List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
+        detectWires(objectizedCompAndCorners,firstCorner, thresholdXY,residualLinesWithoutChunk);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY,residualLinesWithoutChunk);
         System.out.println("Finding wires after the first time : "+wires.size());
         //Prints the found wires
@@ -194,10 +242,12 @@ public class MainOpencv {
 
             }
         }
-        separatedComponents = completeMissingEndings(separatedComponents, thresholdXY);
+        separatedComponents = completeMissingEndings(separatedComponents, thresholdXY,
+                distanceFromComponent);
         System.out.println("After completing missing Endings : "+separatedComponents.size());
 
-        separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents);
+        separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents,
+                distanceFromComponent);
         System.out.println("After adding orphans to the wires : "+separatedComponents.size());
 
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
@@ -234,6 +284,7 @@ public class MainOpencv {
             }
         }
         */
+        // Print out the bitmap (for debugging)
         int x=0;
         for (List<Element> wire : separatedComponents)
         {
@@ -267,7 +318,12 @@ public class MainOpencv {
         return bm;
     }
 
-
+    /**
+     *
+     * @param corners A list of corners, each corner beeing represented by an array of length 2, X, Y
+     * @param components  A list of components, each component beeing represented by an array of length 2, X, Y
+     * @return list of instances of Element
+     */
     private List<Element> objectizeCompAndCorner(List<double[]> corners, List<double[]> components){
         List<Corner> cornerObjects = objectizeCorners(corners);
         List<Component> componentObjects = objectizeComponents(components);
@@ -278,7 +334,11 @@ public class MainOpencv {
     }
 
 
-
+    /**
+     *
+     * @return The final result of opencv, beeing passed to the next part of CircuitSolver
+     * The final result is a collection of wires and components, each having a starting and an end point
+     */
     public List<CircuitElm> getCircuitElements(){
         CircuitElmFactory factory= new CircuitElmFactory();
         List<CircuitElm> circuitElements = new ArrayList<>();
@@ -539,11 +599,13 @@ public class MainOpencv {
         return components;
     }
 
-    private List<List<Element>> addOrphansToWires(List<List<Element>> wires, List<Component> allComponents){
-
-
-
-        int distanceFromComponent = 12;
+    /**
+     *
+     * @param wires All the current wires that are connected with corners
+     * @param allComponents All the components that have originally been detected
+     * @return All the wires and the previously unconnected components in a list of wires
+     */
+    private List<List<Element>> addOrphansToWires(List<List<Element>> wires, List<Component> allComponents, int distanceFromComponent){
         List<List<Element>> orphans = new ArrayList<>();
         List<List<Element>> wiresWithorphans = new ArrayList<>(wires);
         for(Component e : allComponents){
@@ -581,6 +643,11 @@ public class MainOpencv {
     }
 
 
+    /**Utilitary method to return a closed circuit
+     * Finds all points that are not part of a closed circuit (points that don't have two wires going in opposite direction)
+     * @param wires All the wires detected
+     * @return The points that need to be connected
+     */
 
     private List<Corner> findCornersToWire(List<List<Element>> wires){
         List<Corner> toFindAnOther = new ArrayList<>();
@@ -602,6 +669,11 @@ public class MainOpencv {
     }
 
 
+    /**
+     * Makes sure there isn't a wire in one direction, and the same in the opposite direction
+     * @param wires All the found wires
+     * @return A list of unique wires
+     */
     private List<List<Element>> removeDuplicateWires (List<List<Element>> wires){
         List<List<Element>> singleWires = new ArrayList<>();
         for(int i=0; i<wires.size();i++){
@@ -628,6 +700,14 @@ public class MainOpencv {
         return singleWires;
     }
 
+    /**Connects all the missing wires to form a closed component
+     * Note that this method usies the simple assumption to connect the unconnected points to the closest unconnected points
+     * This function could just be removed from the pipeline, and let the user complete the missing wires
+     *
+     * @param wires All the detected wires
+     * @param cornersToWire The points/corners that need to be connected to another point
+     * @return A list of wires representing a closed circuit
+     */
     private List<List<Element>> addMisingWires(List<List<Element>> wires, List<Corner> cornersToWire){
         List<List<Element>> wiresWithMissing = new ArrayList<>(wires);
         List<Corner> allCorners = getCornersFromWires(wires);
@@ -684,6 +764,11 @@ public class MainOpencv {
     }
 
 
+    /**Gets all the corners once from a list of wires
+     *
+     * @param wires The found wires
+     * @return The corners present in wires
+     */
 
     private List<Corner> getCornersFromWires(List<List<Element>> wires){
         List<Corner> corners = new ArrayList<>();
@@ -712,6 +797,12 @@ public class MainOpencv {
         return corners;
     }
 
+    /**Utilitary function to know if an element is contained in a list of Element
+     *
+     * @param element list of Element to search in
+     * @param e The element to look for
+     * @return true if e is contained in Element
+     */
     private boolean containsElement(List<Element> element, Element e){
         for(Element e1 : element){
             if(e1.getX() == e.getX() && e1.getY()==e.getY()){
@@ -720,14 +811,13 @@ public class MainOpencv {
         }
         return false;
     }
-    private boolean containsComponent(List<Component> alreadyAdded, Component corner){
-        for(Component c : alreadyAdded){
-            if(c.getX() == corner.getX() && c.getY()==corner.getY()){
-                return true;
-            }
-        }
-        return false;
-    }
+
+    /**Utilitary function to know if a Corner is contained in a list of Corner
+     *
+     * @param alreadyAdded list of Corner to search in
+     * @param corner The Corner to look for
+     * @return true if corner is contained in alreadyAdded
+     */
     private boolean containsCorner(List<Corner> alreadyAdded, Corner corner){
         for(Corner c : alreadyAdded){
             if(c.getX() == corner.getX() && c.getY()==corner.getY()){
@@ -740,13 +830,13 @@ public class MainOpencv {
 
     /**Takes all the wires as a parameter and adds a Corner at the end if it finishes by a Component
      *
-     * @param wires
+     * @param wires The detected wires
      * @return
      */
 
-    private List<List<Element>> completeMissingEndings(List<List<Element>> wires, int thresholdXY){
+    private List<List<Element>> completeMissingEndings(List<List<Element>> wires, int thresholdXY,
+                                                       int distanceFromComponent){
 
-        int distanceFromComponent = 12;
         List<List<Element>> wiresWithHappyEnding = new ArrayList<>(); //\o/
         for(List<Element> wire : wires) {
 
@@ -787,6 +877,9 @@ public class MainOpencv {
 
     /**Function to make from [Corner, Component1, Component2,...., ComponentN, Corner] => [Corner, Component1, Corner] , [Corner, Component2, Corner],... [Corner, ComponentN, Corner]
      *Separates two adjacent corners
+     * Important note: After this function, it is sure that a wire is of max size 3, and that if it is of size 3, it starts and ends with a Corner.
+     * If it is of size 2 , it starts and ends with a Corner.
+     * This comes from the fact that the param wires comes from the detectWires() function, and thus each List<Element> in wires starts with a Corner
      * @param wires The initial wires found
      * @return The components separated
      */
@@ -852,6 +945,8 @@ public class MainOpencv {
     }
 
     /**Recursive function to detect all the wires
+     * This is the main function to detect wires from components and Corners.
+     * It always starts with a corner, and searches in an horizontal and vertical way to find other components and/or corners
      *
      * @param elements The elements to detect from
      * @param currCorner The corner from which we look for wires
@@ -1056,6 +1151,15 @@ public class MainOpencv {
         return result;
     }
 
+    /**Utilitary function for detectWires. makes sure there is a line between two vertically or horizontal Elements
+     *
+     * @param e1 element 1
+     * @param e2 element 2
+     * @param lines The list of found lines
+     * @param same Character to say if we're interested in horizontal or vertically alignes elements
+     * @param threshold The XY threshold to consider two elements as aligned
+     * @return true if a line was found in lines between the two elements
+     */
     private boolean existsALineBetweenTwoPoints(Element e1, Element e2, List<double[]> lines, char same, int threshold){
         double x1 = e1.getX();
         double y1 = e1.getY();
@@ -1362,7 +1466,7 @@ public class MainOpencv {
         return lineOneRound;
     }
 
-    /**
+    /**Makes from a lot of horizontal chunks one nice line
      *
      * @param lines found from the original hough transform
      * @return the lines, smoothed
