@@ -260,6 +260,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         Log.i(TAG, "Erase touched up");
                         break;
                 }
+                displayElementInfo();
                 return true;
             }
         });
@@ -492,9 +493,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                             circuitView.pause();
                             circuitElms.add(candidate);
                             circuitView.resume();
-                            candidate = null;
                         }
                     }
+                    candidate = null;
                     Log.i(TAG, "touched up");
                     resetCoordinates();
                     break;
