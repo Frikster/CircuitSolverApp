@@ -313,14 +313,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         this.drawController.setFingerTwo(fingerTwo);
                     }
                 }
-//                Log.i("distance", Double.toString(this.drawController.getZoomScale()));
                 this.circuitView.control(this.drawController);
-                //this.circuitView.resume();
-
-                return true;
             } else if (event.getPointerCount() == 1) {
-
-
+//                this.drawController.setFingerOne(fingerOne);
             }
             return true;
         } else {
@@ -329,8 +324,12 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             int y;
             int truncateBits = 5;
             v.getLocationOnScreen(location);
-            x = (int) (event.getRawX() - location[0]);
-            y =  (int) (event.getRawY() - location[1]);
+            x = (int) ((event.getRawX() - location[0]) / this.circuitView.scale);
+            y = (int) ((event.getRawY() - location[1]) / this.circuitView.scale);
+//            if (this.circuitView.zoomPoint != null){
+//                x -= this.circuitView.zoomPoint.x;
+//                y -= this.circuitView.zoomPoint.y;
+//            }
             x = (x >> truncateBits) << truncateBits;
             y = (y >> truncateBits) << truncateBits;
             int lengthThreshHold = 40;

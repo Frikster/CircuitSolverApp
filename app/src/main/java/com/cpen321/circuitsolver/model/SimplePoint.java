@@ -52,6 +52,8 @@ public class SimplePoint {
     }
 
     public double distanceFrom(SimplePoint point2) {
+        if (point2 == null)
+            return 0;
         return Math.hypot(point2.getX() - this.getX(),
                 point2.getY()-this.getY());
     }

@@ -32,8 +32,8 @@ public class CircuitView extends SurfaceView implements Runnable {
     boolean run;
 
     private Canvas canvas;
-    private float scale;
-    private Point zoomPoint;
+    public float scale;
+    public Point zoomPoint;
 
     public CircuitView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,8 +60,7 @@ public class CircuitView extends SurfaceView implements Runnable {
             }
             this.canvas = holder.lockCanvas();
             if (this.zoomPoint != null)
-                this.canvas.scale(this.scale, this.scale,
-                    this.zoomPoint.x, this.zoomPoint.y);
+                this.canvas.scale(this.scale, this.scale);
             canvas.drawColor(Color.WHITE);
             ReentrantLock lock = DrawActivity.getCircuitElmsLock();
             lock.lock();

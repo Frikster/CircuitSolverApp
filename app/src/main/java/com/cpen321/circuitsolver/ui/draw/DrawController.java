@@ -59,6 +59,12 @@ public class DrawController {
     }
 
     public Point getMiddlePoint() {
+//        if (this.fingerOne == null)
+//            return new Point(this.fingerTwo.getX(),
+//                    this.fingerTwo.getY());
+//        if (this.fingerTwo == null)
+//            return new Point(this.fingerOne.getX(),
+//                    this.fingerOne.getY());
         int middleX, middleY;
 
         int diffX, diffY;
