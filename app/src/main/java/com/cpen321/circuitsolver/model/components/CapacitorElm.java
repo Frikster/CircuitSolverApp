@@ -22,6 +22,12 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
     private String name;
     private boolean isSelected;
 
+    public CapacitorElm() {
+        super();
+        this.name = "c" + numCapacitors;
+        numCapacitors++;
+    }
+
     public CapacitorElm(SimplePoint p1, SimplePoint p2, double capacitance){
         super(p1, p2);
         this.capacitance = capacitance;

@@ -22,6 +22,12 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     private String name;
     private boolean isSelected;
 
+    public InductorElm() {
+        super();
+        this.name = "l" + numInductors;
+        numInductors++;
+    }
+
     public InductorElm(SimplePoint p1, SimplePoint p2, double inductance){
         super(p1, p2);
         this.inductance = inductance;
