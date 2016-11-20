@@ -28,6 +28,7 @@ import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.ngspice.NgSpice;
 import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
 import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.ui.EditActivity;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
@@ -36,6 +37,8 @@ import com.cpen321.circuitsolver.util.ImageUtils;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -60,6 +63,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private EditText componentValueText;
     private CircuitProject circuitProject;
     private CircuitDefParser parser = new CircuitDefParser();
+
+    private int screenHeight;
+    private int screenWidth;
 
     private DrawController drawController;
 
