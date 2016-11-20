@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import com.cpen321.circuitsolver.ui.draw.DrawActivity;
+
 public class ProcessingActivity extends AppCompatActivity {
 
     private String dataLocation;
@@ -61,8 +63,10 @@ public class ProcessingActivity extends AppCompatActivity {
 
                 System.out.println("right before processing");
                 MainOpencv main = new MainOpencv();
-                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap, isNoOpenCvTest));
-                ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(main.getCircuitText(isNoOpenCvTest));
+                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap,
+                        isNoOpenCvTest));
+                ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(
+                        main.getCircuitText(isNoOpenCvTest));
                 ProcessingActivity.this.circuitProject.print();
                 System.out.println("out of processing");
                 ProcessingActivity.this.displayOutputImage();
@@ -75,11 +79,9 @@ public class ProcessingActivity extends AppCompatActivity {
     }
 
     private void displayOutputImage() {
-
-        Intent displayIntent = new Intent(getApplicationContext(), EditActivity.class);
+        // Intent displayIntent = new Intent(getApplicationContext(), EditActivity.class);
+        Intent displayIntent = new Intent(getApplicationContext(), DrawActivity.class);
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
-
         startActivity(displayIntent);
-
     }
 }

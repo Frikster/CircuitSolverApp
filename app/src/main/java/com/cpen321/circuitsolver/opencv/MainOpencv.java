@@ -116,7 +116,7 @@ public class MainOpencv {
         int distanceFromComponent = 12*4;
         int maxLinesToBeChunk = 3;
         int radius = 5*6;
-        int minPoints = 20*5;
+        int minPoints = 20*6;
         int twoCornersTooNear = 15*4;
         int thresholdXY = 10*4;
 
@@ -148,7 +148,11 @@ public class MainOpencv {
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
-        List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,2), tmp3, radius, minPoints);
+        // diagonal set of points from Houghlines/Canny = "a chunk"
+        // first line assumes component is only made of diagonals
+        //List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,maxLinesToBeChunk), tmp3, radius, minPoints);
+        // second line only assumes components are made of many lines (hori, vert, or diagonal)
+        List<PointDB> assPoints = dbscan(smoothedLines, tmp3, radius, minPoints);
         List<PointDB> assignedPoints = assignedPoints(assPoints);
         TuplePoints residAssigned = dbToArray(assignedPoints , smoothedLines, maxLinesToBeChunk);
         List<double[]> residualLines = residAssigned.getFirst();
