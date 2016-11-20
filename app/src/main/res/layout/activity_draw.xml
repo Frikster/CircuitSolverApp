@@ -10,55 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <RelativeLayout
-        android:id="@+id/panelLayout"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom|start"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
-            android:layout_gravity="bottom|start"
-            android:id="@+id/relativeLayout"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/editButtonPanel"
-                android:layout_gravity="bottom|start"
-                android:layout_alignParentStart="true">
-
-
-            </LinearLayout>
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/editButtonPanel"
-                android:layout_centerHorizontal="true"
-                android:hint="Component Value"
-                android:inputType="numberDecimal"
-                android:ems="10"
-                android:shadowColor="@color/circuitBackground"
-                android:textColor="@color/circuitBackground"
-                android:id="@+id/component_value"
-                android:backgroundTint="@color/backgroundGray" />
-            <TextView
-                android:text="ohms"
-                android:id="@+id/units_display"
-                android:textColor="@color/circuitBackground"
-                android:layout_toRightOf="@id/component_value"
-                android:layout_alignBaseline="@id/component_value"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </RelativeLayout>
-    </RelativeLayout>
 
     <LinearLayout android:id="@+id/LinearLayout01"
         android:layout_height="wrap_content"
@@ -85,7 +36,84 @@
         android:layout_toRightOf="@+id/componentMenuButton"
         android:layout_toEndOf="@+id/componentMenuButton" />
 
+    <Button
+        android:text="Solve"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/solveButton"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/eraseButton"
+        android:layout_toEndOf="@+id/eraseButton" />
+    <Button
+        android:text="Move/Edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/moveButton"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/solveButton"
+        android:layout_toEndOf="@+id/solveButton" />
+
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_gravity="bottom|start"
+        android:id="@+id/componentValue"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editButtonPanel"
+            android:layout_gravity="bottom|start"
+            android:layout_alignParentStart="true">
+        </LinearLayout>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editButtonPanel"
+            android:layout_centerHorizontal="true"
+            android:hint="Component Value"
+            android:inputType="numberDecimal"
+            android:ems="10"
+            android:shadowColor="@color/circuitBackground"
+            android:textColor="@color/circuitBackground"
+            android:id="@+id/component_value"
+            android:backgroundTint="@color/backgroundGray" />
+        <TextView
+            android:text="ohms"
+            android:id="@+id/units_display"
+            android:textColor="@color/circuitBackground"
+            android:layout_toRightOf="@id/component_value"
+            android:layout_alignBaseline="@id/component_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <TextView
+        android:text="voltage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/componentValue"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="24dp"
+        android:layout_marginEnd="24dp"
+        android:id="@+id/currentText" />
+
+    <TextView
+        android:text="current"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/currentText"
+        android:layout_alignRight="@+id/currentText"
+        android:layout_alignEnd="@+id/currentText"
+        android:id="@+id/voltageText" />
 
 
 </RelativeLayout>
