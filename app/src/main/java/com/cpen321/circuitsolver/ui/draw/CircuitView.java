@@ -118,7 +118,7 @@ public class CircuitView extends SurfaceView implements Runnable {
     }
 
     //this is just a terrible workaround cause no time to change old code
-    private String convertStateToType(AddComponentState state) {
+    private String  convertStateToType(AddComponentState state) {
         switch (state) {
             case DC_SOURCE:
                 return Constants.DC_VOLTAGE;
@@ -271,6 +271,102 @@ public class CircuitView extends SurfaceView implements Runnable {
         //Edit ANODE_WIDTH, CATHODE_WIDTH, and SPACE_LENGTH as needed
         float ANODE_WIDTH = 47;
         float CATHODE_WIDTH = 25;
+        float SPACE_LENGTH = 22;
+        float x = stopX - startX;
+        float y = stopY - startY;
+        float slope = y / x;
+        float b = stopY - slope * stopX;
+        float hypotenuse = getHypotenuse(x, y);
+        float d = (hypotenuse - SPACE_LENGTH) / 2;
+        float angle = (float) Math.atan(slope);
+        float perpAngle = (float) Math.atan(x / y);
+        float innerD = (hypotenuse - 2 * d) / 5;
+
+        float x3, x4, x5, x6, x7, x8, y3, y4, y5, y6, y7, y8;
+
+        //when drawn from left to right
+        if (x > 0) {
+            x3 = stopX - (SPACE_LENGTH + d) * ((float) Math.cos(angle));
+            y3 = stopY - (SPACE_LENGTH + d) * ((float) Math.sin(angle));
+            x4 = stopX - (d) * ((float) Math.cos(angle));
+            y4 = stopY - (d) * ((float) Math.sin(angle));
+
+            x5 = x3 - ANODE_WIDTH * ((float) Math.cos(perpAngle));
+            y5 = y3 + ANODE_WIDTH * ((float) Math.sin(perpAngle));
+
+            x6 = x3 + ANODE_WIDTH * ((float) Math.cos(perpAngle));
+            y6 = y3 - ANODE_WIDTH * ((float) Math.sin(perpAngle));
+
+            x7 = x4 - CATHODE_WIDTH * ((float) Math.cos(perpAngle));
+            y7 = y4 + CATHODE_WIDTH * ((float) Math.sin(perpAngle));
+
+            x8 = x4 + CATHODE_WIDTH * ((float) Math.cos(perpAngle));
+            y8 = y4 - CATHODE_WIDTH * ((float) Math.sin(perpAngle));
+        }
+        //when drawn right to left
+        else if (x < 0) {
+            x3 = startX - (d) * ((float) Math.cos(angle));
+            y3 = startY - (d) * ((float) Math.sin(angle));
+            x4 = startX - (SPACE_LENGTH + d) * ((float) Math.cos(angle));
+            y4 = startY - (SPACE_LENGTH + d) * ((float) Math.sin(angle));
+
+            x5 = x3 - ANODE_WIDTH * ((float) Math.cos(perpAngle));
+            y5 = y3 + ANODE_WIDTH * ((float) Math.sin(perpAngle));
+
+            x6 = x3 + ANODE_WIDTH * ((float) Math.cos(perpAngle));
+            y6 = y3 - ANODE_WIDTH * ((float) Math.sin(perpAngle));
+
+            x7 = x4 - CATHODE_WIDTH * ((float) Math.cos(perpAngle));
+            y7 = y4 + CATHODE_WIDTH * ((float) Math.sin(perpAngle));
+
+            x8 = x4 + CATHODE_WIDTH * ((float) Math.cos(perpAngle));
+            y8 = y4 - CATHODE_WIDTH * ((float) Math.sin(perpAngle));
+        }
+        //when drawn vertically pointing down
+        else if (y > 0) {
+            x3 = stopX;
+            y3 = startY + d;
+            x4 = stopX;
+            y4 = stopY - d;
+            y5 = y3;
+            y6 = y3;
+            y7 = y4;
+            y8 = y4;
+            x5 = startX + ANODE_WIDTH;
+            x6 = startX - ANODE_WIDTH;
+            x7 = startX + CATHODE_WIDTH;
+            x8 = startX - CATHODE_WIDTH;
+        }
+        //when drawn vertically pointing up
+        else {
+            x3 = stopX;
+            y3 = startY - d;
+            x4 = stopX;
+            y4 = stopY + d;
+            y5 = y3;
+            y6 = y3;
+            y7 = y4;
+            y8 = y4;
+            x5 = startX + ANODE_WIDTH;
+            x6 = startX - ANODE_WIDTH;
+            x7 = startX + CATHODE_WIDTH;
+            x8 = startX - CATHODE_WIDTH;
+        }
+
+        //draw wire section
+        canvas.drawLine(startX, startY, x3, y3, paint);
+        canvas.drawLine(x4, y4, stopX, stopY, paint);
+        //draw perpendicular lines part
+        canvas.drawLine(x3, y3, x5, y5, paint);
+        canvas.drawLine(x3, y3, x6, y6, paint);
+        canvas.drawLine(x4, y4, x7, y7, paint);
+        canvas.drawLine(x4, y4, x8, y8, paint);
+    }
+
+    private void drawCapacitor(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        //Edit ANODE_WIDTH, CATHODE_WIDTH, and SPACE_LENGTH as needed
+        float ANODE_WIDTH = 45;
+        float CATHODE_WIDTH = 45;
         float SPACE_LENGTH = 22;
         float x = stopX - startX;
         float y = stopY - startY;
