@@ -1,7 +1,11 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -34,8 +38,11 @@ import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
@@ -177,7 +184,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             }
         }
         else{
-            System.out.println("We should never get here");
+            this.circuitProject = new CircuitProject(ImageUtils.getTimeStamp(),
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES));
         }
 
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
@@ -339,6 +347,19 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         // Convert list of elements to a circuit def file to save
         String circStr = parser.elementsToTxt(circuitElms, screenHeight, screenWidth);
         circuitProject.saveCircuitDefinitionFile(circStr);
+
+        Bitmap tmp = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
+        Canvas tmpcanvas = new Canvas(tmp);
+        this.circuitView.fakeDraw(tmpcanvas);
+
+        try {
+            File screenShot = this.circuitProject.generateOriginalImageFile();
+            FileOutputStream screenshotStream = new FileOutputStream(screenShot);
+            tmp.compress(Bitmap.CompressFormat.PNG, 50, screenshotStream);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
 
         Intent backToHomeIntent = new Intent(this, HomeActivity.class);
         startActivity(backToHomeIntent);

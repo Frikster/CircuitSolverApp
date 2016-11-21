@@ -2,6 +2,8 @@ package com.cpen321.circuitsolver.ui;
 
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,10 +11,12 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
@@ -50,16 +54,16 @@ public class HomeActivity extends BaseActivity {
 
             for(int i=0; i < parentView.getChildCount(); i++) {
                 ImageView imgView = (ImageView) parentView.getChildAt(i);
-                imgView.setAlpha(1f);
+                imgView.setColorFilter(null);
             }
 
             if (view instanceof ImageView) {
                 ImageView imageView = (ImageView) view;
                 if (imageView.getTag() == HomeActivity.selectedTag){
-                    imageView.setAlpha(1f);
+                    imageView.setColorFilter(null);
                     HomeActivity.this.setSelectedTag(null);
                 } else {
-                    imageView.setAlpha(0.65f);
+                    imageView.setColorFilter(Color.argb(100, 112, 17, 19));
                     HomeActivity.this.setSelectedTag((String) imageView.getTag());
                 }
 
@@ -130,6 +134,11 @@ public class HomeActivity extends BaseActivity {
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 CircuitProject projToDelete = new CircuitProject(circuitFolder);
                 projToDelete.deleteFileSystem();
+                Toast.makeText(
+                        HomeActivity.this,
+                        "Project Deleted",
+                        Toast.LENGTH_SHORT
+                ).show();
                 HomeActivity.this.updateSavedCircuits();
             }
         });
@@ -214,7 +223,12 @@ public class HomeActivity extends BaseActivity {
             ImageView newImage = new ImageView(getApplicationContext());
             newImage.setTag(circuitProject.getFolderID());
             newImage.setPadding(10, 10, 10, 10);
-            newImage.setImageBitmap(circuitProject.getThumbnail());
+            try {
+                newImage.setImageBitmap(circuitProject.getThumbnail());
+            } catch (NullPointerException ex) {
+                newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.not_found));
+            }
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }

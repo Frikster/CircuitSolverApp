@@ -1,6 +1,7 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -36,7 +37,6 @@ public class CircuitView extends SurfaceView implements Runnable {
         run = false;
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(10);
-
         this.scale = 1;
     }
 
@@ -52,33 +52,37 @@ public class CircuitView extends SurfaceView implements Runnable {
                 e.printStackTrace();
             }
             this.canvas = holder.lockCanvas();
-            if (this.zoomPoint != null)
-                this.canvas.scale(this.scale, this.scale);
-            canvas.drawColor(Color.WHITE);
-            paint.setColor(Color.BLACK);
-            //get component state
-            AddComponentState state = DrawActivity.getComponentState();
-            for (CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
-                SimplePoint start = circuitElm.getP1();
-                SimplePoint end = circuitElm.getP2();
-                circuitElm.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
-            }
-            ;
-            CircuitElm selected = DrawActivity.getSelectedElm();
-            if (selected != null) {
-                SimplePoint start = selected.getP1();
-                SimplePoint end = selected.getP2();
-                paint.setColor(Color.RED);
-                selected.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
-            }
-            //AddComponentState state = DrawActivity.getComponentState();
-            paint.setColor(Color.RED);
-            CircuitElm candidate = DrawActivity.getCandidateElement();
-            if (candidate != null) {
-                String type = convertStateToType(DrawActivity.getComponentState());
-                candidate.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
-            }
+            this.fakeDraw(this.canvas);
             holder.unlockCanvasAndPost(canvas);
+        }
+    }
+
+    public void fakeDraw(Canvas canvas) {
+        if (this.zoomPoint != null)
+            canvas.scale(this.scale, this.scale);
+        canvas.drawColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
+        //get component state
+        AddComponentState state = DrawActivity.getComponentState();
+        for (CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
+            SimplePoint start = circuitElm.getP1();
+            SimplePoint end = circuitElm.getP2();
+            circuitElm.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
+        }
+        ;
+        CircuitElm selected = DrawActivity.getSelectedElm();
+        if (selected != null) {
+            SimplePoint start = selected.getP1();
+            SimplePoint end = selected.getP2();
+            paint.setColor(Color.RED);
+            selected.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
+        }
+        //AddComponentState state = DrawActivity.getComponentState();
+        paint.setColor(Color.RED);
+        CircuitElm candidate = DrawActivity.getCandidateElement();
+        if (candidate != null) {
+            String type = convertStateToType(DrawActivity.getComponentState());
+            candidate.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
         }
     }
 
