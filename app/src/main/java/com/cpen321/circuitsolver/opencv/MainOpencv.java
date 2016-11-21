@@ -378,16 +378,6 @@ public class MainOpencv {
     }
 
     public String getCircuitText(){
-//        String circStr = "$ 10 10\n" +
-//                "r 3 3 8 3 10.0\n" +
-//                "w 3 3 3 8 10.0\n" +
-//                "w 8 3 8 8 10.0\n" +
-//                "v 3 8 8 8 10.0 \n";
-
-//                String circStr = "$ 10 10\n" +
-//                "r 5 3 8 6 10.0\n" +
-//                "r 5 3 2 6 10.0\n" +
-//                "v 2 6 8 6 10.0 \n";
 
         CircuitDefParser parser = new CircuitDefParser();
         String circStr = parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
@@ -397,11 +387,6 @@ public class MainOpencv {
 
 
     public String getCircuitText(boolean test){
-        //        String circStr = "$ 10 10\n" +
-//                "r 3 3 8 3 10.0\n" +
-//                "w 3 3 3 8 10.0\n" +
-//                "w 8 3 8 8 10.0\n" +
-//                "v 3 8 8 8 10.0 \n";
 
         if(!test)
             return getCircuitText();

@@ -345,7 +345,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     public void onBackPressed(){
 
         // Convert list of elements to a circuit def file to save
-        String circStr = parser.elementsToTxt(circuitElms, screenHeight, screenWidth);
+        String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
         circuitProject.saveCircuitDefinitionFile(circStr);
 
         Bitmap tmp = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
