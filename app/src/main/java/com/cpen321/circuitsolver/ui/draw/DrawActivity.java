@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,10 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
+import com.cpen321.circuitsolver.model.components.CapacitorElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
@@ -81,10 +85,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
 
     private static CircuitElm selectedElm = null;
+    private static CircuitElm candidateElement = null;
 
     private int[] location = new int[2];
-
-    private static CircuitElm candidate = null;
 
     public static ArrayList<CircuitElm> getCircuitElms() {
         return circuitElms;
@@ -207,6 +210,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                                 break;
                             default:
                                 break;
+                        }
+                        if (selectedElm != null) {
+                            circuitView.pause();
+                            changeElementType(selectedElm, componentState);
+                            circuitView.resume();
                         }
                         return true;
                     }
@@ -349,8 +357,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView.resume();
     }
 
-    public static CircuitElm getCandidate() {
-        return candidate;
+    public static CircuitElm getCandidateElement() {
+        return candidateElement;
     }
 
     @Override
@@ -431,16 +439,16 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         }
                         switch (componentState) {
                             case DC_SOURCE:
-                                candidate = new VoltageElm();
+                                candidateElement = new VoltageElm();
                                 break;
                             case RESISTOR:
-                                candidate = new ResistorElm();
+                                candidateElement = new ResistorElm();
                                 break;
                             case WIRE:
-                                candidate = new WireElm();
+                                candidateElement = new WireElm();
                                 break;
                             default:
-                                candidate = new WireElm();
+                                candidateElement = new WireElm();
                                 break;
                         }
                     }
@@ -462,16 +470,16 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     int length = (int) startPoint.distanceFrom(endPoint);
                     //don't create a circuit element if it is too short
                     if (length > lengthThreshHold && componentState != ERASE) {
-                        if(candidate != null) {
-                            candidate.setP1(startPoint);
-                            candidate.setP2(endPoint);
-                            candidate.setValue(10);
+                        if(candidateElement != null) {
+                            candidateElement.setP1(startPoint);
+                            candidateElement.setP2(endPoint);
+                            candidateElement.setValue(10);
                             circuitView.pause();
-                            circuitElms.add(candidate);
+                            circuitElms.add(candidateElement);
                             circuitView.resume();
                         }
                     }
-                    candidate = null;
+                    candidateElement = null;
 //                    Log.i(TAG, "touched up");
                     resetCoordinates();
                     break;
@@ -513,6 +521,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             componentValueText.setText("--");
             voltageText.setText("--");
             currentText.setText("--");
+            this.toggleAddButtonText(false);
         } else {
             componentValueText.setTag(null); //Used to distinguish between whether editText was changed by user, or pragmatically
             componentValueText.setText(Double.toString(selectedElm.getValue()));
@@ -539,6 +548,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     break;
                 }
             }
+            this.toggleAddButtonText(true);
         }
 
         if(componentState == SOLVED && selectedElm != null && !selectedElm.getType().equals(Constants.WIRE)) {
@@ -548,6 +558,45 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             voltageText.setText("--");
             currentText.setText("--");
         }
+    }
+
+    private void toggleAddButtonText(boolean addText){
+        if (addText) {
+            this.componentMenuButton.setText(R.string.change_button_tag);
+        } else {
+            this.componentMenuButton.setText(R.string.add_button_tag);
+        }
+    }
+
+    private void changeElementType(CircuitElm element, AddComponentState newType) {
+        for (CircuitElm elm : circuitElms) {
+            if (elm.equals(element)) {
+                int index = circuitElms.indexOf(elm);
+                switch (newType) {
+                    case WIRE:
+                        elm = new WireElm(elm.getP1(), elm.getP2());
+                        break;
+//                    case :
+//                        elm = new InductorElm(elm.getP1(), elm.getP2(), elm.getValue());
+//                        break;
+//                    case Constants.CAPACITOR:
+//                        elm = new CapacitorElm(elm.getP1(), elm.getP2(), elm.getValue());
+//                        break;
+                    case DC_SOURCE:
+                        elm = new VoltageElm(elm.getP1(), elm.getP2(), elm.getValue());
+                        break;
+                    case RESISTOR:
+                        if (elm.getType().equals(Constants.WIRE)) {
+                            elm = new ResistorElm(elm.getP1(), elm.getP2(), 10);
+                        } else {
+                            elm = new ResistorElm(elm.getP1(), elm.getP2(), elm.getValue());
+                        }
+                        break;
+                }
+                circuitElms.set(index, elm);
+            }
+        }
+        selectedElm = null;
     }
 
     private void generateExampleCircuitElms(){

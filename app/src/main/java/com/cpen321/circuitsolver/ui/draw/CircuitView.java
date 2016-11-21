@@ -6,19 +6,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
-
-import java.util.concurrent.locks.ReentrantLock;
-
-import static com.cpen321.circuitsolver.ui.draw.AddComponentState.ERASE;
-import static com.cpen321.circuitsolver.ui.draw.AddComponentState.DC_SOURCE;
-import static com.cpen321.circuitsolver.ui.draw.AddComponentState.RESISTOR;
 
 
 /**
@@ -80,7 +73,7 @@ public class CircuitView extends SurfaceView implements Runnable {
             }
             //AddComponentState state = DrawActivity.getComponentState();
             paint.setColor(Color.RED);
-            CircuitElm candidate = DrawActivity.getCandidate();
+            CircuitElm candidate = DrawActivity.getCandidateElement();
             if (candidate != null) {
                 String type = convertStateToType(DrawActivity.getComponentState());
                 candidate.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
@@ -111,10 +104,6 @@ public class CircuitView extends SurfaceView implements Runnable {
         run = true;
         thread = new Thread(this);
         thread.start();
-    }
-
-    private int getDistance(int x1, int y1, int x2, int y2) {
-        return (int) Math.hypot(x1 - x2, y1 - y2);
     }
 
     //this is just a terrible workaround cause no time to change old code
