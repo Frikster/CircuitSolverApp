@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ProgressBar;
 
 import com.cpen321.circuitsolver.R;
@@ -45,7 +46,6 @@ public class ProcessingActivity extends AppCompatActivity {
         }
 
         this.circuitProject = new CircuitProject(new File(this.dataLocation));
-        this.displayOutputImage();
 
         Thread tmp = new Thread() {
             @Override
@@ -73,7 +73,7 @@ public class ProcessingActivity extends AppCompatActivity {
             }
         };
 
-        tmp.run();
+        tmp.start();
 
     }
 

@@ -134,7 +134,7 @@ public class CircuitDefParser {
     }
 
     public void transform(int margin, List<CircuitElm> circuitElms){
-        
+        //TODO: create method that transforms coordinates of all elements to scale to fit in margin
     }
 
     private CircuitElm parseCircuitElmLine(String line){
