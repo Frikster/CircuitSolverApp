@@ -35,11 +35,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/solveButton" />
-        <Button
-            android:text="@string/move_button_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/moveButton"/>
 
     </LinearLayout>
 
