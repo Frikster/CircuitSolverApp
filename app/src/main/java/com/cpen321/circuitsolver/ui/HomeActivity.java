@@ -43,7 +43,7 @@ public class HomeActivity extends BaseActivity {
     static final int REQUEST_TAKE_PHOTO = 1;
     private final int DRAW_NEW_CIRCUIT = 3;
     private LinearLayout savedCircuitsScroll;
-    private LinearLayout exampleCircuitScroll;
+    //private LinearLayout exampleCircuitScroll;
 
     private ArrayList<CircuitProject> circuitProjects = new ArrayList<>();
     private CircuitProject candidateProject;
@@ -111,9 +111,9 @@ public class HomeActivity extends BaseActivity {
         this.processingFab = (FloatingActionButton) findViewById(R.id.processing_fab);
         this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-        this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
+        //this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
         this.updateSavedCircuits();
-        this.loadExamples();
+        //this.loadExamples();
 
         this.checkNecessaryPermissions();
 
@@ -315,14 +315,14 @@ public class HomeActivity extends BaseActivity {
             this.savedCircuitsScroll.addView(newImage);
         }
     }
-    protected void loadExamples(){
-        this.exampleCircuitScroll.removeAllViews();
-        ImageView newImage = new ImageView(getApplicationContext());
-        newImage.setTag("example_1");
-        newImage.setPadding(10, 10, 10, 10);
-        newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.example_1));
-        newImage.setOnClickListener(this.thumbnailListener);
-        this.exampleCircuitScroll.addView(newImage);
-    }
+//    protected void loadExamples(){
+//        this.exampleCircuitScroll.removeAllViews();
+//        ImageView newImage = new ImageView(getApplicationContext());
+//        newImage.setTag("example_1");
+//        newImage.setPadding(10, 10, 10, 10);
+//        newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.example_1));
+//        newImage.setOnClickListener(this.thumbnailListener);
+//        this.exampleCircuitScroll.addView(newImage);
+//    }
 
 }
