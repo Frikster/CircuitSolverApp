@@ -42,7 +42,6 @@ public class HomeActivity extends BaseActivity {
     private Button drawCircuitButton;
 
 
-
     private View.OnClickListener thumbnailListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -98,6 +97,14 @@ public class HomeActivity extends BaseActivity {
         this.loadExamples();
 
         this.checkNecessaryPermissions();
+
+        final View actionB = findViewById(R.id.action_b);
+        actionB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+            }
+        });
 
         this.cameraFab.setOnClickListener(new View.OnClickListener() {
             @Override
