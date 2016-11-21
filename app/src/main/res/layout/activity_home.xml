@@ -74,13 +74,13 @@
             android:id="@+id/multiple_actions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
+            android:layout_gravity="bottom|center"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             fab:fab_addButtonColorNormal="@color/colorPrimary"
             fab:fab_addButtonColorPressed="@color/white_pressed"
-            fab:fab_addButtonPlusIconColor="@color/half_black"
+            fab:fab_addButtonPlusIconColor="@color/white"
             fab:fab_labelStyle="@style/menu_labels_style"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
@@ -92,7 +92,8 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/colorPrimary"
                 fab:fab_title="Draw Circuit"
-                fab:fab_colorPressed="@color/white_pressed"/>
+                fab:fab_colorPressed="@color/white_pressed"
+                fab:fab_icon="@drawable/ic_draw"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/capture_fab"
@@ -100,15 +101,17 @@
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/colorPrimary"
                 fab:fab_title="Capture Circuit"
-                fab:fab_colorPressed="@color/white_pressed"/>
+                fab:fab_colorPressed="@color/white_pressed"
+                fab:fab_icon="@drawable/ic_camera"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:id="@+id/load_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/colorPrimary"
-                fab:fab_title="Load Circuit"
-                fab:fab_colorPressed="@color/white_pressed"/>
+                fab:fab_title="Load Circuit Image"
+                fab:fab_colorPressed="@color/white_pressed"
+                fab:fab_icon="@drawable/ic_image"/>
 
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
     <!--</RelativeLayout>-->
