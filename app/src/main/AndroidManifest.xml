@@ -59,8 +59,7 @@
             android:label="@string/title_activity_edit"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".ui.draw.DrawActivity"
-                  android:noHistory="true"></activity>
+        <activity android:name=".ui.draw.DrawActivity"></activity>
     </application>
 
 </manifest>

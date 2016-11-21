@@ -41,6 +41,7 @@ import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -360,6 +361,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         Intent backToHomeIntent = new Intent(this, HomeActivity.class);
         startActivity(backToHomeIntent);
         finish();
+        ProcessPhoenix.triggerRebirth(this);
     }
 
 
