@@ -27,13 +27,13 @@
         android:id="@+id/include" />
 
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/cam_icon" />
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:id="@+id/fab"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|center"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--app:srcCompat="@drawable/cam_icon" />-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/processing_fab"
@@ -55,14 +55,14 @@
         android:visibility="gone"
         app:srcCompat="@drawable/delete" />
 
-    <Button
-        android:text="Draw Circuit"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:id="@+id/drawCircuitButton"
-        android:layout_gravity="top|left"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="center_vertical|right" />
+    <!--<Button-->
+        <!--android:text="Draw Circuit"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="60dp"-->
+        <!--android:id="@+id/drawCircuitButton"-->
+        <!--android:layout_gravity="top|left"-->
+        <!--app:layout_anchor="@+id/include"-->
+        <!--app:layout_anchorGravity="center_vertical|right" />-->
 
     <!--<RelativeLayout -->
         <!--android:background="@color/background"-->
@@ -78,7 +78,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            fab:fab_addButtonColorNormal="@color/white"
+            fab:fab_addButtonColorNormal="@color/colorPrimary"
             fab:fab_addButtonColorPressed="@color/white_pressed"
             fab:fab_addButtonPlusIconColor="@color/half_black"
             fab:fab_labelStyle="@style/menu_labels_style"
@@ -87,7 +87,7 @@
             android:layout_marginEnd="16dp">
 
             <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_a"
+                android:id="@+id/draw_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="@color/colorPrimary"
@@ -95,18 +95,18 @@
                 fab:fab_colorPressed="@color/white_pressed"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_b"
+                android:id="@+id/capture_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
+                fab:fab_colorNormal="@color/colorPrimary"
                 fab:fab_title="Capture Circuit"
                 fab:fab_colorPressed="@color/white_pressed"/>
 
             <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_c"
+                android:id="@+id/load_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                fab:fab_colorNormal="@color/white"
+                fab:fab_colorNormal="@color/colorPrimary"
                 fab:fab_title="Load Circuit"
                 fab:fab_colorPressed="@color/white_pressed"/>
 

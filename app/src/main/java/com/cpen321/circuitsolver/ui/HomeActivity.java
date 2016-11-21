@@ -27,6 +27,7 @@ import java.util.ArrayList;
 public class HomeActivity extends BaseActivity {
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
+    private static int RESULT_LOAD_IMAGE = 1;
     static final int REQUEST_TAKE_PHOTO = 1;
     private LinearLayout savedCircuitsScroll;
     private LinearLayout exampleCircuitScroll;
@@ -37,9 +38,11 @@ public class HomeActivity extends BaseActivity {
     private static String selectedTag = null;
 
     private FloatingActionButton processingFab;
-    private FloatingActionButton cameraFab;
+    private View cameraFab;
+    private View loadFab;
+    private View drawFab;
     private FloatingActionButton deleteFab;
-    private Button drawCircuitButton;
+    //private Button drawCircuitButton;
 
 
     private View.OnClickListener thumbnailListener = new View.OnClickListener() {
@@ -86,10 +89,12 @@ public class HomeActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.cameraFab = (FloatingActionButton) findViewById(R.id.fab);
+        this.cameraFab =  findViewById(R.id.capture_fab);
+        this.loadFab =  findViewById(R.id.load_fab);
+        this.drawFab =  findViewById(R.id.draw_fab);
         this.processingFab = (FloatingActionButton) findViewById(R.id.processing_fab);
         this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
-        this.drawCircuitButton = (Button) findViewById(R.id.drawCircuitButton);
+        //this.drawCircuitButton = (Button) findViewById(R.id.drawCircuitButton);
 
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
         this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
@@ -98,19 +103,42 @@ public class HomeActivity extends BaseActivity {
 
         this.checkNecessaryPermissions();
 
-        final View actionB = findViewById(R.id.action_b);
-        actionB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-            }
-        });
+//        final View actionB = findViewById(R.id.action_b);
+//        actionB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+//            }
+//        });
 
         this.cameraFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 HomeActivity.this.checkNecessaryPermissions();
                 HomeActivity.this.dispatchTakePictureIntent();
+            }
+        });
+
+        this.loadFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HomeActivity.this.checkNecessaryPermissions();
+                Intent i = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                startActivityForResult(i, RESULT_LOAD_IMAGE);
+            }
+        });
+
+        this.drawFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
+//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
+//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                startActivity(displayIntent);
+                finish();
             }
         });
 
@@ -138,17 +166,6 @@ public class HomeActivity extends BaseActivity {
                 CircuitProject projToDelete = new CircuitProject(circuitFolder);
                 projToDelete.deleteFileSystem();
                 HomeActivity.this.updateSavedCircuits();
-            }
-        });
-
-        this.drawCircuitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
-                startActivity(displayIntent);
-                finish();
             }
         });
     }
@@ -180,6 +197,30 @@ public class HomeActivity extends BaseActivity {
     }
 
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
+
+    private void dispatchLoadPictureIntent() {
+        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = this.candidateProject.generateOriginalImageFile();
+
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        APP_NAME,
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
+            else {
+                System.out.println("photo file is null");
+            }
+        }
+    }
 
 
     @Override
