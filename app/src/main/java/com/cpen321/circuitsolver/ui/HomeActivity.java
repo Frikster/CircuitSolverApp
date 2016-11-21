@@ -1,6 +1,7 @@
 package com.cpen321.circuitsolver.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -13,10 +14,11 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+import android.database.Cursor;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
@@ -26,11 +28,17 @@ import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class HomeActivity extends BaseActivity {
+    private static final String TAG = "HomeActivity";
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
+    private static int RESULT_LOAD_IMAGE = 2;
     static final int REQUEST_TAKE_PHOTO = 1;
     private LinearLayout savedCircuitsScroll;
     private LinearLayout exampleCircuitScroll;
@@ -41,10 +49,11 @@ public class HomeActivity extends BaseActivity {
     private static String selectedTag = null;
 
     private FloatingActionButton processingFab;
-    private FloatingActionButton cameraFab;
+    private View cameraFab;
+    private View loadFab;
+    private View drawFab;
     private FloatingActionButton deleteFab;
-    private Button drawCircuitButton;
-
+    //private Button drawCircuitButton;
 
 
     private View.OnClickListener thumbnailListener = new View.OnClickListener() {
@@ -91,10 +100,12 @@ public class HomeActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.cameraFab = (FloatingActionButton) findViewById(R.id.fab);
+        this.cameraFab =  findViewById(R.id.capture_fab);
+        this.loadFab =  findViewById(R.id.load_fab);
+        this.drawFab =  findViewById(R.id.draw_fab);
         this.processingFab = (FloatingActionButton) findViewById(R.id.processing_fab);
         this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
-        this.drawCircuitButton = (Button) findViewById(R.id.drawCircuitButton);
+        //this.drawCircuitButton = (Button) findViewById(R.id.drawCircuitButton);
 
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
         this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
@@ -103,11 +114,42 @@ public class HomeActivity extends BaseActivity {
 
         this.checkNecessaryPermissions();
 
+//        final View actionB = findViewById(R.id.action_b);
+//        actionB.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+//            }
+//        });
+
         this.cameraFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 HomeActivity.this.checkNecessaryPermissions();
                 HomeActivity.this.dispatchTakePictureIntent();
+            }
+        });
+
+        this.loadFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HomeActivity.this.checkNecessaryPermissions();
+                Intent i = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                startActivityForResult(i, RESULT_LOAD_IMAGE);
+            }
+        });
+
+        this.drawFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
+//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
+//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                startActivity(displayIntent);
+                finish();
             }
         });
 
@@ -142,17 +184,6 @@ public class HomeActivity extends BaseActivity {
                 HomeActivity.this.updateSavedCircuits();
             }
         });
-
-        this.drawCircuitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
-                startActivity(displayIntent);
-                finish();
-            }
-        });
     }
 
     // TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE (NOT MY OWN CODE)
@@ -183,10 +214,71 @@ public class HomeActivity extends BaseActivity {
 
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
 
+//    private void dispatchLoadPictureIntent() {
+//        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+//                getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+//        Intent loadPictureIntent = new Intent(
+//                Intent.ACTION_PICK,
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        // Ensure that there's a camera activity to handle the intent
+//        if (loadPictureIntent.resolveActivity(getPackageManager()) != null) {
+//            // Create the File where the photo should go
+//            File photoFile = this.candidateProject.generateOriginalImageFile();
+//
+//            // Continue only if the File was successfully created
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(this,
+//                        APP_NAME,
+//                        photoFile);
+//                loadPictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//                startActivityForResult(loadPictureIntent, RESULT_LOAD_IMAGE);
+//            }
+//            else {
+//                System.out.println("photo file is null");
+//            }
+//        }
+//        startActivityForResult(loadPictureIntent, RESULT_LOAD_IMAGE);
+//    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            Bitmap bm = BitmapFactory.decodeFile(picturePath);
+
+            this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            // Create the File where the photo should go
+            File photoFile = this.candidateProject.generateOriginalImageFile();
+            if (photoFile == null) {
+                Log.d(TAG,
+                        "Error creating media file, check storage permissions: ");// e.getMessage());
+                return;
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(photoFile);
+                bm.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+
+        }
+
         Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
         analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
         startActivity(analysisIntent);
