@@ -62,7 +62,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private Button componentMenuButton;
     private Button eraseButton;
     private Button solveButton;
-    private Button moveModeButton;
     private TextView unitsText;
     private TextView voltageText;
     private TextView currentText;
@@ -75,7 +74,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private DrawController drawController;
 
-    private boolean moveMode = false;
     private boolean firstZoom = true;
 
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
@@ -145,7 +143,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
         eraseButton = (Button) findViewById(R.id.eraseButton);
-        moveModeButton = (Button) findViewById(R.id.moveButton);
         solveButton = (Button) findViewById(R.id.solveButton);
         voltageText = (TextView) findViewById(R.id.voltageText);
         currentText = (TextView) findViewById(R.id.currentText);
@@ -236,18 +233,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 popup.show(); //showing popup menu
             }
         }); //closing the setOnClickListener method
-
-        this.moveModeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (moveMode){
-                    moveModeButton.setText(R.string.move_button_tag);
-                } else {
-                    moveModeButton.setText(R.string.edit_button_tag);
-                }
-                moveMode = !moveMode;
-            }
-        });
 
         eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -396,36 +381,33 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (this.moveMode) {
-            if (event.getPointerCount() == 2)
-            {
-                SimplePoint fingerOne = new SimplePoint((int) event.getX(0), (int) event.getY(0));
-                SimplePoint fingerTwo = new SimplePoint((int) event.getX(1),(int)  event.getY(1));
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_MOVE: {
-                        if (this.firstZoom) {
-                            this.firstZoom = false;
-                            this.drawController.setStartFingerOne(fingerOne);
-                            this.drawController.setStartFingerTwo(fingerTwo);
-                        } else {
-                            this.drawController.setFingerOne(fingerOne);
-                            this.drawController.setFingerTwo(fingerTwo);
-                        }
-                        break;
-                    }
-                    case MotionEvent.ACTION_POINTER_UP: {
-                        this.firstZoom = true;
-                    }
-                    default: {
+        if (event.getPointerCount() == 2)
+        {
+            startPoint = null;
+            endPoint = null;
+            SimplePoint fingerOne = new SimplePoint((int) event.getX(0), (int) event.getY(0));
+            SimplePoint fingerTwo = new SimplePoint((int) event.getX(1),(int)  event.getY(1));
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_MOVE: {
+                    if (this.firstZoom) {
+                        this.firstZoom = false;
+                        this.drawController.setStartFingerOne(fingerOne);
+                        this.drawController.setStartFingerTwo(fingerTwo);
+                    } else {
                         this.drawController.setFingerOne(fingerOne);
                         this.drawController.setFingerTwo(fingerTwo);
                     }
+                    break;
                 }
-                this.circuitView.control(this.drawController);
-//            } else if (event.getPointerCount() == 1) {
-//                this.drawController.setFingerOne(fingerOne);
+                case MotionEvent.ACTION_POINTER_UP: {
+                    this.firstZoom = true;
+                }
+                default: {
+                    this.drawController.setFingerOne(fingerOne);
+                    this.drawController.setFingerTwo(fingerTwo);
+                }
             }
-            return true;
+            this.circuitView.control(this.drawController);
         } else {
             int x;
             int y;
@@ -462,6 +444,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 //                    CharSequence text = "Touched (" + x + "," + y + ")";
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    if (startPoint == null)
+                        break;
                     endPoint = new SimplePoint(x,y);
                     if (startPoint.distanceFrom(endPoint) > lengthThreshHold) {
                         circuitView.pause();
@@ -488,6 +472,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 //                    Log.i(TAG, "moving: (" + x + ", " + y + ")");
                     break;
                 case MotionEvent.ACTION_UP:
+                    if (startPoint == null)
+                        break;
                     endPoint = new SimplePoint(x, y);
                     for (CircuitElm circuitElm : circuitElms) {
                         //check to see if the new points we are drawing are near existing ones, if so connect them
@@ -520,6 +506,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             displayElementInfo();
             return true;
         }
+        return true;
     }
 
     private boolean isOnElement(int x, int y, CircuitElm e) {
