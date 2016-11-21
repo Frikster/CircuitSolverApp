@@ -1,5 +1,6 @@
 package com.cpen321.circuitsolver.ui.draw;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
@@ -135,7 +137,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return selectedElm;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,12 +183,17 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     e.printStackTrace();
                 }
             }
+            Log.d(TAG, ImageUtils.getTimeStamp());
+            Log.d(TAG, getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString());
+            Log.d(TAG, this.circuitProject.toString());
         }
         else{
+            Log.d(TAG, ImageUtils.getTimeStamp());
+            Log.d(TAG, getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString());
             this.circuitProject = new CircuitProject(ImageUtils.getTimeStamp(),
                     getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            Log.d(TAG, this.circuitProject.toString());
         }
-
         componentMenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -340,8 +346,14 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         });
     }
 
-
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        setContentView( R.layout.activity_draw );
+        Log.i(TAG, "onActivityResult!");
+    }
+
+        @Override
     public void onBackPressed(){
 
         // Convert list of elements to a circuit def file to save
@@ -360,11 +372,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             ex.printStackTrace();
         }
 
-
         Intent backToHomeIntent = new Intent(this, HomeActivity.class);
         startActivity(backToHomeIntent);
         finish();
     }
+
 
     @Override
     protected void onPause() {

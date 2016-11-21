@@ -1,5 +1,6 @@
 package com.cpen321.circuitsolver.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -40,6 +41,7 @@ public class HomeActivity extends BaseActivity {
 
     private static int RESULT_LOAD_IMAGE = 2;
     static final int REQUEST_TAKE_PHOTO = 1;
+    private final int DRAW_NEW_CIRCUIT = 3;
     private LinearLayout savedCircuitsScroll;
     private LinearLayout exampleCircuitScroll;
 
@@ -54,6 +56,8 @@ public class HomeActivity extends BaseActivity {
     private View drawFab;
     private FloatingActionButton deleteFab;
     //private Button drawCircuitButton;
+
+    private static ArrayList<Activity> activities=new ArrayList<Activity>();
 
 
     private View.OnClickListener thumbnailListener = new View.OnClickListener() {
@@ -96,6 +100,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activities.add(this);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -105,22 +110,12 @@ public class HomeActivity extends BaseActivity {
         this.drawFab =  findViewById(R.id.draw_fab);
         this.processingFab = (FloatingActionButton) findViewById(R.id.processing_fab);
         this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
-        //this.drawCircuitButton = (Button) findViewById(R.id.drawCircuitButton);
-
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
         this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
         this.updateSavedCircuits();
         this.loadExamples();
 
         this.checkNecessaryPermissions();
-
-//        final View actionB = findViewById(R.id.action_b);
-//        actionB.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                actionB.setVisibility(actionB.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-//            }
-//        });
 
         this.cameraFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +140,8 @@ public class HomeActivity extends BaseActivity {
         this.drawFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //HomeActivity.this.dispatchDrawCircuitIntent();
+
                 Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
 //                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
 //                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
@@ -214,32 +211,25 @@ public class HomeActivity extends BaseActivity {
 
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
 
-//    private void dispatchLoadPictureIntent() {
-//        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
-//                getExternalFilesDir(Environment.DIRECTORY_PICTURES));
-//        Intent loadPictureIntent = new Intent(
-//                Intent.ACTION_PICK,
-//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//
-//        // Ensure that there's a camera activity to handle the intent
-//        if (loadPictureIntent.resolveActivity(getPackageManager()) != null) {
-//            // Create the File where the photo should go
-//            File photoFile = this.candidateProject.generateOriginalImageFile();
-//
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                Uri photoURI = FileProvider.getUriForFile(this,
-//                        APP_NAME,
-//                        photoFile);
-//                loadPictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//                startActivityForResult(loadPictureIntent, RESULT_LOAD_IMAGE);
-//            }
-//            else {
-//                System.out.println("photo file is null");
-//            }
-//        }
-//        startActivityForResult(loadPictureIntent, RESULT_LOAD_IMAGE);
-//    }
+    private void dispatchDrawCircuitIntent() {
+        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+        getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+        File photoFile = this.candidateProject.generateOriginalImageFile();
+        Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
+        if (photoFile != null) {
+//            Uri photoURI = FileProvider.getUriForFile(this,
+//                    APP_NAME,
+//                    photoFile);
+//            analysisIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//            startActivityForResult(analysisIntent, DRAW_NEW_CIRCUIT);
+            analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
+            startActivity(analysisIntent);
+            finish();
+        }
+        else{
+            Log.d(TAG, "dispatchDrawCircuitIntent Error");
+        }
+    }
 
 
     @Override
@@ -334,6 +324,5 @@ public class HomeActivity extends BaseActivity {
         newImage.setOnClickListener(this.thumbnailListener);
         this.exampleCircuitScroll.addView(newImage);
     }
-
 
 }
