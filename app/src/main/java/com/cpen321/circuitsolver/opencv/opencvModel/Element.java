@@ -1,22 +1,22 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.opencvModel;
 
 /**Abstract superclass defining an Element (extended by Corner and Component)
  * Created by Simon on 24.10.2016.
  */
 
 public abstract class Element {
-    protected double positionX;
-    protected double positionY;
+    private float positionX;
+    private float positionY;
 
-    public Element(double x, double y){
+    public Element(float x, float y){
         positionX = x;
         positionY = y;
     }
 
-    public double getX(){
+    public float getX(){
         return positionX;
     }
-    public double getY(){
+    public float getY(){
         return positionY;
     }
 

@@ -1,4 +1,4 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.comparators;
 
 import java.util.Comparator;
 
@@ -10,9 +10,9 @@ import java.util.Comparator;
  * Created by Simon on 19.10.2016.
  */
 
-public class LinesComparatorYX implements Comparator<double[]> {
+public class LinesComparatorYX implements Comparator<float[]> {
     @Override
-    public int compare(double[] a, double[] b){
+    public int compare(float[] a, float[] b){
         if(a[1]>b[1]){
             return 1;
         }

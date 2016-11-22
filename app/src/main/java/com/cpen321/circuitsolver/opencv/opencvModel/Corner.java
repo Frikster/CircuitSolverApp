@@ -1,4 +1,4 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.opencvModel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +10,7 @@ import java.util.Set;
 public class Corner extends Element {
     //n = north, w = west, s = south, e = east
     public Set<Character> exploredDirections;
-    public Corner(double x, double y){
+    public Corner(float x, float y){
         super(x,y);
         exploredDirections = new HashSet<>();
     }

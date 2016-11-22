@@ -1,4 +1,4 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.opencvModel;
 
 /**Classes that modelizes a point, and has some useful fields to use for the dbscan algorithm
  * Created by Simon on 01.11.2016.
@@ -8,8 +8,8 @@ package com.cpen321.circuitsolver.opencv;
 public class PointDB {
     public static int nrClusters = 1;
     private int cluster;
-    private double X;
-    private double Y;
+    private float X;
+    private float Y;
     private boolean isCore;
     private boolean isAssigned;
 
@@ -17,7 +17,7 @@ public class PointDB {
     {
         X=0; Y=0;
     }
-    public PointDB(double x,double y)
+    public PointDB(float x,float y)
     {
         X=x;
         Y=y;
@@ -43,13 +43,13 @@ public class PointDB {
         return isCore;
     }
 
-    public double getX() {
+    public float getX() {
         return X;
     }
     public void setX(float x) {
         X = x;
     }
-    public double getY() {
+    public float getY() {
         return  Y;
     }
     public void setY(float y) {

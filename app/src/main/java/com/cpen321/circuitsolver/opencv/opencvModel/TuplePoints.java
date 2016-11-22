@@ -1,4 +1,4 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.opencvModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,18 +8,18 @@ import java.util.List;
  */
 
 public class TuplePoints {
-    private List<double[]> firstList;
-    private List<double[]> secondList;
-    public TuplePoints(List<double[]> a, List<double[]> b){
+    private List<float[]> firstList;
+    private List<float[]> secondList;
+    public TuplePoints(List<float[]> a, List<float[]> b){
         firstList = new ArrayList<>(a);
         secondList = new ArrayList<>(b);
     }
 
-    public List<double[]> getFirst(){
+    public List<float[]> getFirst(){
         return firstList;
     }
 
-    public List<double[]> getSecond(){
+    public List<float[]> getSecond(){
         return secondList;
     }
 }

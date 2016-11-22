@@ -1,4 +1,6 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.comparators;
+
+import com.cpen321.circuitsolver.opencv.opencvModel.Element;
 
 import java.util.Comparator;
 
@@ -12,7 +14,7 @@ public class ComponentComparatorY implements Comparator<Element> {
 
         @Override
         public int compare(Element a, Element b){
-            if(a.positionY >= b.positionY){
+            if(a.getY() >= b.getY()){
                 return 1;
             }
             else{

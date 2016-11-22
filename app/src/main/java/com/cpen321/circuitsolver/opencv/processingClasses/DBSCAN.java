@@ -1,8 +1,10 @@
-package com.cpen321.circuitsolver.opencv;
+package com.cpen321.circuitsolver.opencv.processingClasses;
 
 /**Class to perform the DB scan algorithm
  *Created by Simon Haefeli entirely 3.11.2016
  */
+
+import com.cpen321.circuitsolver.opencv.opencvModel.PointDB;
 
 import java.util.ArrayList;
 import java.util.List;
