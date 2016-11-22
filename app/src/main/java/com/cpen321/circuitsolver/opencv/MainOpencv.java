@@ -1,25 +1,17 @@
 package com.cpen321.circuitsolver.opencv;
 
 import android.graphics.Bitmap;
-import android.provider.Settings;
-
 
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.model.components.ResistorElm;
-import com.cpen321.circuitsolver.model.components.VoltageElm;
-import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.service.CircuitDefParser;
-import com.cpen321.circuitsolver.util.Constants;
 
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -28,21 +20,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
-import static com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE;
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
-import static org.opencv.core.Core.BORDER_DEFAULT;
-import static org.opencv.core.Core.addWeighted;
-import static org.opencv.core.Core.convertScaleAbs;
-import static org.opencv.core.Core.NORM_MINMAX;
-import static org.opencv.core.CvType.CV_32FC1;
-import static org.opencv.imgproc.Imgproc.COLOR_BGR2GRAY;
+import static com.cpen321.circuitsolver.util.Constants.distanceFromComponent;
+import static com.cpen321.circuitsolver.util.Constants.maxLinesToBeChunk;
+import static com.cpen321.circuitsolver.util.Constants.minPoints;
+import static com.cpen321.circuitsolver.util.Constants.radius;
+import static com.cpen321.circuitsolver.util.Constants.thresholdXY;
+import static com.cpen321.circuitsolver.util.Constants.tooNearFromComponent;
+import static com.cpen321.circuitsolver.util.Constants.twoCornersTooNear;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
 
 /**Main opencv class
- * Created by Simon on 27.10.2016.
+ * Created by Simon Haefeli on 27.10.2016.
  */
 
 public class MainOpencv {
@@ -51,16 +42,22 @@ public class MainOpencv {
     //MainOpenCV
     //##############TODO :#################
     //Integration with tenserflow
-    //Javadoc
     //##########################################
 
 
-    List<List<Element>> wires = new ArrayList<>();
-    List<List<Element>> separatedComponents = new ArrayList<>();
+    private List<List<Element>> wires  = new ArrayList<>();
+    private List<List<Element>> separatedComponents  = new ArrayList<>();
 
     private int bitMapWidth;
     private int bitMapHeight;
 
+
+    /**Temporary method for debugging purposes**
+     *
+     * @param bMap The input image
+     * @param test true if this a mock test
+     * @return the result
+     */
     public Bitmap houghLines(Bitmap bMap, boolean test){
         if(!test)
             return houghLines(bMap);
@@ -72,58 +69,7 @@ public class MainOpencv {
      * @return the bitmap with the detected lines and a circle around the components
      */
     public Bitmap houghLines(Bitmap bMap){
-        // Sobel Edge Detection - theoretically it should be worse
-//        //Convert to a canny edge detector grayscale mat
-//        System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
-//        bitMapHeight = bMap.getHeight();
-//        bitMapWidth = bMap.getWidth();
-//
-//        Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//        Utils.bitmapToMat(bMap, tmp);
-//        Mat grad_x = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//        Mat grad_y = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//        Mat abs_grad_x = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//        Mat abs_grad_y = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//        Mat src_gray = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//        Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
-//
-//        int scale = 1;
-//        int delta = 0;
-//        int ddepth = CvType.CV_16S;
-//
-//        Imgproc.GaussianBlur( tmp, tmp, new Size(3,3), 0, 0, BORDER_DEFAULT );
-//
-//        /// Convert it to gray
-//        cvtColor( tmp, src_gray, COLOR_GRAY2BGR);
-//
-//        /// Gradient X
-//        //Scharr( src_gray, grad_x, ddepth, 1, 0, scale, delta, BORDER_DEFAULT );
-//        Imgproc.Sobel( src_gray, grad_x, ddepth, 1, 0, 3, scale, delta, BORDER_DEFAULT );
-//        convertScaleAbs( grad_x, abs_grad_x );
-//
-//        /// Gradient Y
-//        //Scharr( src_gray, grad_y, ddepth, 0, 1, scale, delta, BORDER_DEFAULT );
-//        Imgproc.Sobel( src_gray, grad_y, ddepth, 0, 1, 3, scale, delta, BORDER_DEFAULT );
-//        convertScaleAbs( grad_y, abs_grad_y );
-//
-//        /// Total Gradient (approximate)
-//        addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, tmp2 );
-//
-//        //cvtColor(tmp,tmp2,COLOR_BGR2GRAY);
-//        //Imgproc.Canny(tmp, tmp2, 40, 200);
 
-        // "Constants" found by trial and error (i.e. blood and tears)
-        int distanceFromComponent = 12*4;
-        int maxLinesToBeChunk = 3;
-        int radius = 5*6;
-        int minPoints = 20*6;
-        int twoCornersTooNear = 15*4;
-        int thresholdXY = 10*4;
-
-
-
-        //Convert to a canny edge detector grayscale mat
-        System.out.println("width/height :"+bMap.getWidth()+" , "+ bMap.getHeight());
         bitMapHeight = bMap.getHeight();
         bitMapWidth = bMap.getWidth();
 
@@ -131,7 +77,8 @@ public class MainOpencv {
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
 
-        //cvtColor(tmp,tmp2,COLOR_BGR2GRAY);
+        System.out.println("Width/height : "+bitMapHeight +" , "+bitMapWidth);
+        //Convert to a canny edge detector grayscale mat
         Imgproc.Canny(tmp, tmp2, 40, 200);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
@@ -142,6 +89,7 @@ public class MainOpencv {
         Mat lines = new Mat();
         Imgproc.HoughLinesP(tmp2,lines,1,Math.PI/180,0);
 
+        //To be able to draw in color on the mat tmp3
         cvtColor(tmp2, tmp3, COLOR_GRAY2BGR);
 
 
@@ -160,131 +108,55 @@ public class MainOpencv {
 
         List<double[]> residualLinesWithoutChunk= removeChunks(residualLines, maxLinesToBeChunk);
 
-        System.out.println("Residual lines");
-        for(double[] line : residualLinesWithoutChunk){
-            double x1 = line[0];
-            double y1 = line[1];
-            double x2 = line[2];
-            double y2 = line[3];
-            System.out.println(x1+" , "+y1+" -> "+x2+" , "+y2);
-        }
-        //List<double[]> withoutBorders = removeImageBorder(residualLinesWithoutChunk);
-        List<double[]> withoutBorders = residualLinesWithoutChunk;
-        List<double[]> verticalLines = verticalLines(withoutBorders);
-        List<double[]> horizontalLines = horizontalLines(withoutBorders);
+        List<double[]> verticalLines = verticalLines(residualLinesWithoutChunk);
+        List<double[]> horizontalLines = horizontalLines(residualLinesWithoutChunk);
         List<double[]> corners = findCorners(verticalLines,horizontalLines,10);
 
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
-        int tooNearFromComponent = 10*4;
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);
 
+        //If removing too near components removes everything, just keep the corners before the filtering
         if(validCorners.size() == 0){
             validCorners = new ArrayList<>(singleCorners);
         }
-        drawCircles(tmp3,validCorners, new Scalar(0,255,0), 10*4);
-        drawCircles(tmp3,components, new Scalar(255,0,0), 10*4);
-        Bitmap tmp3_bm_postCircles = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(tmp3, tmp3_bm_postCircles);
 
-        System.out.println("Nr of corners : "+validCorners.size());
-        System.out.println("Nr of components : "+components.size());
-        //eliminer les corners trop près des components
+
+        //Detecting the wires from the list of corners and components
+        List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
+        List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
+
         Corner firstCorner = null;
         if(!objectizeCorners(validCorners).isEmpty()){
             firstCorner = objectizeCorners(validCorners).get(0);
         }
-
-        System.out.println("before any wire processing");
-        for(int i=0 ;i<components.size();i++){
-            double[] coord = components.get(i);
-            double x1 = coord[0];
-            double y1 = coord[1];
-
-            System.out.println("Coord of comp : "+x1+" , "+y1);
-        }
-        for(int i=0 ;i<validCorners.size();i++){
-            double[] coord = validCorners.get(i);
-            double x1 = coord[0];
-            double y1 = coord[1];
-
-            System.out.println("Coord of corner : "+x1+" , "+y1);
-        }
-        List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
-        List<Component> objectizedComponents = getCompFromElements(objectizedCompAndCorners);
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY,residualLinesWithoutChunk);
-        detectWires(objectizedCompAndCorners,firstCorner, thresholdXY,residualLinesWithoutChunk);
-        System.out.println("Finding wires after the first time : "+wires.size());
-        //Prints the found wires
-        for(List<Element> wire : wires){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
 
-            }
-        }
-        //correctCallToWires(validCorners, components);
+        //Process the result to output a normalized version of the wires
         separatedComponents = separateComponents(wires);
-        System.out.println("After separated components size :"+separatedComponents.size());
-        for(List<Element> wire : separatedComponents){
-            System.out.println("New wire : ");
-            for(Element e : wire){
-                if(e instanceof Corner){
-                    System.out.println("Corner, x : "+e.getX()+", y: "+e.getY());
-                }
-                else{
-                    System.out.println("Component, x : "+e.getX()+", y: "+e.getY());
-                }
 
-            }
-        }
-        separatedComponents = completeMissingEndings(separatedComponents, thresholdXY,
-                distanceFromComponent);
-        System.out.println("After completing missing Endings : "+separatedComponents.size());
+        separatedComponents = completeMissingEndings(separatedComponents, thresholdXY, distanceFromComponent);
 
-        separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents,
-                distanceFromComponent);
-        System.out.println("After adding orphans to the wires : "+separatedComponents.size());
+        separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents, distanceFromComponent);
 
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
-        System.out.println("After add missing wires : "+separatedComponents.size());
 
         separatedComponents = removeDuplicateWires(separatedComponents);
-        System.out.println("After remove duplicates : "+separatedComponents.size());
+
+
+        //######Printing stuff out on tmp3 for debugging purposes#########
+        // Print out the bitmap (for debugging)
 
         List<CircuitElm> myelement = getCircuitElements();
         for(CircuitElm c : myelement){
-            //System.out.println(c.getPoint(0).getX()+" , "+c.getPoint(0).getY()+" ; "+c.getType()+" , "+c.getPoint(1).getX()+" , "+c.getPoint(1).getY());
             System.out.println(c);
         }
-        /*
-        //Draw the found lines
-        for (int x = 0; x < withoutBorders.size(); x++)
-        {
-            double[] vec = withoutBorders.get(x);
-            double x1 = vec[0],
-                    y1 = vec[1],
-                    x2 = vec[2],
-                    y2 = vec[3];
-            Point start = new Point(x1, y1);
-            Point end = new Point(x2, y2);
-            //System.out.println("line :("+x1+" : "+y1+") , ("+x2+" : "+y2+")");
-            if(x%3 == 0){
-                Imgproc.line(tmp3, start, end, new Scalar(255,0,0), 1);
-            }
-            else if(x% 3 == 1){
-                Imgproc.line(tmp3, start, end, new Scalar(0,255,0), 1);
-            }
-            else{
-                Imgproc.line(tmp3, start, end, new Scalar(0,0,255), 1);
-            }
-        }
-        */
-        // Print out the bitmap (for debugging)
+
+        drawCircles(tmp3,validCorners, new Scalar(0,255,0), 10*4);
+        drawCircles(tmp3,components, new Scalar(255,0,0), 10*4);
+
+        System.out.println("Nr of corners : "+validCorners.size());
+        System.out.println("Nr of components : "+components.size());
+
         int x=0;
         for (List<Element> wire : separatedComponents)
         {
@@ -309,6 +181,10 @@ public class MainOpencv {
             }
             x++;
         }
+
+        //######End debugging printings##########
+
+
         //Create and return the final bitmap
         Bitmap bm = Bitmap.createBitmap(tmp3.cols(), tmp3.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(tmp3, bm);
@@ -595,13 +471,9 @@ public class MainOpencv {
         List<List<Element>> wiresWithorphans = new ArrayList<>(wires);
         for(Component e : allComponents){
 
-
                 boolean foundOrphan = true;
                 for (List<Element> wire : wires) {
 
-                    for(Element c : wire){
-                        System.out.println(c.getX()+" , "+c.getY());
-                    }
                     if(containsElement(wire,e)){
 
                         foundOrphan = false;
@@ -610,7 +482,6 @@ public class MainOpencv {
                 }
 
                 if (foundOrphan) {
-                    System.out.println("Found an orphan !");
                     Component co = (Component) e;
                     Corner c1 = new Corner(co.getX() - distanceFromComponent, co.getY());
                     Corner c2 = new Corner(co.getX() + distanceFromComponent, co.getY());
@@ -696,9 +567,6 @@ public class MainOpencv {
     private List<List<Element>> addMisingWires(List<List<Element>> wires, List<Corner> cornersToWire){
         List<List<Element>> wiresWithMissing = new ArrayList<>(wires);
         List<Corner> allCorners = getCornersFromWires(wires);
-        System.out.println("wires all size :"+ wires.size());
-        System.out.println("Corners to wire size"+cornersToWire.size());
-        System.out.println("allcorners size : "+allCorners.size());
         List<Corner> alreadyWiredCorners = new ArrayList<>();
         for(Corner c : cornersToWire){
             if(!containsCorner(alreadyWiredCorners,c)) {
@@ -941,7 +809,6 @@ public class MainOpencv {
         //Threshold : so that two points have sameX or sameY
 
         if(currCorner != null && !currCorner.exploredDirections.isEmpty()){
-            System.out.println("Current corner "+currCorner.getX()+" , "+currCorner.getY());
             //get same horizontal and vertical components
             List<Element> sameY = getSameYElements(elements,currCorner,thresholdXY);
             List<Element> sameX = getSameXElements(elements,currCorner,thresholdXY);
@@ -1373,24 +1240,6 @@ public class MainOpencv {
             }
         }
         return realLine;
-    }
-
-    /**Draw a single circle
-     *
-     * @param i "x" position of center
-     * @param j "y" position of center
-     * @param radius radius of the circle
-     * @param toDraw the Mat to draw on
-     */
-
-    private void drawSCircle(int i, int j, int radius, Mat toDraw){
-        double[] circle = new double[3];
-        circle[0]=i;
-        circle[1]=j;
-        circle[2]=radius;
-        List<double[]> circles = new ArrayList<>();
-        circles.add(circle);
-        drawCircles(toDraw, circles, new Scalar(0,0,255), 15);
     }
 
     /**

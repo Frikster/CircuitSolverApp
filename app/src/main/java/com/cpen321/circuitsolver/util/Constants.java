@@ -28,5 +28,14 @@ public final class Constants {
     public static final String NOTHING_SELECTED = "--";
     public static final String WIRE_UNTIS = "--";
 
+    //The openCv constants, to tweek depending on resolution
+    public static int distanceFromComponent = 12*4;
+    public static int maxLinesToBeChunk = 3;
+    public static int radius = 5*6;
+    public static int minPoints = 20*6;
+    public static int twoCornersTooNear = 15*4;
+    public static int thresholdXY = 10*4;
+    public static int tooNearFromComponent = 10*4;
+
 
 }
