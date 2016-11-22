@@ -142,6 +142,7 @@ public class MainOpencv {
 
         separatedComponents = removeDuplicateWires(separatedComponents);
 
+        separatedComponents = removeWireOnComponents(separatedComponents);
 
         //######Printing stuff out on tmp3 for debugging purposes#########
         // Print out the bitmap (for debugging)
@@ -524,9 +525,38 @@ public class MainOpencv {
 
     }
 
+    /**Makes sure there isn't a wire on a component
+     *
+     * @param wires All the found wires
+     * @return A list of unique components and wires
+     */
 
-    /**
-     * Makes sure there isn't a wire in one direction, and the same in the opposite direction
+    private List<List<Element>> removeWireOnComponents (List<List<Element>> wires){
+        List<List<Element>> cleanedUpWires = new ArrayList<>();
+        for(List<Element> wire : wires){
+            //we're going to look for a potential wire of size 3 at the same position.
+            boolean hasSame = false;
+            if(wire.size() == 2){
+                for(List<Element> wire1 : wires){
+                    if(wire1.size() == 3){
+                        if(containsElement(wire1,wire.get(0)) && containsElement(wire1,wire.get(1))){
+                            hasSame = true;
+                            break;
+                        }
+                    }
+                }
+                if(!hasSame) {
+                    cleanedUpWires.add(wire);
+                }
+            }
+            else{
+                cleanedUpWires.add(wire);
+            }
+        }
+        return cleanedUpWires;
+    }
+    /**Makes sure there isn't a wire in one direction, and the same in the opposite direction
+     *
      * @param wires All the found wires
      * @return A list of unique wires
      */
@@ -738,11 +768,9 @@ public class MainOpencv {
      */
     private List<List<Element>> separateComponents(List<List<Element>> wires){
         List<List<Element>> newWires = new ArrayList<>(wires);
-        List<List<Element>> result = new ArrayList<>();
-        boolean g=true;
         while(TwoAdjacentComponent(newWires)){
 
-            result = new ArrayList<>();
+            List<List<Element>> result = new ArrayList<>();
             for(List<Element> wire : newWires){
 
                     boolean brokeWire = false;
@@ -1114,24 +1142,7 @@ public class MainOpencv {
         return singleCorners;
     }
 
-    /**Removes the border from the image
-     * (the lines of the border of the image are detected by the hough transform and can be removed using this function)
-     * @param lines the list of lines containng a border
-     * @return The list of lines without the border
-     */
 
-    private List<double[]> removeImageBorder(List<double[]> lines){
-        List<double[]> line = new ArrayList<>(lines);
-        Collections.sort(line,new LinesComparatorYX());
-        line.remove(0);
-        line.remove(line.size()-1);
-
-        Collections.sort(line,new LinesComparatorXY());
-        line.remove(0);
-        line.remove(line.size()-1);
-
-        return line;
-    }
 
     /**Finds the corners from a set of horizontal and vertical lines
      * If two ends of respectively an horizontal and a vertical lines is close enough (defined by searchRadius),
