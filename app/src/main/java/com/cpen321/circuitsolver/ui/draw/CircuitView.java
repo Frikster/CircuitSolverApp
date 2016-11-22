@@ -77,6 +77,12 @@ public class CircuitView extends SurfaceView implements Runnable {
                 SimplePoint end = selected.getP2();
                 paint.setColor(Color.RED);
                 selected.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
+
+                paint.setColor(Color.BLUE);
+                //draws arrow, dirStartToStop is set to true: current goes from start point to end point
+                selected.drawArrow(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint, true);
+                //return back to red
+                paint.setColor(Color.RED);
             }
             //AddComponentState state = DrawActivity.getComponentState();
             paint.setColor(Color.RED);
@@ -84,6 +90,12 @@ public class CircuitView extends SurfaceView implements Runnable {
             if (candidate != null) {
                 String type = convertStateToType(DrawActivity.getComponentState());
                 candidate.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
+
+//                paint.setColor(Color.BLUE);
+//                //draws arrow, dirStartToStop is set to true: current goes from start point to end point
+//                candidate.drawArrow(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint, true);
+//                //return back to red
+//                paint.setColor(Color.RED);
             }
             holder.unlockCanvasAndPost(canvas);
         }
