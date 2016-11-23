@@ -156,6 +156,18 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
             x8 = x8i + WIDTH * ((float) Math.cos(perpAngle));
             y8i = stopY - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.sin(angle));
             y8 = y8i - WIDTH * ((float) Math.sin(perpAngle));
+
+            if(slope/(Math.abs(slope)) == -1){
+                y5 = y5i - WIDTH * ((float) Math.sin(perpAngle));
+                y6 = y6i + WIDTH * ((float) Math.sin(perpAngle));
+                y7 = y7i - WIDTH * ((float) Math.sin(perpAngle));
+                y8 = y8i + WIDTH * ((float) Math.sin(perpAngle));
+
+                x5 = x5i + WIDTH * ((float) Math.cos(perpAngle));
+                x6 = x6i - WIDTH * ((float) Math.cos(perpAngle));
+                x7 = x7i + WIDTH * ((float) Math.cos(perpAngle));
+                x8 = x8i - WIDTH * ((float) Math.cos(perpAngle));
+            }
         }
         //when drawn right to left
         else if (x < 0) {
@@ -183,6 +195,18 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
             x8 = x8i + WIDTH * ((float) Math.cos(perpAngle));
             y8i = startY - (d + 4 * innerD) * ((float) Math.sin(angle));
             y8 = y8i - WIDTH * ((float) Math.sin(perpAngle));
+
+            if(slope/(Math.abs(slope)) == 1){
+                y5 = y5i - WIDTH * ((float) Math.sin(perpAngle));
+                y6 = y6i + WIDTH * ((float) Math.sin(perpAngle));
+                y7 = y7i - WIDTH * ((float) Math.sin(perpAngle));
+                y8 = y8i + WIDTH * ((float) Math.sin(perpAngle));
+
+                x5 = x5i + WIDTH * ((float) Math.cos(perpAngle));
+                x6 = x6i - WIDTH * ((float) Math.cos(perpAngle));
+                x7 = x7i + WIDTH * ((float) Math.cos(perpAngle));
+                x8 = x8i - WIDTH * ((float) Math.cos(perpAngle));
+            }
         }
         //when drawn vertically pointing down
         else if (y > 0) {
@@ -209,10 +233,10 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
             y6 = startY - d - 2 * innerD;
             y7 = startY - d - 3 * innerD;
             y8 = startY - d - 4 * innerD;
-            x5 = startX - WIDTH;
-            x6 = startX + WIDTH;
-            x7 = startX - WIDTH;
-            x8 = startX + WIDTH;
+            x5 = startX + WIDTH;
+            x6 = startX - WIDTH;
+            x7 = startX + WIDTH;
+            x8 = startX - WIDTH;
         }
         //draw wire section
         canvas.drawLine(startX, startY, x3, y3, paint);
