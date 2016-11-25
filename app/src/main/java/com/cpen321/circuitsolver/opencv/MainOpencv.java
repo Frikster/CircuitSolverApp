@@ -21,13 +21,16 @@ import java.util.List;
 import java.util.Set;
 
 import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
+import static com.cpen321.circuitsolver.util.Constants.cornerSearchRadius;
 import static com.cpen321.circuitsolver.util.Constants.distanceFromComponent;
+import static com.cpen321.circuitsolver.util.Constants.lowerCannyThreshold;
 import static com.cpen321.circuitsolver.util.Constants.maxLinesToBeChunk;
 import static com.cpen321.circuitsolver.util.Constants.minPoints;
 import static com.cpen321.circuitsolver.util.Constants.radius;
 import static com.cpen321.circuitsolver.util.Constants.thresholdXY;
 import static com.cpen321.circuitsolver.util.Constants.tooNearFromComponent;
 import static com.cpen321.circuitsolver.util.Constants.twoCornersTooNear;
+import static com.cpen321.circuitsolver.util.Constants.upperCannyThreshold;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -79,7 +82,7 @@ public class MainOpencv {
 
         System.out.println("Width/height : "+bitMapHeight +" , "+bitMapWidth);
         //Convert to a canny edge detector grayscale mat
-        Imgproc.Canny(tmp, tmp2, 40, 200);
+        Imgproc.Canny(tmp, tmp2, lowerCannyThreshold, upperCannyThreshold);
 
         Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Bitmap tmp2_bm_postCanny = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
@@ -92,17 +95,16 @@ public class MainOpencv {
         //To be able to draw in color on the mat tmp3
         cvtColor(tmp2, tmp3, COLOR_GRAY2BGR);
 
-
         //remove chunks from hough transform and make one line from them
         List<double[]> smoothedLines = smoothLines(MatToList(lines));
 
         // diagonal set of points from Houghlines/Canny = "a chunk"
         // first line assumes component is only made of diagonals
-        //List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,maxLinesToBeChunk), tmp3, radius, minPoints);
+        // List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,maxLinesToBeChunk), tmp3, radius, minPoints);
         // second line only assumes components are made of many lines (hori, vert, or diagonal)
         List<PointDB> assPoints = dbscan(smoothedLines, tmp3, radius, minPoints);
         List<PointDB> assignedPoints = assignedPoints(assPoints);
-        TuplePoints residAssigned = dbToArray(assignedPoints , smoothedLines, maxLinesToBeChunk);
+        TuplePoints residAssigned = dbToArray(assignedPoints, smoothedLines, maxLinesToBeChunk);
         List<double[]> residualLines = residAssigned.getFirst();
         List<double[]> components = residAssigned.getSecond();
 
@@ -110,7 +112,7 @@ public class MainOpencv {
 
         List<double[]> verticalLines = verticalLines(residualLinesWithoutChunk);
         List<double[]> horizontalLines = horizontalLines(residualLinesWithoutChunk);
-        List<double[]> corners = findCorners(verticalLines,horizontalLines,10);
+        List<double[]> corners = findCorners(verticalLines, horizontalLines, cornerSearchRadius);
 
         List<double[]> singleCorners = singleCorners(corners,twoCornersTooNear);
         List<double[]> validCorners = goodCorners(assignedPoints,singleCorners,tooNearFromComponent);

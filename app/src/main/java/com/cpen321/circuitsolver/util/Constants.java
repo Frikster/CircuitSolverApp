@@ -28,14 +28,16 @@ public final class Constants {
     public static final String NOTHING_SELECTED = "--";
     public static final String WIRE_UNTIS = "--";
 
+    public static final int lowerCannyThreshold = 40;
+    public static final int upperCannyThreshold = 200;
     //The openCv constants, to tweek depending on resolution
-    public static int distanceFromComponent = 12*4;
-    public static int maxLinesToBeChunk = 3;
-    public static int radius = 5*6;
-    public static int minPoints = 20*6;
-    public static int twoCornersTooNear = 15*4;
-    public static int thresholdXY = 10*4;
-    public static int tooNearFromComponent = 10*4;
-
-
+    // cluster = collection of meaningful points identified
+    public static int distanceFromComponent = 12 * 4; //... like tooNearFromComponent... but different?
+    public static int maxLinesToBeChunk = 3; // the maximum length of a line to be considered as a chunk (used to remove clusters that only have wire): used by dbtoArray
+    public static int radius = 5 * 6; // maximum radius of a cluster: used by dbscan
+    public static int minPoints = 20 * 6; // minimum number of points needed to identify a cluster: used by dbscan
+    public static int twoCornersTooNear = 15 * 4; // The min distance between two corners: used by singleCorners
+    public static int thresholdXY = 10 * 4; // the dmmax distance to be considered as same distance (?) <- threshold tolerance wires can be said to be on the same x or y axis: used by completeMissingEndings
+    public static int tooNearFromComponent = 10 * 4; // used to define how close a corner can be to a component: in goodCorners
+    public static int cornerSearchRadius = 10; // The max distance between two line endings to be considered as a corner: used by findCorners
 }
