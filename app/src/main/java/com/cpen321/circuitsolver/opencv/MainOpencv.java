@@ -120,6 +120,11 @@ public class MainOpencv {
             validCorners = new ArrayList<>(singleCorners);
         }
 
+        //####### Special for testing tensorflow testing ####
+        componentsForTensorFlow = new ArrayList<>(components);
+        originalMat = tmp;
+        List<Bitmap> salut = getSubImagesForTensorflow();
+
 
         //Detecting the wires from the list of corners and components
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
@@ -193,6 +198,22 @@ public class MainOpencv {
         tmp2.release();
         tmp3.release();
         return bm;
+    }
+
+    //Method to call for tensorlow. imageWH is the frame around a component.
+    private List<double[]> componentsForTensorFlow;
+    int imageWH =10*5;
+    Mat originalMat;
+    public List<Bitmap> getSubImagesForTensorflow(){
+        List<Bitmap> subimages = new ArrayList<>();
+        for(double[] component : componentsForTensorFlow){
+            System.out.println(component[0]+" , "+component[1]);
+            Mat submat = originalMat.submat((int)(component[1]-imageWH),(int)(component[1]+imageWH),(int)(component[0]-imageWH),(int)(component[0]+imageWH));
+            Bitmap b = Bitmap.createBitmap(submat.cols(), submat.rows(),Bitmap.Config.ARGB_8888);
+            Utils.matToBitmap(submat,b);
+            subimages.add(b);
+        }
+        return subimages;
     }
 
     /**
