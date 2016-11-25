@@ -22,6 +22,12 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     private String name;
     private boolean isSelected;
 
+    public InductorElm() {
+        super();
+        this.name = "l" + numInductors;
+        numInductors++;
+    }
+
     public InductorElm(SimplePoint p1, SimplePoint p2, double inductance){
         super(p1, p2);
         this.inductance = inductance;
@@ -71,6 +77,37 @@ public class InductorElm extends CircuitElm implements SpiceElm {
         Log.i("RECT", "CORRECT");
         Log.i("RECT", this.getType());
         isSelected = !isSelected;
+    }
+
+    /**
+     * Draws inductor element as a green coloured wire
+     * @param canvas
+     * @param paint
+     * @param disp
+     * @param test
+     */
+    public void onDraw(Canvas canvas, Paint paint, int disp, boolean test){
+
+        int startX = this.getPoint(0).getX();
+        int startY = this.getPoint(0).getY();
+        int endX = this.getPoint(1).getX();
+        int endY = this.getPoint(1).getY();
+        Paint rpaint = new Paint();
+        rpaint.setColor(Color.GREEN);
+        rpaint.setStyle(Paint.Style.STROKE);
+
+        canvas.drawLine(startX, startY, endX, endY, rpaint);
+
+        if (isSelected()){
+            showSelected(canvas);
+        }
+
+    }
+
+
+    @Override
+    public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+        //TODO implement inductor draw
     }
 
     @Override

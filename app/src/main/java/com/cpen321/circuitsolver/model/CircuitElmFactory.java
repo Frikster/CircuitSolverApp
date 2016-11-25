@@ -39,10 +39,6 @@ public class CircuitElmFactory {
         return elm;
     }
 
-    public CircuitElm makeElm(String type, SimplePoint p1, SimplePoint p2){
-        return new WireElm(p1, p2);
-    }
-
     public CircuitElm makeElm(SimplePoint p1, SimplePoint p2){
         return new WireElm(p1, p2);
     }

@@ -83,6 +83,7 @@ public final class NgSpice {
      */
     private void writeToInputFile(String input) {
         String inputFilePath = folderPath + "/" + INPUT_FILE_NAME;
+        Log.d(TAG, "Input: \n" + input);
         try {
             PrintWriter writer = new PrintWriter(inputFilePath);
             writer.println(input);

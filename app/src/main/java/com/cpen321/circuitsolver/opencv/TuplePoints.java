@@ -3,7 +3,7 @@ package com.cpen321.circuitsolver.opencv;
 import java.util.ArrayList;
 import java.util.List;
 
-/**Class to be able to return two elements at the time
+/**Class to be able to return two List of points (double[]) at the time
  * Created by Simon on 21.10.2016.
  */
 

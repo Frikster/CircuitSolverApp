@@ -11,10 +11,14 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Math.abs;
+
 /**
  * Created by Jennifer on 10/10/2016.
  */
-public abstract class CircuitElm {
+public abstract class CircuitElm{
+
+
 
     //protected CircuitNode[] nodes;
     private CircuitNode n1;
@@ -35,10 +39,32 @@ public abstract class CircuitElm {
 
     private double current;
 
-    public CircuitElm(SimplePoint p1, SimplePoint p2){
-        this.p1 = p1;
-        this.p2 = p2;
+    public CircuitElm() {
+
     }
+
+    public CircuitElm(SimplePoint p1, SimplePoint p2){
+//        if (p2.getX() <= p1.getX() && p2.getY() <= p1.getY()) {
+//            this.p1 = p2;
+//            this.p2 = p1;
+//        } else {
+            this.p1 = p1;
+            this.p2 = p2;
+//        }
+    }
+
+
+    /**
+     * Returns true if node corresponds to the given point, false otherwise
+     * @param p the point to check
+     * @return true if node coresponds to the given point, false otherwise
+     */
+    public boolean correspondsToPoint(SimplePoint p){
+        if(p.equals(p1) || p.equals(p2))
+            return true;
+        return false;
+    }
+
 
     public SimplePoint getP1() {
         return p1;
@@ -152,9 +178,18 @@ public abstract class CircuitElm {
         return nodes;
     }
 
+
+
     public void onDraw(Canvas canvas, Paint paint, int yDisp) {
 
     }
+
+    public void onDraw(Canvas canvas, Paint paint, int yDisp, boolean test) {
+
+
+    }
+
+    public abstract void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint);
 
     public boolean isSelected(){
         return isSelected;
@@ -166,6 +201,45 @@ public abstract class CircuitElm {
         isSelected = !isSelected;
     }
 
+    protected void showSelected(Canvas canvas) {
+        SimplePoint p1 = this.getP1();
+        SimplePoint p2 = this.getP2();
+
+        float left, right, top, bottom;
+        float quarterLength = 20;
+
+
+        if(p1.getY() == p2.getY()){
+            if(p1.getX() < p2.getX()){
+                left = p1.getX();
+                right = p2.getX();
+            }
+            else{
+                left = p2.getX();
+                right = p1.getX();
+            }
+            top = p1.getY() - quarterLength;
+            bottom = p1.getY() + quarterLength;
+        }
+        else{
+            if(p1.getY() < p2.getY()){
+                top = p1.getY();
+                bottom = p2.getY();
+            }
+            else{
+                top = p2.getY();
+                bottom = p1.getY();
+            }
+            left = p1.getX() - quarterLength;
+            right = p1.getX() + quarterLength;
+
+        }
+        Paint rectPaint = new Paint();
+        rectPaint.setColor(Color.RED);
+        rectPaint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(left, top, right, bottom, rectPaint);
+    }
+
     public double getValue() {
         return 0;
     }
@@ -173,10 +247,17 @@ public abstract class CircuitElm {
     @Override
     public String toString() {
         return "{type: " + this.getType() + ", val: " + this.getValue() + ", sX: " + this.getP1().getX()
-            + ", sY:" + this.getP1().getX() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
+            + ", sY:" + this.getP1().getY() + ", eX: " + this.getP2().getX() + ", eY: " + this.getP2().getY() +  "}";
     }
 
     public boolean isWire(){
+        return false;
+    }
+
+    public boolean isVertical() {
+        if(Math.abs(this.p1.getX() - this.p2.getX()) < 50 ) {
+            return true;
+        }
         return false;
     }
 }

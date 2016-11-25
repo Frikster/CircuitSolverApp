@@ -2,8 +2,9 @@ package com.cpen321.circuitsolver.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,19 +12,27 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
-public class EditActivity extends AppCompatActivity {
+import java.io.File;
+import java.io.IOException;
+
+public class EditActivity extends AppCompatActivity{
+    public static String TAG = "EditActivity";
 
     private CircuitDisplay circuitDisplay;
     private Button resistorButton;
@@ -32,11 +41,22 @@ public class EditActivity extends AppCompatActivity {
     private Button voltageSourceButton;
     private TextView valueUnits;
     private EditText componentValue;
+    private Button solveCircuitButton;
+    private TextView currentAndVoltageText;
+    private String currentAndVoltageString;
+    private ImageView cvBitmap;
+    private double computedCurrent;
+    private double computedResistance;
+
+    private CircuitProject circuitProject;
 
     private CircuitElm tappedElement;
 
     private FloatingActionButton rotateFab;
     private FloatingActionButton analysisActivity;
+
+    private int prevX;
+    private int prevY;
 
     private View.OnTouchListener handleTouch = new View.OnTouchListener() {
         @Override
@@ -50,13 +70,18 @@ public class EditActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_DOWN:
                     Log.i("TAG", "touched down");
                     CharSequence text = "Touched (" + x + "," + y + ")";
+                    EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
+                    prevX = x;
+                    prevY = y;
                     break;
                 case MotionEvent.ACTION_MOVE:
                     Log.i("TAG", "moving: (" + x + ", " + y + ")");
+                    circuitDisplay.move(tappedElement, x, y);
+                    //circuitDisplay.moveCorner(new SimplePoint(prevX, prevY), new SimplePoint(x,y));
                     break;
                 case MotionEvent.ACTION_UP:
                     Log.i("TAG", "touched up");
-                    EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
+                    //EditActivity.this.tappedElement = circuitDisplay.getCircuitElemTouched(x, y);
                     break;
             }
             //EditActivity.this.tappedElement = null;
@@ -66,6 +91,15 @@ public class EditActivity extends AppCompatActivity {
         }
     };
 
+
+    @Override
+    public void onBackPressed() {
+        Intent backToHomeIntent = new Intent(this, HomeActivity.class);
+        startActivity(backToHomeIntent);
+        finish();
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,9 +108,26 @@ public class EditActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.circuitDisplay = new CircuitDisplay(getApplicationContext());
-        // todo: remove the call to init. make it work without it. Init is just a test method
-        circuitDisplay.init();
+        Bundle extras = getIntent().getExtras();
+        String dataLocation = null;
+        if (extras != null) {
+            dataLocation = (String) extras.get(Constants.CIRCUIT_PROJECT_FOLDER);
+        }
+
+        if (dataLocation != null){
+            File test = new File(dataLocation);
+            if (dataLocation.contains("example"))
+                this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+            else {
+                this.circuitProject = new CircuitProject(test);
+                this.circuitDisplay = new CircuitDisplay(getApplicationContext(), this.circuitProject);
+            }
+        } else {
+            this.circuitDisplay = new CircuitDisplay(getApplicationContext());
+        }
+
+        // todo: uncomment this one and comment out the previous two to switch to using opencv!
+
         circuitDisplay.setOnTouchListener(handleTouch);
         CoordinatorLayout relativeLayout = (CoordinatorLayout) findViewById(R.id.content_edit);
         relativeLayout.addView(this.circuitDisplay, 0);
@@ -87,11 +138,21 @@ public class EditActivity extends AppCompatActivity {
         this.voltageSourceButton = (Button) findViewById(R.id.voltage_source);
         this.valueUnits = (TextView) findViewById(R.id.units_display);
         this.componentValue = (EditText) findViewById(R.id.component_value);
+        this.solveCircuitButton = (Button) findViewById(R.id.solveButton);
+        this.currentAndVoltageText = (TextView) findViewById(R.id.voltageAndCurrent);
         this.rotateFab = (FloatingActionButton) findViewById(R.id.rotate_fav);
         this.analysisActivity = (FloatingActionButton) findViewById(R.id.component_analysis);
         this.initElements();
         this.tappedElement = this.circuitDisplay.getRandomElement();
-        this.displayElement();
+        this.cvBitmap = (ImageView) findViewById(R.id.cvImage);
+        try {
+            this.cvBitmap.setImageBitmap(this.circuitProject.getProcessedImage());
+            Log.i("edit", "after setting bitmap");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        //this.displayElement();
     }
 
     @Override
@@ -117,6 +178,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void enableAllButtons() {
+        this.solveCircuitButton.setEnabled(true);
         this.resistorButton.setEnabled(true);
         this.capacitorButton.setEnabled(true);
         this.inductorButton.setEnabled(true);
@@ -124,6 +186,11 @@ public class EditActivity extends AppCompatActivity {
         this.componentValue.setEnabled(true);
         this.componentValue.setFocusable(true);
         this.componentValue.setClickable(true);
+
+        this.currentAndVoltageText.setEnabled(true);
+        this.currentAndVoltageText.setFocusable(true);
+        this.currentAndVoltageText.setClickable(true);
+
     }
 
     private void displayElement() {
@@ -158,11 +225,20 @@ public class EditActivity extends AppCompatActivity {
             }
         }
 
+        circuitDisplay.solveCircuit();
         this.componentValue.setText(Double.toString(this.tappedElement.getValue()));
-
+        this.currentAndVoltageString = "\n\n\n\n\n\n\n\n\n\n" + Double.toString(this.tappedElement.getCurrent()) + " A\n" + Double.toString(this.tappedElement.getVoltageDiff())+ " V";
+        this.currentAndVoltageText.setText(currentAndVoltageString);
+        Log.d(TAG ,"\n\n" + Double.toString(this.tappedElement.getCurrent()) + " A\n" + Double.toString(this.tappedElement.getVoltageDiff())+ " V");
     }
 
     private void initElements() {
+        this.solveCircuitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                circuitDisplay.solveCircuit();
+            }
+        });
         this.resistorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,7 +275,6 @@ public class EditActivity extends AppCompatActivity {
                 EditActivity.this.analyzeComponent();
             }
         });
-
         this.componentValue.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -232,6 +307,10 @@ public class EditActivity extends AppCompatActivity {
         if (newValue.isEmpty())
             return;
 
+        if (newValue.equals("--")) {
+            return;
+        }
+
         this.circuitDisplay.changeElementValue(this.tappedElement,
                 Double.valueOf(newValue));
     }
@@ -244,7 +323,12 @@ public class EditActivity extends AppCompatActivity {
 
     private void analyzeComponent(){
         Intent analysisIntent = new Intent(EditActivity.this, AnalysisActivity.class);
-        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.tappedElement.getType());
+        Bundle extras = new Bundle();
+        // todo: figure out what we should use as keys...
+        extras.putString("tappedElementType", this.tappedElement.getType());
+        extras.putDouble("computedCurrent", this.tappedElement.getCurrent());
+        extras.putDouble("computedVoltageDiff", this.tappedElement.getVoltageDiff());
+        analysisIntent.putExtras(extras);
         startActivity(analysisIntent);
     }
 }

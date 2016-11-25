@@ -9,8 +9,9 @@ public final class Constants {
     public static final String CIRCUIT_PROJECT_FOLDER = "circuit_projec_folder";
     public static final String OUTPUT_BITMAP = "hough_lines_output_bitmap";
     public static final String PROCESSING_DATA_LOCATION_KEY = "processing_data_location_key";
+    public static final int CANVAS_MARGIN = 10; //leaves buffer space so that circuit components aren't right on the edge of the screen
 
-    public static final int PROCESSING_WIDTH = 125;
+    public static final int PROCESSING_WIDTH = 500;
 
     //TODO change many of these things to enum for type safety
     public static final String RESISTOR = "r";
@@ -24,7 +25,17 @@ public final class Constants {
     public static final String INDUCTOR_UNTIS = "henrys";
     public static final String CAPACITOR_UNITS = "farads";
     public static final String VOLTAGE_UNITS = "volts";
-    public static final String NOTHING_SELECTED = "N/A";
+    public static final String NOTHING_SELECTED = "--";
+    public static final String WIRE_UNTIS = "--";
+
+    //The openCv constants, to tweek depending on resolution
+    public static int distanceFromComponent = 12*4;
+    public static int maxLinesToBeChunk = 3;
+    public static int radius = 5*6;
+    public static int minPoints = 20*6;
+    public static int twoCornersTooNear = 15*4;
+    public static int thresholdXY = 10*4;
+    public static int tooNearFromComponent = 10*4;
 
 
 }

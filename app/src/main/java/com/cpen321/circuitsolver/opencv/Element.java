@@ -1,6 +1,6 @@
 package com.cpen321.circuitsolver.opencv;
 
-/**
+/**Abstract superclass defining an Element (extended by Corner and Component)
  * Created by Simon on 24.10.2016.
  */
 

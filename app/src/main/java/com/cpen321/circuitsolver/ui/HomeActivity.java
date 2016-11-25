@@ -1,37 +1,49 @@
 package com.cpen321.circuitsolver.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+import android.database.Cursor;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.BaseActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class HomeActivity extends BaseActivity {
+    private static final String TAG = "HomeActivity";
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
+    private static int RESULT_LOAD_IMAGE = 2;
     static final int REQUEST_TAKE_PHOTO = 1;
+    private final int DRAW_NEW_CIRCUIT = 3;
     private LinearLayout savedCircuitsScroll;
+    //private LinearLayout exampleCircuitScroll;
 
     private ArrayList<CircuitProject> circuitProjects = new ArrayList<>();
     private CircuitProject candidateProject;
@@ -39,9 +51,13 @@ public class HomeActivity extends BaseActivity {
     private static String selectedTag = null;
 
     private FloatingActionButton processingFab;
-    private FloatingActionButton cameraFab;
+    private View cameraFab;
+    private View loadFab;
+    private View drawFab;
     private FloatingActionButton deleteFab;
+    //private Button drawCircuitButton;
 
+    private static ArrayList<Activity> activities=new ArrayList<Activity>();
 
 
     private View.OnClickListener thumbnailListener = new View.OnClickListener() {
@@ -51,16 +67,16 @@ public class HomeActivity extends BaseActivity {
 
             for(int i=0; i < parentView.getChildCount(); i++) {
                 ImageView imgView = (ImageView) parentView.getChildAt(i);
-                imgView.setAlpha(1f);
+                imgView.setColorFilter(null);
             }
 
             if (view instanceof ImageView) {
                 ImageView imageView = (ImageView) view;
                 if (imageView.getTag() == HomeActivity.selectedTag){
-                    imageView.setAlpha(1f);
+                    imageView.setColorFilter(null);
                     HomeActivity.this.setSelectedTag(null);
                 } else {
-                    imageView.setAlpha(0.65f);
+                    imageView.setColorFilter(Color.argb(100, 112, 17, 19));
                     HomeActivity.this.setSelectedTag((String) imageView.getTag());
                 }
 
@@ -84,17 +100,20 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activities.add(this);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        this.cameraFab = (FloatingActionButton) findViewById(R.id.fab);
+        this.cameraFab =  findViewById(R.id.capture_fab);
+        this.loadFab =  findViewById(R.id.load_fab);
+        this.drawFab =  findViewById(R.id.draw_fab);
         this.processingFab = (FloatingActionButton) findViewById(R.id.processing_fab);
         this.deleteFab = (FloatingActionButton) findViewById(R.id.delete_fab);
-
         this.savedCircuitsScroll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
+        //this.exampleCircuitScroll = (LinearLayout) findViewById(R.id.example_circuits_scroll);
         this.updateSavedCircuits();
-
+        //this.loadExamples();
 
         this.checkNecessaryPermissions();
 
@@ -106,15 +125,41 @@ public class HomeActivity extends BaseActivity {
             }
         });
 
+        this.loadFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                HomeActivity.this.checkNecessaryPermissions();
+                Intent i = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                startActivityForResult(i, RESULT_LOAD_IMAGE);
+            }
+        });
+
+        this.drawFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //HomeActivity.this.dispatchDrawCircuitIntent();
+
+                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
+//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
+//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                startActivity(displayIntent);
+                finish();
+            }
+        });
+
         this.processingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (HomeActivity.selectedTag == null)
                     return;
-                Intent displayIntent = new Intent(HomeActivity.this, EditActivity.class);
+                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                 startActivity(displayIntent);
+                finish();
             }
         });
 
@@ -123,9 +168,16 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View view) {
                 if (HomeActivity.selectedTag == null)
                     return;
+                if (HomeActivity.selectedTag.contains("example"))
+                    return;
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 CircuitProject projToDelete = new CircuitProject(circuitFolder);
                 projToDelete.deleteFileSystem();
+                Toast.makeText(
+                        HomeActivity.this,
+                        "Project Deleted",
+                        Toast.LENGTH_SHORT
+                ).show();
                 HomeActivity.this.updateSavedCircuits();
             }
         });
@@ -159,13 +211,68 @@ public class HomeActivity extends BaseActivity {
 
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
 
+    private void dispatchDrawCircuitIntent() {
+        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+        getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+        File photoFile = this.candidateProject.generateOriginalImageFile();
+        Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
+        if (photoFile != null) {
+//            Uri photoURI = FileProvider.getUriForFile(this,
+//                    APP_NAME,
+//                    photoFile);
+//            analysisIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//            startActivityForResult(analysisIntent, DRAW_NEW_CIRCUIT);
+            analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
+            startActivity(analysisIntent);
+            finish();
+        }
+        else{
+            Log.d(TAG, "dispatchDrawCircuitIntent Error");
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String picturePath = cursor.getString(columnIndex);
+            cursor.close();
+            Bitmap bm = BitmapFactory.decodeFile(picturePath);
+
+            this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+                    getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+            // Create the File where the photo should go
+            File photoFile = this.candidateProject.generateOriginalImageFile();
+            if (photoFile == null) {
+                Log.d(TAG,
+                        "Error creating media file, check storage permissions: ");// e.getMessage());
+                return;
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(photoFile);
+                bm.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                fos.close();
+            } catch (FileNotFoundException e) {
+                Log.d(TAG, "File not found: " + e.getMessage());
+            } catch (IOException e) {
+                Log.d(TAG, "Error accessing file: " + e.getMessage());
+            }
+
+        }
+
         Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
         analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
         startActivity(analysisIntent);
+        finish();
     }
 
     private void deleteFolderOrFile(File file) {
@@ -198,11 +305,24 @@ public class HomeActivity extends BaseActivity {
             ImageView newImage = new ImageView(getApplicationContext());
             newImage.setTag(circuitProject.getFolderID());
             newImage.setPadding(10, 10, 10, 10);
-            newImage.setImageBitmap(circuitProject.getThumbnail());
+            try {
+                newImage.setImageBitmap(circuitProject.getThumbnail());
+            } catch (NullPointerException ex) {
+                newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+                        R.drawable.not_found));
+            }
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
     }
-
+//    protected void loadExamples(){
+//        this.exampleCircuitScroll.removeAllViews();
+//        ImageView newImage = new ImageView(getApplicationContext());
+//        newImage.setTag("example_1");
+//        newImage.setPadding(10, 10, 10, 10);
+//        newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.example_1));
+//        newImage.setOnClickListener(this.thumbnailListener);
+//        this.exampleCircuitScroll.addView(newImage);
+//    }
 
 }
