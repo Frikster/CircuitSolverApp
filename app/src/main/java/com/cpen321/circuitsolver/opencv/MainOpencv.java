@@ -57,7 +57,6 @@ public class MainOpencv {
     private int bitMapWidth;
     private int bitMapHeight;
 
-
     /**Temporary method for debugging purposes**
      *
      * @param bMap The input image
@@ -90,29 +89,32 @@ public class MainOpencv {
         Imgproc.Canny(tmp, tmp2, lowerCannyThreshold, upperCannyThreshold);
 
         /// Detector parameters
-        int blockSize = 2;
+        int blockSize = 4;
         int apertureSize = 3;
         double k = 0.04;
         Imgproc.cornerHarris(tmp2, tmp_postHarris, blockSize, apertureSize, k );
-        //Core.normalize( tmp_postHarris, tmp_postHarris, 0, 255, NORM_MINMAX, CV_32FC1, new Mat() );
+        Mat tmp_postHarris_norm = new Mat (bMap.getWidth(), bMap.getHeight(), tmp_postHarris.type());
+        Core.normalize( tmp_postHarris, tmp_postHarris_norm, 0, 255, NORM_MINMAX, CvType.CV_8U, new Mat() );
 
         /// Drawing a circle around corners
 //        for( int j = 0; j < tmp_postHarris.rows() ; j++ )
-//        { for( int i = 0; i < tmp_postHarris.cols(); i++ )
 //        {
-//            System.out.print("kytfc");
-////            if( (int) tmp_postHarris.get(j,i) > 200)
-////            {
-////                Imgproc.circle( tmp_postHarris, new Point( i, j ), 5,  new Scalar(0), 2, 8, 0 );
-////            }
+//            for( int i = 0; i < tmp_postHarris.cols(); i++ )
+//            {
+//                System.out.print("kytfc");
+//                if( (int) tmp_postHarris.get(j,i) > 200)
+//                {
+//                    Imgproc.circle( tmp_postHarris, new Point( i, j ), 5,  new Scalar(0), 2, 8, 0 );
+//                }
+//            }
 //        }
-//        }
-
-        Bitmap tmp2_bm_postHarris = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
-        Utils.matToBitmap(tmp2, tmp2_bm_postHarris);
+        //drawCircles(tmp_postHarris,List<double[]> listOfCircles, new Scalar(0,255,0), 10*4);
 
         Bitmap tmp2_bm_postCanny = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(tmp2, tmp2_bm_postCanny);
+        Bitmap tmp_bm_postHarris = Bitmap.createBitmap(tmp_postHarris_norm.cols(), tmp_postHarris_norm.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp_postHarris_norm, tmp_bm_postHarris);
+
 
         //Execute the hough transform on the canny edge detector
         Mat lines = new Mat();
