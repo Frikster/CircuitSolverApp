@@ -13,6 +13,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.core.Core;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +32,8 @@ import static com.cpen321.circuitsolver.util.Constants.thresholdXY;
 import static com.cpen321.circuitsolver.util.Constants.tooNearFromComponent;
 import static com.cpen321.circuitsolver.util.Constants.twoCornersTooNear;
 import static com.cpen321.circuitsolver.util.Constants.upperCannyThreshold;
+import static org.opencv.core.Core.NORM_MINMAX;
+import static org.opencv.core.CvType.CV_32FC1;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
@@ -78,13 +81,36 @@ public class MainOpencv {
 
         Mat tmp = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+        Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+        Mat tmp_postHarris = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
 
         System.out.println("Width/height : "+bitMapHeight +" , "+bitMapWidth);
         //Convert to a canny edge detector grayscale mat
         Imgproc.Canny(tmp, tmp2, lowerCannyThreshold, upperCannyThreshold);
 
-        Mat tmp3 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
+        /// Detector parameters
+        int blockSize = 2;
+        int apertureSize = 3;
+        double k = 0.04;
+        Imgproc.cornerHarris(tmp2, tmp_postHarris, blockSize, apertureSize, k );
+        //Core.normalize( tmp_postHarris, tmp_postHarris, 0, 255, NORM_MINMAX, CV_32FC1, new Mat() );
+
+        /// Drawing a circle around corners
+//        for( int j = 0; j < tmp_postHarris.rows() ; j++ )
+//        { for( int i = 0; i < tmp_postHarris.cols(); i++ )
+//        {
+//            System.out.print("kytfc");
+////            if( (int) tmp_postHarris.get(j,i) > 200)
+////            {
+////                Imgproc.circle( tmp_postHarris, new Point( i, j ), 5,  new Scalar(0), 2, 8, 0 );
+////            }
+//        }
+//        }
+
+        Bitmap tmp2_bm_postHarris = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(tmp2, tmp2_bm_postHarris);
+
         Bitmap tmp2_bm_postCanny = Bitmap.createBitmap(tmp2.cols(), tmp2.rows(),Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(tmp2, tmp2_bm_postCanny);
 
