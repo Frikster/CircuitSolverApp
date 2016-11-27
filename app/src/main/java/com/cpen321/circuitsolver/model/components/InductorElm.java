@@ -4,6 +4,7 @@ package com.cpen321.circuitsolver.model.components;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.util.Log;
@@ -98,10 +99,106 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
     }
 
-
     @Override
     public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
-        //TODO implement inductor draw
+        //Edit MAX_LENGTH as needed
+        float MAX_LENGTH = 100;
+        float x = stopX - startX;
+        float y = stopY - startY;
+        float slope = y / x;
+        float b = stopY - slope * stopX;
+        float hypotenuse = (float) Math.hypot(x, y);
+        float d = (hypotenuse - MAX_LENGTH) / 2;
+        float angle = (float) Math.atan(slope);
+        float innerD = (hypotenuse - 2 * d) / 5;
+
+        float x3, x4, x5, x6, x7, x8, y3, y4, y5, y6, y7, y8;
+
+        //when length of entire inductor is less than MAX_LENGTH
+        if (hypotenuse < MAX_LENGTH) {
+            MAX_LENGTH = MAX_LENGTH / 2;
+            d = (hypotenuse - MAX_LENGTH) / 2;
+            innerD = (hypotenuse - 2 * d) / 5;
+        }
+        //when drawn from left to right
+        if (x > 0) {
+            x3 = stopX - (MAX_LENGTH + d) * ((float) Math.cos(angle));
+            y3 = stopY - (MAX_LENGTH + d) * ((float) Math.sin(angle));
+            x4 = stopX - (d) * ((float) Math.cos(angle));
+            y4 = stopY - (d) * ((float) Math.sin(angle));
+
+            x5 = stopX - (MAX_LENGTH + d - innerD) * ((float) Math.cos(angle));
+            y5 = stopY - (MAX_LENGTH + d - innerD) * ((float) Math.sin(angle));
+
+            x6 = stopX - (MAX_LENGTH + d - 2 * innerD) * ((float) Math.cos(angle));
+            y6 = stopY - (MAX_LENGTH + d - 2 * innerD) * ((float) Math.sin(angle));
+
+            x7 = stopX - (MAX_LENGTH + d - 3 * innerD) * ((float) Math.cos(angle));
+            y7 = stopY - (MAX_LENGTH + d - 3 * innerD) * ((float) Math.sin(angle));
+
+            x8 = stopX - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.cos(angle));
+            y8 = stopY - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.sin(angle));
+        }
+        //when drawn right to left
+        else if (x < 0) {
+            x3 = startX - (d) * ((float) Math.cos(angle));
+            y3 = startY - (d) * ((float) Math.sin(angle));
+            x4 = startX - (MAX_LENGTH + d) * ((float) Math.cos(angle));
+            y4 = startY - (MAX_LENGTH + d) * ((float) Math.sin(angle));
+
+            x5 = startX - (d + innerD) * ((float) Math.cos(angle));
+            y5 = startY - (d + innerD) * ((float) Math.sin(angle));
+
+            x6 = startX - (d + 2 * innerD) * ((float) Math.cos(angle));
+            y6 = startY - (d + 2 * innerD) * ((float) Math.sin(angle));
+
+            x7 = startX - (d + 3 * innerD) * ((float) Math.cos(angle));
+            y7 = startY - (d + 3 * innerD) * ((float) Math.sin(angle));
+
+            x8= startX - (d + 4 * innerD) * ((float) Math.cos(angle));
+            y8 = startY - (d + 4 * innerD) * ((float) Math.sin(angle));
+        }
+        //when drawn vertically pointing down
+        else if (y > 0) {
+            x3 = stopX;
+            y3 = startY + d;
+            x4 = stopX;
+            y4 = stopY - d;
+            y5 = startY + d + innerD;
+            y6 = startY + d + 2 * innerD;
+            y7 = startY + d + 3 * innerD;
+            y8 = startY + d + 4 * innerD;
+            x5 = startX ;
+            x6 = startX ;
+            x7 = startX ;
+            x8 = startX;
+        }
+        //when drawn vertically pointing up
+        else {
+            x3 = stopX;
+            y3 = startY - d;
+            x4 = stopX;
+            y4 = stopY + d;
+            y5 = startY - d - innerD;
+            y6 = startY - d - 2 * innerD;
+            y7 = startY - d - 3 * innerD;
+            y8 = startY - d - 4 * innerD;
+            x5 = startX ;
+            x6 = startX ;
+            x7 = startX ;
+            x8 = startX ;
+        }
+        //draw wire section
+        canvas.drawLine(startX, startY, x3, y3, paint);
+        canvas.drawLine(x4, y4, stopX, stopY, paint);
+
+        //draw loops
+        int radius = 75;
+        drawCurved((int)x3,(int) y3, (int) x5,  (int)y5, radius ,canvas, paint);
+        drawCurved((int)x5,(int) y5, (int) x6,  (int)y6, radius ,canvas, paint);
+        drawCurved((int)x6,(int) y6, (int) x7,  (int)y7, radius ,canvas, paint);
+        drawCurved((int)x7,(int) y7, (int) x8,  (int)y8, radius ,canvas, paint);
+        drawCurved((int)x8,(int) y8, (int) x4,  (int)y4, radius ,canvas, paint);
     }
 
     @Override
@@ -193,5 +290,27 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
     public static void resetNumElements() {
         numInductors = 1;
+    }
+    //draw curved line
+    public void drawCurved(int x1, int y1, int x2, int y2, int curveRadius, Canvas canvas, Paint paint) {
+        final Path path = new Path();
+        int midX            = x1 + ((x2 - x1) / 2);
+        int midY            = y1 + ((y2 - y1) / 2);
+        float xDiff         = midX - x1;
+        float yDiff         = midY - y1;
+        double angle        = (Math.atan2(yDiff, xDiff) * (180 / Math.PI)) - 90;
+        double angleRadians = Math.toRadians(angle);
+        float pointX        = (float) (midX + curveRadius * Math.cos(angleRadians));
+        float pointY        = (float) (midY + curveRadius * Math.sin(angleRadians));
+
+        Paint curvePaint  = new Paint();
+        curvePaint.setAntiAlias(true);
+        curvePaint.setStyle(Paint.Style.STROKE);
+        curvePaint.setStrokeWidth(10);
+        curvePaint.setColor(paint.getColor());
+
+        path.moveTo(x1, y1);
+        path.cubicTo(x1,y1,pointX, pointY, x2, y2);
+        canvas.drawPath(path, curvePaint);
     }
 }
