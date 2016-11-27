@@ -185,6 +185,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             Log.d(TAG, this.circuitProject.toString());
         }
         else{
+            circuitElms.clear();
             Log.d(TAG, ImageUtils.getTimeStamp());
             Log.d(TAG, getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString());
             this.circuitProject = new CircuitProject(ImageUtils.getTimeStamp(),
