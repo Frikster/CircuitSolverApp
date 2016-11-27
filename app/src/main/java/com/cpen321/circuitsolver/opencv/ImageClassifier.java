@@ -63,7 +63,7 @@ public class ImageClassifier {
             case "inductor":
                 return Constants.INDUCTOR;
             default:
-                return Constants.RESISTOR;
+                return Constants.WIRE;
         }
     }
 
