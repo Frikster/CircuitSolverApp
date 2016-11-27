@@ -41,7 +41,6 @@ import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -186,6 +185,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             Log.d(TAG, this.circuitProject.toString());
         }
         else{
+            circuitElms.clear();
             Log.d(TAG, ImageUtils.getTimeStamp());
             Log.d(TAG, getExternalFilesDir(Environment.DIRECTORY_PICTURES).toString());
             this.circuitProject = new CircuitProject(ImageUtils.getTimeStamp(),
@@ -361,7 +361,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         Intent backToHomeIntent = new Intent(this, HomeActivity.class);
         startActivity(backToHomeIntent);
         finish();
-        ProcessPhoenix.triggerRebirth(this);
     }
 
 

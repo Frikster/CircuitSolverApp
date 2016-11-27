@@ -136,7 +136,7 @@ public class CircuitProject {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(filename);
-            imgBmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            imgBmp.compress(Bitmap.CompressFormat.JPEG, Constants.COMPRESSION_QUALITY, outputStream);
             outputStream.close();
         } catch (FileNotFoundException ex) {
             System.out.println("FILE NOT FOUND");
