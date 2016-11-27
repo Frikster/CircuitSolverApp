@@ -5,12 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.RectF;
-import android.text.method.TextKeyListener;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
@@ -25,15 +20,13 @@ import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.ngspice.NgSpice;
 import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
-import com.cpen321.circuitsolver.opencv.Component;
-import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.AllocateNodes;
 import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Neil Goossen on 2016-10-15.
@@ -146,8 +139,8 @@ public class CircuitDisplay extends View {
     }
 
     public void solveCircuit() {
-        AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(components);
-        circuit.init();
+        AllocateNodes circuit = new AllocateNodes(components);
+        circuit.allocate();
         SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
         interfacer.solveCircuit(NgSpice.getInstance(getContext()));
     }

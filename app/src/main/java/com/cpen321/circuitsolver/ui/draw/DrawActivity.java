@@ -1,9 +1,7 @@
 package com.cpen321.circuitsolver.ui.draw;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,7 +13,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
@@ -23,19 +20,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
-import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.ResetComponents;
 import com.cpen321.circuitsolver.model.SimplePoint;
-import com.cpen321.circuitsolver.model.components.CapacitorElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
 import com.cpen321.circuitsolver.ngspice.NgSpice;
 import com.cpen321.circuitsolver.ngspice.SpiceInterfacer;
-import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.AllocateNodes;
 import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
@@ -282,8 +276,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 componentState = SOLVED;
                 CircuitNode.resetNumNodes();
-                AnalyzeCircuitImpl circuit = new AnalyzeCircuitImpl(circuitElms);
-                circuit.init();
+                AllocateNodes circuit = new AllocateNodes(circuitElms);
+                circuit.allocate();
                 SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
                 if(interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))){
                     Toast.makeText(DrawActivity.this, "Solved!", Toast.LENGTH_SHORT).show();

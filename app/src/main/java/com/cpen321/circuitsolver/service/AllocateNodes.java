@@ -13,23 +13,23 @@ import java.util.List;
 /**
  * Created by jen on 2016-10-13.
  */
-public class AnalyzeCircuitImpl implements AnalyzeCircuit{
+public class AllocateNodes {
 
     private List<CircuitNode> nodes;
     private List<CircuitElm> elements;
 
     /**
-     * Note that list of elements may be modified by AnalyzeCircuitImpl instance in its other methods
+     * Note that list of elements may be modified by AllocateNodes instance in its other methods
      * @param elements
      */
-    public AnalyzeCircuitImpl(List<CircuitElm> elements){
+    public AllocateNodes(List<CircuitElm> elements){
         this.elements = new ArrayList(elements);
     }
 
     /**
      * Initializes circuit nodes from elements
      */
-    public void init(){
+    public void allocate(){
         nodes = new ArrayList<CircuitNode>();
 
         for(CircuitElm e: elements){
@@ -130,20 +130,6 @@ public class AnalyzeCircuitImpl implements AnalyzeCircuit{
         //Delete n2
         nodes.remove(n2);
         return n1;
-    }
-
-    @Override
-    public double getVoltageDiff(CircuitElm elm){
-        //TODO: implement this method
-
-        return 0;
-    }
-
-    @Override
-    public double getCurrent(CircuitElm elm){
-        //TODO: implement this method
-
-        return 0;
     }
 
     public List<CircuitNode> getNodes(){

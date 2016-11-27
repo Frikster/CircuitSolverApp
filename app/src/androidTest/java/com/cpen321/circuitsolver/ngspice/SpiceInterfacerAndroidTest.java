@@ -8,13 +8,10 @@ import android.support.test.runner.AndroidJUnit4;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.CircuitNode;
-import com.cpen321.circuitsolver.model.ResetComponents;
-import com.cpen321.circuitsolver.model.SimplePoint;
-import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
-import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.AllocateNodes;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -58,11 +55,11 @@ public class SpiceInterfacerAndroidTest extends AndroidJUnitRunner {
         elements.add(new WireElm(new SimplePoint(0, 0), new SimplePoint(3, 0)));
         elements.add(new WireElm(new SimplePoint(3, 0), new SimplePoint(6, 0)));
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
 
-        List<CircuitNode> resultNodes = analyzeCircuitImpl.getNodes();
-        List<CircuitElm> resultElms = analyzeCircuitImpl.getElements();
+        List<CircuitNode> resultNodes = allocateNodes.getNodes();
+        List<CircuitElm> resultElms = allocateNodes.getElements();
 
         SpiceInterfacer spiceInterfacer = new SpiceInterfacer(resultNodes, resultElms);
         spiceInterfacer.solveCircuit(NgSpice.getInstance(InstrumentationRegistry.getTargetContext()));

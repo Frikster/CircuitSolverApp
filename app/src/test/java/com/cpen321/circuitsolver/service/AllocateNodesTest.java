@@ -21,7 +21,7 @@ import static junit.framework.Assert.fail;
 /**
  * Created by Jennifer on 10/13/2016.
  */
-public class AnalyzeCircuitImplTest {
+public class AllocateNodesTest {
 
     @Test
     public void testInitAndAllocateNodes_twoNodeCircuit(){
@@ -36,10 +36,10 @@ public class AnalyzeCircuitImplTest {
         elements.add(v1);
         elements.add(w2);
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
 
-        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
+        List<CircuitNode> result = allocateNodes.getNodes();
         System.out.println(result);
 
         /*
@@ -65,11 +65,11 @@ public class AnalyzeCircuitImplTest {
         //Node 1 should contain r1, v1, w2
 //        ArrayList<CircuitElm> elmInNode1 = new ArrayList<CircuitElm>();
 //        elmInNode1.addAll(Arrays.asList(r1, v1, w2));
-//        assertTrue("Node 1 does not contain the elements it should", analyzeCircuitImpl.getNodeConnectedToElements(elmInNode1) != null);
+//        assertTrue("Node 1 does not contain the elements it should", allocateNodes.getNodeConnectedToElements(elmInNode1) != null);
         //Node 2 should contain w1, r1, v1
 //        ArrayList<CircuitElm> elmInNode2 = new ArrayList<CircuitElm>();
 //        elmInNode1.addAll(Arrays.asList(r1, w1, v1));
-//        assertTrue("Node 2 does not contain the elements it should", analyzeCircuitImpl.getNodeConnectedToElements(elmInNode1) != null);
+//        assertTrue("Node 2 does not contain the elements it should", allocateNodes.getNodeConnectedToElements(elmInNode1) != null);
 
 
         /*
@@ -98,10 +98,10 @@ public class AnalyzeCircuitImplTest {
         elements.add(v1);
         elements.add(w2);
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
 
-        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
+        List<CircuitNode> result = allocateNodes.getNodes();
 
         for(CircuitNode node: result){
             System.out.println(node.getElements());
@@ -126,10 +126,10 @@ public class AnalyzeCircuitImplTest {
 
 
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
 
-        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
+        List<CircuitNode> result = allocateNodes.getNodes();
         System.out.println(result);
 
         //Node 1 should correspond to (0,0), (0,5), (0,10), (0,15)
@@ -174,10 +174,10 @@ public class AnalyzeCircuitImplTest {
         elements.add(new VoltageElm(new SimplePoint(0, 0), new SimplePoint(5, 0), 10));
 
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
 
-        List<CircuitNode> result = analyzeCircuitImpl.getNodes();
+        List<CircuitNode> result = allocateNodes.getNodes();
         System.out.println(result);
 
         //Node 1 should correspond to (0,0), (0,5)
@@ -215,22 +215,6 @@ public class AnalyzeCircuitImplTest {
             assertTrue("No element nodes in " + e + " match its post at " + p1, e.getNode(0).correspondsToPoint(p1) || e.getNode(1).correspondsToPoint(p1));
             assertTrue("No element nodes in " + e + " match its post at " + p2, e.getNode(0).correspondsToPoint(p2) || e.getNode(1).correspondsToPoint(p2));
         }
-    }
-
-
-    @Test
-    public void testGetCurrent_threeNodeCircuit_returnsVoltageCurrent(){
-        fail("not implemented");
-    }
-
-    @Test
-    public void testGetCurrent_sixNodeCircuit_returnsResistorCurrent(){
-        fail("not implemented");
-    }
-
-    @Test
-    public void testGetCurrent_sixNodeCircuit_returnsVoltageCurrent(){
-        fail("not implemented");
     }
 
 
