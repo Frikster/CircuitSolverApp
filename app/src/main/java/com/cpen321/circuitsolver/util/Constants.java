@@ -9,7 +9,8 @@ public final class Constants {
     public static final String CIRCUIT_PROJECT_FOLDER = "circuit_projec_folder";
     public static final String OUTPUT_BITMAP = "hough_lines_output_bitmap";
     public static final String PROCESSING_DATA_LOCATION_KEY = "processing_data_location_key";
-    public static final int CANVAS_MARGIN = 10; //leaves buffer space so that circuit components aren't right on the edge of the screen
+
+    public static final int COMPRESSION_QUALITY = 20;
 
     public static final int PROCESSING_WIDTH = 500;
 
