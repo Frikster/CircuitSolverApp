@@ -154,6 +154,8 @@ public class CircuitProject {
 
     private void loadFromFolder() {
         File[] files = this.savedFolder.listFiles();
+        if (files == null)
+            return;
         for (File file : files) {
             if (file.getName().contains("original_"))
                 this.originalImage = file;

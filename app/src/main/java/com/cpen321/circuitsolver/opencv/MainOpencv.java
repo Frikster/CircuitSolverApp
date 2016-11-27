@@ -31,7 +31,6 @@ import static com.cpen321.circuitsolver.util.Constants.twoCornersTooNear;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
-
 /**Main opencv class
  * Created by Simon Haefeli on 27.10.2016.
  */
@@ -51,6 +50,11 @@ public class MainOpencv {
     private int bitMapWidth;
     private int bitMapHeight;
 
+    private ImageClassifier componentClassifier;
+
+    public void setComponentClassifier(ImageClassifier classifier) {
+        this.componentClassifier = classifier;
+    }
 
     /**Temporary method for debugging purposes**
      *
@@ -121,9 +125,9 @@ public class MainOpencv {
         }
 
         //####### Special for testing tensorflow testing ####
-        componentsForTensorFlow = new ArrayList<>(components);
+//        componentsForTensorFlow = new ArrayList<>(components);
         originalMat = tmp;
-        List<Bitmap> salut = getSubImagesForTensorflow();
+//        List<Bitmap> salut = getSubImagesForTensorflow(components);
 
 
         //Detecting the wires from the list of corners and components
@@ -201,12 +205,11 @@ public class MainOpencv {
     }
 
     //Method to call for tensorlow. imageWH is the frame around a component.
-    private List<double[]> componentsForTensorFlow;
-    int imageWH =10*5;
+    int imageWH =10*10;
     Mat originalMat;
-    public List<Bitmap> getSubImagesForTensorflow(){
+    public List<Bitmap> getSubImagesForTensorflow(List<double []> components){
         List<Bitmap> subimages = new ArrayList<>();
-        for(double[] component : componentsForTensorFlow){
+        for(double[] component : components){
             System.out.println(component[0]+" , "+component[1]);
             Mat submat = originalMat.submat((int)(component[1]-imageWH),(int)(component[1]+imageWH),(int)(component[0]-imageWH),(int)(component[0]+imageWH));
             Bitmap b = Bitmap.createBitmap(submat.cols(), submat.rows(),Bitmap.Config.ARGB_8888);
@@ -1027,8 +1030,13 @@ public class MainOpencv {
     private List<Component> objectizeComponents (List<double[]> components){
 
         List<Component> componentObjects = new ArrayList<>();
+        List<Bitmap> componentSnips = this.getSubImagesForTensorflow(components);
         for(double[] component : components){
-            componentObjects.add(new Component(component[0], component[1],RESISTOR));
+            int index = components.indexOf(component);
+            componentObjects.add(this.componentClassifier.infoToComponent(
+                    componentSnips.get(index),
+                    component
+            ));
         }
         return componentObjects;
     }
