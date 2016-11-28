@@ -12,8 +12,6 @@ import org.tensorflow.demo.TensorFlowImageClassifier;
 import java.io.IOException;
 import java.util.List;
 
-import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
-
 public class ImageClassifier {
     private TensorFlowImageClassifier classifier;
 

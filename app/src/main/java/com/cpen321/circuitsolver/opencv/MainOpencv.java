@@ -200,7 +200,7 @@ public class MainOpencv {
     }
 
     //Method to call for tensorlow. imageWH is the frame around a component.
-    int imageWH =10*10;
+    int imageWH =10*7;
     Mat originalMat;
     private List<Bitmap> getSubImagesForTensorflow(List<double []> components){
         List<Bitmap> subimages = new ArrayList<>();
@@ -218,7 +218,7 @@ public class MainOpencv {
         int top = (int) (component[1] - frameWidth);
         int bottom = (int) (component[1] + frameWidth);
         int left = (int) (component[0] - frameWidth);
-        int right = (int) (component[1] + frameWidth);
+        int right = (int) (component[0] + frameWidth);
 
         if (top < 0) top = 0;
         if (left < 0) left = 0;
