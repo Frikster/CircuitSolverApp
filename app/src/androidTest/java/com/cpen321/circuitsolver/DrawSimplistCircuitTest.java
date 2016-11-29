@@ -66,13 +66,13 @@ public class DrawSimplistCircuitTest {
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("Wire")).perform(click());
         onView(withId(R.id.circuitFrame)).perform(swipeLeftTop());
+        
+//        float[] coordinates =  GeneralLocation.BOTTOM_RIGHT.calculateCoordinates(view);
+//        coordinates[0] = coordinates[0] - 100;
+//        coordinates[1] = coordinates[1] - 300;
 
-        float[] coordinates =  GeneralLocation.BOTTOM_RIGHT.calculateCoordinates(view);
-        coordinates[0] = coordinates[0] - 100;
-        coordinates[1] = coordinates[1] - 300;
-
-        onView(withId(R.id.circuitFrame)).perform(clickXY());
-        onView(withId(R.id.solveButton)).perform(click());
+//        onView(withId(R.id.circuitFrame)).perform(clickXY());
+//        onView(withId(R.id.solveButton)).perform(click());
 
 //        onView(withId(R.id.draw_fab)).check(matches(isDisplayed()));
 //        View v = mHomeActivityRule.getActivity().findViewById(R.id.draw_fab);
@@ -181,7 +181,7 @@ public class DrawSimplistCircuitTest {
                 return coordinates;
             }
         };
-        swipeUpRight_coordinates = cp.calculateCoordinates(mDrawActivityRule);
+        //swipeUpRight_coordinates = cp.calculateCoordinates(mDrawActivityRule);
 
         return new GeneralSwipeAction(Swipe.SLOW, cp,
             new CoordinatesProvider() {

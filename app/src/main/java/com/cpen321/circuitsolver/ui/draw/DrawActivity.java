@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -70,6 +71,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private boolean firstZoom = true;
 
+    @VisibleForTesting
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
     private static final ReentrantLock circuitElmsLock = new ReentrantLock();
