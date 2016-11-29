@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
@@ -39,9 +40,9 @@ public class HomeActivity extends BaseActivity {
     private static final String TAG = "HomeActivity";
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
-    private static int RESULT_LOAD_IMAGE = 2;
-    static final int REQUEST_TAKE_PHOTO = 1;
-    private final int DRAW_NEW_CIRCUIT = 3;
+    protected static int RESULT_LOAD_IMAGE = 2;
+    public static int REQUEST_TAKE_PHOTO = 1;
+    protected static int DRAW_NEW_CIRCUIT = 3;
     private LinearLayout savedCircuitsScroll;
     //private LinearLayout exampleCircuitScroll;
 
@@ -79,9 +80,7 @@ public class HomeActivity extends BaseActivity {
                     imageView.setColorFilter(Color.argb(100, 112, 17, 19));
                     HomeActivity.this.setSelectedTag((String) imageView.getTag());
                 }
-
             }
-
         }
     };
 
