@@ -11,11 +11,14 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.opencv.ImageClassifier;
 import com.cpen321.circuitsolver.opencv.MainOpencv;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
+
+import org.tensorflow.demo.TensorFlowImageClassifier;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +34,6 @@ public class ProcessingActivity extends AppCompatActivity {
     private CircuitProject circuitProject;
 
     private boolean isNoOpenCvTest = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,7 @@ public class ProcessingActivity extends AppCompatActivity {
 
                 System.out.println("right before processing");
                 MainOpencv main = new MainOpencv();
+                main.setComponentClassifier(new ImageClassifier(getAssets()));
                 ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap,
                         isNoOpenCvTest));
                 ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(

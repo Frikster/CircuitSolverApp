@@ -1,6 +1,7 @@
 package com.cpen321.circuitsolver.opencv;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
@@ -31,7 +32,6 @@ import static com.cpen321.circuitsolver.util.Constants.twoCornersTooNear;
 import static org.opencv.imgproc.Imgproc.COLOR_GRAY2BGR;
 import static org.opencv.imgproc.Imgproc.cvtColor;
 
-
 /**Main opencv class
  * Created by Simon Haefeli on 27.10.2016.
  */
@@ -41,7 +41,6 @@ public class MainOpencv {
     //########MODIFIED ###############
     //MainOpenCV
     //##############TODO :#################
-    //Integration with tenserflow
     //##########################################
 
 
@@ -51,6 +50,11 @@ public class MainOpencv {
     private int bitMapWidth;
     private int bitMapHeight;
 
+    private ImageClassifier componentClassifier;
+
+    public void setComponentClassifier(ImageClassifier classifier) {
+        this.componentClassifier = classifier;
+    }
 
     /**Temporary method for debugging purposes**
      *
@@ -119,12 +123,7 @@ public class MainOpencv {
         if(validCorners.size() == 0){
             validCorners = new ArrayList<>(singleCorners);
         }
-
-        //####### Special for testing tensorflow testing ####
-        componentsForTensorFlow = new ArrayList<>(components);
         originalMat = tmp;
-        List<Bitmap> salut = getSubImagesForTensorflow();
-
 
         //Detecting the wires from the list of corners and components
         List<Element> objectizedCompAndCorners = objectizeCompAndCorner(validCorners, components);
@@ -201,20 +200,35 @@ public class MainOpencv {
     }
 
     //Method to call for tensorlow. imageWH is the frame around a component.
-    private List<double[]> componentsForTensorFlow;
-    int imageWH =10*5;
+    int imageWH =10*7;
     Mat originalMat;
-    public List<Bitmap> getSubImagesForTensorflow(){
+    private List<Bitmap> getSubImagesForTensorflow(List<double []> components){
         List<Bitmap> subimages = new ArrayList<>();
-        for(double[] component : componentsForTensorFlow){
+        for(double[] component : components){
             System.out.println(component[0]+" , "+component[1]);
-            Mat submat = originalMat.submat((int)(component[1]-imageWH),(int)(component[1]+imageWH),(int)(component[0]-imageWH),(int)(component[0]+imageWH));
+            Mat submat = this.getSubMat(originalMat, component, imageWH);
             Bitmap b = Bitmap.createBitmap(submat.cols(), submat.rows(),Bitmap.Config.ARGB_8888);
             Utils.matToBitmap(submat,b);
             subimages.add(b);
         }
         return subimages;
     }
+
+    private Mat getSubMat(Mat originalMat, double[] component, int frameWidth) {
+        int top = (int) (component[1] - frameWidth);
+        int bottom = (int) (component[1] + frameWidth);
+        int left = (int) (component[0] - frameWidth);
+        int right = (int) (component[0] + frameWidth);
+
+        if (top < 0) top = 0;
+        if (left < 0) left = 0;
+
+        if (bottom > originalMat.rows()) bottom = originalMat.rows();
+        if (right > originalMat.cols()) right = originalMat.cols();
+
+        return originalMat.submat(top, bottom, left, right);
+    }
+
 
     /**
      *
@@ -1027,8 +1041,13 @@ public class MainOpencv {
     private List<Component> objectizeComponents (List<double[]> components){
 
         List<Component> componentObjects = new ArrayList<>();
+        List<Bitmap> componentSnips = this.getSubImagesForTensorflow(components);
         for(double[] component : components){
-            componentObjects.add(new Component(component[0], component[1],RESISTOR));
+            int index = components.indexOf(component);
+            componentObjects.add(this.componentClassifier.infoToComponent(
+                    componentSnips.get(index),
+                    component
+            ));
         }
         return componentObjects;
     }

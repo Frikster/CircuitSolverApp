@@ -154,10 +154,20 @@ public class HomeActivity extends BaseActivity {
             public void onClick(View view) {
                 if (HomeActivity.selectedTag == null)
                     return;
-                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
-                startActivity(displayIntent);
+                File[] images = circuitFolder.listFiles();
+                for (File image : images) {
+                    if (image.getName().contains("processed")){
+                        Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
+                        displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                        startActivity(displayIntent);
+                        finish();
+                        return;
+                    }
+                }
+                Intent processIntent = new Intent(HomeActivity.this, ProcessingActivity.class);
+                processIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                startActivity(processIntent);
                 finish();
             }
         });
