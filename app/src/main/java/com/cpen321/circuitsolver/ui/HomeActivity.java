@@ -40,9 +40,6 @@ public class HomeActivity extends BaseActivity {
     private static final String TAG = "HomeActivity";
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
-    protected static int RESULT_LOAD_IMAGE = 2;
-    public static int REQUEST_TAKE_PHOTO = 1;
-    protected static int DRAW_NEW_CIRCUIT = 3;
     private LinearLayout savedCircuitsScroll;
     //private LinearLayout exampleCircuitScroll;
 
@@ -132,7 +129,7 @@ public class HomeActivity extends BaseActivity {
                         Intent.ACTION_PICK,
                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-                startActivityForResult(i, RESULT_LOAD_IMAGE);
+                startActivityForResult(i, Constants.RESULT_LOAD_IMAGE);
             }
         });
 
@@ -193,7 +190,6 @@ public class HomeActivity extends BaseActivity {
     }
 
     // TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE (NOT MY OWN CODE)
-
     private void dispatchTakePictureIntent() {
         this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
                 getExternalFilesDir(Environment.DIRECTORY_PICTURES));
@@ -210,14 +206,13 @@ public class HomeActivity extends BaseActivity {
                         APP_NAME,
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                startActivityForResult(takePictureIntent, Constants.REQUEST_TAKE_PHOTO);
             }
             else {
                 System.out.println("photo file is null");
             }
         }
     }
-
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
 
     private void dispatchDrawCircuitIntent() {
@@ -244,7 +239,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+        if (requestCode == Constants.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -333,5 +328,10 @@ public class HomeActivity extends BaseActivity {
 //        newImage.setOnClickListener(this.thumbnailListener);
 //        this.exampleCircuitScroll.addView(newImage);
 //    }
+
+    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
+    public void setCandidateProject(CircuitProject candidateProject){
+        this.candidateProject = candidateProject;
+    }
 
 }

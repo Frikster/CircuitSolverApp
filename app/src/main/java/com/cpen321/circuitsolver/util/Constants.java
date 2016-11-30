@@ -10,8 +10,12 @@ public final class Constants {
     public static final String OUTPUT_BITMAP = "hough_lines_output_bitmap";
     public static final String PROCESSING_DATA_LOCATION_KEY = "processing_data_location_key";
 
-    public static final int COMPRESSION_QUALITY = 20;
+    // key for determining FAB action taken (used in onActivityResult)
+    public static final int RESULT_LOAD_IMAGE = 2;
+    public static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int DRAW_NEW_CIRCUIT = 3;
 
+    public static final int COMPRESSION_QUALITY = 20;
     public static final int PROCESSING_WIDTH = 500;
 
     //TODO change many of these things to enum for type safety
@@ -39,7 +43,7 @@ public final class Constants {
     public static int tooNearFromComponent = 10*4;
 
 
-//    Tensorflow values!
+    //    Tensorflow values!
     public static final int NUM_CLASSES = 5;
     public static final int INPUT_SIZE = 299;
     public static final int IMAGE_MEAN = 128;
