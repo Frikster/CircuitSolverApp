@@ -6,13 +6,10 @@ import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
-import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by lotus on 05/11/16.

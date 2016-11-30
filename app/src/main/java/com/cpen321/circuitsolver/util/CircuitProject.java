@@ -28,8 +28,6 @@ public class CircuitProject {
 
     private File savedFolder = null;
 
-    private List<CircuitElm> circElms = null;
-
     public CircuitProject(File directory) {
         this.savedFolder = directory;
         this.loadFromFolder();

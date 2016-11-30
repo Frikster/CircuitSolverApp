@@ -6,7 +6,6 @@ import com.cpen321.circuitsolver.model.components.InductorElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
-import com.cpen321.circuitsolver.service.CircuitDefParser;
 import com.cpen321.circuitsolver.util.Constants;
 
 /**

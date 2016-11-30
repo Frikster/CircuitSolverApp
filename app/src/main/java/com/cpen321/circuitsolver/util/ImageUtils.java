@@ -18,20 +18,11 @@ public class ImageUtils {
         // Create an image file name
         String timeStamp = ImageUtils.getTimeStamp();
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File image = File.createTempFile(
+        return File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
         );
-        return image;
-    }
-
-    public static Uri bitmapToUri(Bitmap bitmap, File storageDir) throws IOException {
-        File imageFile = ImageUtils.createImageFile(storageDir);
-        FileOutputStream outputStream = new FileOutputStream(imageFile);
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-        outputStream.close();
-        return Uri.fromFile(imageFile);
     }
 
     public static String getTimeStamp() {

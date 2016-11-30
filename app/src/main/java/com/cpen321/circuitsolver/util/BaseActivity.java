@@ -9,12 +9,8 @@ import android.util.Log;
 
 import org.opencv.android.OpenCVLoader;
 
-import java.io.File;
-
-/**
- * Created by Neil Goossen on 2016-10-15.
- */
-
+// Base activity for all the other activities to inherit from to
+// reduce code duplication
 public class BaseActivity extends AppCompatActivity{
 
     static{
@@ -44,20 +40,4 @@ public class BaseActivity extends AppCompatActivity{
             }
         }
     }
-//
-//    public void loadCircuit(File circuitDirectory) {
-//        this.circuitProject = new CircuitProject(circuitDirectory);
-//        this.circuitProject.print();
-//
-//        ImageView outputImageView = (ImageView) findViewById(R.id.output_image);
-//        outputImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-//        try {
-//            outputImageView.setImageBitmap(this.circuitProject.getProcessedImage());
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-//
-//    }
-
-
 }

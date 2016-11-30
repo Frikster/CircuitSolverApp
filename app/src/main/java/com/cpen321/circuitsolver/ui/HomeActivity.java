@@ -2,10 +2,10 @@ package com.cpen321.circuitsolver.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,8 +18,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.database.Cursor;
-import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
@@ -29,9 +27,8 @@ import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
