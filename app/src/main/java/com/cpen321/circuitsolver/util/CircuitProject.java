@@ -41,10 +41,21 @@ public class CircuitProject {
 
     public Bitmap getThumbnail() {
         try {
-            return ImageUtils.downsizeImage(this.getOriginalImage(), 600);
+            if (this.downsizedImage != null) {
+                return this.getDownsizedImage();
+            } else {
+                return ImageUtils.downsizeImage(this.getOriginalImage(), Constants.PROCESSING_WIDTH);
+            }
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    public File getOriginalImageLocation() throws IOException {
+        if (this.originalImage != null)
+            return this.originalImage;
+        else
+            return this.generateOriginalImageFile();
     }
 
     public String getCircuitText() throws IOException{

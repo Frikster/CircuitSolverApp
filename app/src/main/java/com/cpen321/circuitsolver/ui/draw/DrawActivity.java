@@ -319,16 +319,23 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
         circuitProject.saveCircuitDefinitionFile(circStr);
 
-        Bitmap tmp = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.RGB_565);
+        float scaleX = ((float) Constants.PROCESSING_WIDTH)/((float) screenWidth);
+        float scaleY = ((float) Constants.PROCESSING_WIDTH)/((float) screenHeight);
+
+        Bitmap tmp = Bitmap.createBitmap(Constants.PROCESSING_WIDTH, Constants.PROCESSING_WIDTH,
+                Bitmap.Config.RGB_565);
         Canvas tmpcanvas = new Canvas(tmp);
+        tmpcanvas.scale(scaleX, scaleY);
         this.circuitView.fakeDraw(tmpcanvas);
 
         try {
-            File screenShot = this.circuitProject.generateOriginalImageFile();
+            File screenShot = this.circuitProject.getOriginalImageLocation();
             FileOutputStream screenshotStream = new FileOutputStream(screenShot);
             tmp.compress(Bitmap.CompressFormat.PNG, 50, screenshotStream);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
+        } catch (IOException ioEx) {
+            ioEx.printStackTrace();
         }
 
         Intent backToHomeIntent = new Intent(this, HomeActivity.class);
