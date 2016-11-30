@@ -2,13 +2,8 @@ package com.cpen321.circuitsolver.ui;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
+import android.support.v7.app.AppCompatActivity;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.opencv.ImageClassifier;
@@ -16,21 +11,12 @@ import com.cpen321.circuitsolver.opencv.MainOpencv;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
-import com.cpen321.circuitsolver.util.ImageUtils;
-
-import org.tensorflow.demo.TensorFlowImageClassifier;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 public class ProcessingActivity extends AppCompatActivity {
 
     private String dataLocation;
-    private ProgressBar progressBar;
-
-    private Bitmap outputImage;
-
     private CircuitProject circuitProject;
 
     private boolean isNoOpenCvTest = false;
@@ -52,7 +38,7 @@ public class ProcessingActivity extends AppCompatActivity {
         Thread tmp = new Thread() {
             @Override
             public void run() {
-                Bitmap bMap = null;
+                Bitmap bMap;
                 try{
                     ProcessingActivity.this.circuitProject.print();
                     ProcessingActivity.this.circuitProject.convertOriginalToDownsized();
@@ -65,8 +51,9 @@ public class ProcessingActivity extends AppCompatActivity {
                 System.out.println("right before processing");
                 MainOpencv main = new MainOpencv();
                 main.setComponentClassifier(new ImageClassifier(getAssets()));
-                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap,
-                        isNoOpenCvTest));
+                main.houghLines(bMap, isNoOpenCvTest);
+//                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap,
+//                        isNoOpenCvTest));
                 ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(
                         main.getCircuitText(isNoOpenCvTest));
                 ProcessingActivity.this.circuitProject.print();
@@ -81,7 +68,6 @@ public class ProcessingActivity extends AppCompatActivity {
     }
 
     private void displayOutputImage() {
-
         Intent displayIntent = new Intent(getApplicationContext(), DrawActivity.class);
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
         startActivity(displayIntent);

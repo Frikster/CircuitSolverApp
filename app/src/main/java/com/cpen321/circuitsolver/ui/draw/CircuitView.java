@@ -1,7 +1,6 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -93,7 +92,7 @@ public class CircuitView extends SurfaceView implements Runnable {
 
     public void pause() {
         run = false;
-        while (true && thread != null) {
+        while (thread != null) {
             try {
                 thread.join();
                 break;
@@ -111,7 +110,7 @@ public class CircuitView extends SurfaceView implements Runnable {
     }
 
     //this is just a terrible workaround cause no time to change old code
-    private String  convertStateToType(AddComponentState state) {
+    private String convertStateToType(AddComponentState state) {
         switch (state) {
             case DC_SOURCE:
                 return Constants.DC_VOLTAGE;

@@ -1,7 +1,6 @@
 package com.cpen321.circuitsolver.opencv;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
@@ -21,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.cpen321.circuitsolver.util.Constants.RESISTOR;
 import static com.cpen321.circuitsolver.util.Constants.distanceFromComponent;
 import static com.cpen321.circuitsolver.util.Constants.maxLinesToBeChunk;
 import static com.cpen321.circuitsolver.util.Constants.minPoints;

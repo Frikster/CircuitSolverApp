@@ -4,12 +4,10 @@ package com.cpen321.circuitsolver.model.components;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.util.Log;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
-import com.cpen321.circuitsolver.model.SpiceLabel;
 import com.cpen321.circuitsolver.util.Constants;
 
 /**

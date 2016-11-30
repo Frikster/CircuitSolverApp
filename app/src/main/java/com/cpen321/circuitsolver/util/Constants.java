@@ -5,10 +5,7 @@ package com.cpen321.circuitsolver.util;
  */
 
 public final class Constants {
-    public static final String IMAGE_LOCATION_KEY = "image_location_key";
     public static final String CIRCUIT_PROJECT_FOLDER = "circuit_projec_folder";
-    public static final String OUTPUT_BITMAP = "hough_lines_output_bitmap";
-    public static final String PROCESSING_DATA_LOCATION_KEY = "processing_data_location_key";
 
     // key for determining FAB action taken (used in onActivityResult)
     public static final int RESULT_LOAD_IMAGE = 2;
@@ -54,5 +51,12 @@ public final class Constants {
     public static final String MODEL_FILE = "file:///android_asset/opt_output_graph.pb";
     public static final String LABEL_FILE =
             "file:///android_asset/output_labels.txt";
+    // possible tensorFlow tags
+    public static final String TF_RESISTOR = "resistor";
+    public static final String TF_INDUCTOR = "inductor";
+    public static final String TF_CURRENT_SOURCE = "current source";
+    public static final String TF_VOLTAGE_SOURCE = "voltage source";
+    public static final String TF_CAPACITOR = "capacitor";
+
 
 }

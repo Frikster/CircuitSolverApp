@@ -28,8 +28,6 @@ public class CircuitProject {
 
     private File savedFolder = null;
 
-    private List<CircuitElm> circElms = null;
-
     public CircuitProject(File directory) {
         this.savedFolder = directory;
         this.loadFromFolder();
@@ -43,10 +41,21 @@ public class CircuitProject {
 
     public Bitmap getThumbnail() {
         try {
-            return ImageUtils.downsizeImage(this.getOriginalImage(), 600);
+            if (this.downsizedImage != null) {
+                return this.getDownsizedImage();
+            } else {
+                return ImageUtils.downsizeImage(this.getOriginalImage(), Constants.PROCESSING_WIDTH);
+            }
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    public File getOriginalImageLocation() throws IOException {
+        if (this.originalImage != null)
+            return this.originalImage;
+        else
+            return this.generateOriginalImageFile();
     }
 
     public String getCircuitText() throws IOException{

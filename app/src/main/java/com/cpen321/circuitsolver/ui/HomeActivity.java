@@ -2,6 +2,7 @@ package com.cpen321.circuitsolver.ui;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -136,11 +138,7 @@ public class HomeActivity extends BaseActivity {
         this.drawFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //HomeActivity.this.dispatchDrawCircuitIntent();
-
                 Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-//                File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-//                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                 startActivity(displayIntent);
                 finish();
             }
@@ -152,19 +150,9 @@ public class HomeActivity extends BaseActivity {
                 if (HomeActivity.selectedTag == null)
                     return;
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-                File[] images = circuitFolder.listFiles();
-                for (File image : images) {
-                    if (image.getName().contains("processed")){
-                        Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-                        displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
-                        startActivity(displayIntent);
-                        finish();
-                        return;
-                    }
-                }
-                Intent processIntent = new Intent(HomeActivity.this, ProcessingActivity.class);
-                processIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
-                startActivity(processIntent);
+                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
+                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
+                startActivity(displayIntent);
                 finish();
             }
         });
@@ -178,12 +166,20 @@ public class HomeActivity extends BaseActivity {
                     return;
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
                 CircuitProject projToDelete = new CircuitProject(circuitFolder);
-                projToDelete.deleteFileSystem();
-                Toast.makeText(
-                        HomeActivity.this,
-                        "Project Deleted",
-                        Toast.LENGTH_SHORT
-                ).show();
+                if (projToDelete.deleteFileSystem()) {
+                    HomeActivity.this.setSelectedTag(null);
+                    Toast.makeText(
+                            HomeActivity.this,
+                            "Project Deleted",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } else {
+                    Toast.makeText(
+                            HomeActivity.this,
+                            "Failed to delete project.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
                 HomeActivity.this.updateSavedCircuits();
             }
         });
@@ -214,27 +210,6 @@ public class HomeActivity extends BaseActivity {
         }
     }
     // END OF CODE TAKEN FROM OFFICIAL ANDROID DEVELOPERS PAGE
-
-    private void dispatchDrawCircuitIntent() {
-        this.candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
-        getExternalFilesDir(Environment.DIRECTORY_PICTURES));
-        File photoFile = this.candidateProject.generateOriginalImageFile();
-        Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
-        if (photoFile != null) {
-//            Uri photoURI = FileProvider.getUriForFile(this,
-//                    APP_NAME,
-//                    photoFile);
-//            analysisIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//            startActivityForResult(analysisIntent, DRAW_NEW_CIRCUIT);
-            analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
-            startActivity(analysisIntent);
-            finish();
-        }
-        else{
-            Log.d(TAG, "dispatchDrawCircuitIntent Error");
-        }
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
