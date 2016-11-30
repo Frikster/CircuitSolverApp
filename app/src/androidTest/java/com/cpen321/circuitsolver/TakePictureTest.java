@@ -69,6 +69,7 @@ public class TakePictureTest {
 
         // Click on the button that will trigger the stubbed intent.
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
+        SystemClock.sleep(1000);
         onView(withId(R.id.capture_fab)).perform(click());
         SystemClock.sleep(5000);
 
