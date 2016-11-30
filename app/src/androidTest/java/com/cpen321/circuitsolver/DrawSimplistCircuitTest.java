@@ -3,6 +3,7 @@ package com.cpen321.circuitsolver;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
+import android.os.SystemClock;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -11,13 +12,18 @@ import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
 import android.support.test.espresso.action.Tap;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.cpen321.circuitsolver.model.SimplePoint;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
+import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.draw.CircuitView;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 
@@ -25,8 +31,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -40,17 +50,30 @@ import static java.security.AccessController.getContext;
 public class DrawSimplistCircuitTest {
     private final static String TAG = "DrawSimplistCircuitTest";
 
-    private float[] test_coordinates;
-
 //    @Rule
-//    public ActivityTestRule<HomeActivity> mHomeActivityRule =
-//            new ActivityTestRule<>(HomeActivity.class);
+//    public ActivityTestRule<DrawActivity> mDrawActivityRule =
+//            new ActivityTestRule<>(DrawActivity.class);
     @Rule
-    public ActivityTestRule<DrawActivity> mDrawActivityRule =
-            new ActivityTestRule<>(DrawActivity.class);
+    public ActivityTestRule<HomeActivity> mHomeActivityRule =
+            new ActivityTestRule<>(HomeActivity.class);
+
 
     @Test
     public void simpleCircuitTest() {
+        View v = mHomeActivityRule.getActivity().findViewById(R.id.multiple_actions);
+        Log.d(TAG, String.valueOf(v.getVisibility()==v.VISIBLE));
+        Log.d(TAG, String.valueOf(v.isShown()));
+        Log.d(TAG, String.valueOf(v.isEnabled()));
+
+        org.hamcrest.Matcher<View> debugThis = withId(R.id.multiple_actions);
+        Log.d(TAG, String.valueOf(withId(R.id.multiple_actions)));
+
+        onView(withId(R.id.multiple_actions)).perform(click(), ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.multiple_actions)).perform(click());
+        onView(withId(R.id.multiple_actions)).perform(click());
+        SystemClock.sleep(1000);
+        onView(withText("Draw Circuit")).perform(click());
+
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("DC Source")).perform(click());
         onView(withId(R.id.circuitFrame)).perform(swipeDownLeft());
@@ -66,7 +89,20 @@ public class DrawSimplistCircuitTest {
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("Wire")).perform(click());
         onView(withId(R.id.circuitFrame)).perform(swipeLeftTop());
-        
+
+//        ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
+//        CircuitElm source = circuitElms.get(0);
+//        SimplePoint source_midpoint_coords = midpoint(source.getP2(),source.getP1());
+//
+//        onView(withId(R.id.circuitFrame)).perform(clickXY(source_midpoint_coords.getX(),
+//                source_midpoint_coords.getY()));
+        SystemClock.sleep(1000);
+        onView(withId(R.id.solveButton)).perform(click());
+        SystemClock.sleep(1000);
+        onView(withId(R.id.component_value)).perform(replaceText("23.4"));
+        SystemClock.sleep(1000);
+        onView(withId(R.id.solveButton)).perform(click());
+        SystemClock.sleep(5000);
 //        float[] coordinates =  GeneralLocation.BOTTOM_RIGHT.calculateCoordinates(view);
 //        coordinates[0] = coordinates[0] - 100;
 //        coordinates[1] = coordinates[1] - 300;
@@ -106,6 +142,10 @@ public class DrawSimplistCircuitTest {
 //        return new GeneralSwipeAction(Swipe.SLOW, GeneralLocation.TOP_LEFT,
 //                GeneralLocation.BOTTOM_LEFT, Press.FINGER);
 //    }
+
+    public static SimplePoint midpoint(SimplePoint p1, SimplePoint p2) {
+        return new SimplePoint((p1.getX() + p2.getX())/2, (p1.getY() + p2.getY())/2);
+    }
 
     public static ViewAction clickXY(final int x, final int y){
         return new GeneralClickAction(

@@ -71,7 +71,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private boolean firstZoom = true;
 
-    @VisibleForTesting
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
 
     private static final ReentrantLock circuitElmsLock = new ReentrantLock();
