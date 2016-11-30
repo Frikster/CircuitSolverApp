@@ -3,8 +3,10 @@ package com.cpen321.circuitsolver;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
@@ -42,11 +44,8 @@ public class TakePictureTest {
      * for you and also expose the activity under test.
      */
     @Rule
-    public ActivityTestRule<HomeActivity> mHomeActivityRule =
-            new ActivityTestRule<>(HomeActivity.class);
-    @Rule
-    public ActivityTestRule<DrawActivity> mDrawActivityRule =
-            new ActivityTestRule<>(DrawActivity.class);
+    public IntentsTestRule<HomeActivity> mHomeActivityRule =
+            new IntentsTestRule<>(HomeActivity.class);
 
     @Before
     public void stubCameraIntent() {
@@ -62,8 +61,9 @@ public class TakePictureTest {
         //onView(withId(R.id.imageView)).check(matches(not(hasDrawable())));
 
         // Click on the button that will trigger the stubbed intent.
-        onView(withId(R.id.multiple_actions)).perform(click());
+        onView(withId(R.id.fab_expand_menu_button)).perform(click());
         onView(withId(R.id.capture_fab)).perform(click());
+        SystemClock.sleep(5000);
 
         // With no user interaction, the ImageView will have a drawable.
         // need to define hasDrawable() to test for circuit being placed
@@ -73,8 +73,9 @@ public class TakePictureTest {
     private Instrumentation.ActivityResult createImageCaptureActivityResultStub() {
         // Put the drawable in a bundle.
         Bundle bundle = new Bundle();
-        bundle.putParcelable(Integer.toString(HomeActivity.REQUEST_TAKE_PHOTO), BitmapFactory.decodeResource(
-                mHomeActivityRule.getActivity().getResources(), R.drawable.circuit));
+        Bitmap bm = BitmapFactory.decodeResource(
+                mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
+        bundle.putParcelable(Integer.toString(HomeActivity.REQUEST_TAKE_PHOTO), bm);
 
         // Create the Intent that will include the bundle.
         Intent resultData = new Intent();
