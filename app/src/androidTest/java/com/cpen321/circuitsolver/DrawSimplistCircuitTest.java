@@ -51,29 +51,15 @@ public class DrawSimplistCircuitTest {
     private final static String TAG = "DrawSimplistCircuitTest";
 
 //    @Rule
-//    public ActivityTestRule<DrawActivity> mDrawActivityRule =
-//            new ActivityTestRule<>(DrawActivity.class);
+//    public ActivityTestRule<HomeActivity> mHomeActivityRule =
+//            new ActivityTestRule<>(HomeActivity.class);
     @Rule
-    public ActivityTestRule<HomeActivity> mHomeActivityRule =
-            new ActivityTestRule<>(HomeActivity.class);
+    public ActivityTestRule<DrawActivity> mDrawActivityRule =
+            new ActivityTestRule<>(DrawActivity.class);
 
 
     @Test
     public void simpleCircuitTest() {
-        View v = mHomeActivityRule.getActivity().findViewById(R.id.multiple_actions);
-        Log.d(TAG, String.valueOf(v.getVisibility()==v.VISIBLE));
-        Log.d(TAG, String.valueOf(v.isShown()));
-        Log.d(TAG, String.valueOf(v.isEnabled()));
-
-        org.hamcrest.Matcher<View> debugThis = withId(R.id.multiple_actions);
-        Log.d(TAG, String.valueOf(withId(R.id.multiple_actions)));
-
-        onView(withId(R.id.multiple_actions)).perform(click(), ViewActions.closeSoftKeyboard());
-        onView(withId(R.id.multiple_actions)).perform(click());
-        onView(withId(R.id.multiple_actions)).perform(click());
-        SystemClock.sleep(1000);
-        onView(withText("Draw Circuit")).perform(click());
-
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("DC Source")).perform(click());
         onView(withId(R.id.circuitFrame)).perform(swipeDownLeft());
@@ -90,12 +76,12 @@ public class DrawSimplistCircuitTest {
         onView(withText("Wire")).perform(click());
         onView(withId(R.id.circuitFrame)).perform(swipeLeftTop());
 
-//        ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
-//        CircuitElm source = circuitElms.get(0);
-//        SimplePoint source_midpoint_coords = midpoint(source.getP2(),source.getP1());
-//
-//        onView(withId(R.id.circuitFrame)).perform(clickXY(source_midpoint_coords.getX(),
-//                source_midpoint_coords.getY()));
+        ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
+        CircuitElm source = circuitElms.get(0);
+        SimplePoint source_midpoint_coords = midpoint(source.getP2(),source.getP1());
+
+        onView(withId(R.id.circuitFrame)).perform(clickXY(source_midpoint_coords.getX(),
+                source_midpoint_coords.getY()));
         SystemClock.sleep(1000);
         onView(withId(R.id.solveButton)).perform(click());
         SystemClock.sleep(1000);
