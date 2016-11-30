@@ -39,4 +39,16 @@ public final class Constants {
     public static int tooNearFromComponent = 10*4;
 
 
+//    Tensorflow values!
+    public static final int NUM_CLASSES = 5;
+    public static final int INPUT_SIZE = 299;
+    public static final int IMAGE_MEAN = 128;
+    public static final float IMAGE_STD = 128;
+    public static final String INPUT_NAME = "Mul:0";
+    public static final String OUTPUT_NAME = "final_result:0";
+
+    public static final String MODEL_FILE = "file:///android_asset/opt_output_graph.pb";
+    public static final String LABEL_FILE =
+            "file:///android_asset/output_labels.txt";
+
 }

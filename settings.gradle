@@ -1,2 +1,2 @@
-include ':app'
+include ':app', ':libtensorflow_demo_2'
 include ':libraries:opencv'

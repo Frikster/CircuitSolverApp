@@ -6,6 +6,8 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    aaptOptions { noCompress 'pb' }
+
     defaultConfig {
         applicationId "com.cpen321.circuitsolver"
         minSdkVersion 16
@@ -25,10 +27,15 @@ android {
             force 'com.android.support:support-annotations:23.1.1'
         }
     }
+    sourceSets.main {
+        jni.srcDirs = []
+        jniLibs.srcDir 'src/main/jniLibs'
+    }
+
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
     testCompile 'junit:junit:4.12'
@@ -36,6 +43,6 @@ dependencies {
     compile project(':libraries:opencv')
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'
-
     compile 'com.getbase:floatingactionbutton:1.10.1'
+    compile project(':libtensorflow_demo_2')
 }
