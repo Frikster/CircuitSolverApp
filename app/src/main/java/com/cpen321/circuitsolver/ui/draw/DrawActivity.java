@@ -358,11 +358,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return candidateElement;
     }
 
+    private static boolean zooming = false;
+    private static boolean drawing = false;
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (event.getPointerCount() == 2) {
-            startPoint = null;
-            endPoint = null;
+            zooming = true;
             SimplePoint fingerOne = new SimplePoint((int) event.getX(0), (int) event.getY(0));
             SimplePoint fingerTwo = new SimplePoint((int) event.getX(1), (int) event.getY(1));
             switch (event.getAction()) {
@@ -399,6 +401,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    zooming = false;
                     selectedElm = getSelected(x, y);
                     startPoint = new SimplePoint(x, y);
                     endPoint = new SimplePoint(x, y);
@@ -415,8 +418,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (startPoint == null)
+                    if (zooming){
+                        resetCoordinates();
                         break;
+                    }
                     endPoint = new SimplePoint(x, y);
                     if (startPoint.distanceFrom(endPoint) > lengthThreshHold) {
                         circuitView.pause();
@@ -442,8 +447,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (startPoint == null)
+                    if (zooming){
+                        resetCoordinates();
                         break;
+                    }
                     endPoint = new SimplePoint(x, y);
                     for (CircuitElm circuitElm : circuitElms) {
                         //check to see if the new points we are drawing are near existing ones, if so connect them
