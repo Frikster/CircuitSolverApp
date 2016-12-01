@@ -20,7 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class CircuitProject {
+public class CircuitProject implements Cloneable {
     private File originalImage = null;
     private File downsizedImage = null;
     private File processedImage = null;
@@ -281,6 +281,21 @@ public class CircuitProject {
         if (this.savedFolder != null)
             this.savedFolder.delete();
         return true;
+    }
+
+    // Fix java's "protected clone" mistake: http://stackoverflow.com/a/1138790/2734863
+    // note: returns null if cloning fails
+    @Override
+    public CircuitProject clone(){
+        //return (CircuitElm) super.clone();
+        Object clone = null;
+        try {
+            clone = super.clone();
+        }
+        catch (CloneNotSupportedException exception){
+            // Why the try/catch? http://stackoverflow.com/a/8609338/2734863
+        }
+        return (CircuitProject) clone;
     }
 
 }

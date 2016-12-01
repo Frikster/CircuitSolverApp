@@ -1,8 +1,10 @@
 package com.cpen321.circuitsolver;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 
 import org.junit.Rule;
@@ -31,7 +33,7 @@ public class EspressoTemplate {
 
     @Test
     public void simpleButtonTest() {
-        onView(withId(R.id.multiple_actions)).perform(click()).check(matches(isDisplayed()));
+        onView(ViewMatchers.withId(R.id.multiple_actions)).perform(click()).check(matches(isDisplayed()));
         onView(withId(R.id.multiple_actions)).perform(click()).check(matches(isDisplayed()));
     }
 }

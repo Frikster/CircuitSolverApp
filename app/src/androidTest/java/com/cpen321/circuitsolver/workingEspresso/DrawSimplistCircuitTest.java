@@ -1,6 +1,10 @@
-package com.cpen321.circuitsolver;
+package com.cpen321.circuitsolver.workingEspresso;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
@@ -21,12 +25,15 @@ import android.support.test.uiautomator.UiSelector;
 import android.util.Log;
 import android.view.View;
 
+import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
+import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -61,22 +68,22 @@ public class DrawSimplistCircuitTest{
             new ActivityTestRule<>(HomeActivity.class);
     private ActivityTestRule<DrawActivity> mDrawActivityRule =
             new ActivityTestRule<>(DrawActivity.class);
-    public ActivityTestRule<ProcessingActivity> mProcessingActivityRule =
-            new ActivityTestRule<>(ProcessingActivity.class);
+//    private ActivityTestRule<ProcessingActivity> mProcessingActivityRule =
+//            new ActivityTestRule<>(ProcessingActivity.class);
 
     @Before
     public void sendBitmap(){
-//        CircuitProject candidateProject = new CircuitProject(ImageUtils.getTimeStamp()+"TEST_IMAGE",
-//                mHomeActivityRule.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
-//        //mProcessingActivityRule.getActivity().setCircuitProject(candidateProject);
-//        Bitmap bm = BitmapFactory.decodeResource(
-//                mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
-//        candidateProject.saveOriginalImage(bm);
-//        Intent analysisIntent = new Intent(mHomeActivityRule.getActivity().getApplicationContext(),
-//                ProcessingActivity.class);
-//        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
-//        allowPermissionsIfNeeded();
-//        mHomeActivityRule.getActivity().startActivity(analysisIntent);
+        CircuitProject candidateProject = new CircuitProject(ImageUtils.getTimeStamp()+"TEST_IMAGE",
+                mHomeActivityRule.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+        //mProcessingActivityRule.getActivity().setCircuitProject(candidateProject);
+        Bitmap bm = BitmapFactory.decodeResource(
+                mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
+        candidateProject.saveOriginalImage(bm);
+        Intent analysisIntent = new Intent(mHomeActivityRule.getActivity().getApplicationContext(),
+                ProcessingActivity.class);
+        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
+        allowPermissionsIfNeeded();
+        mHomeActivityRule.getActivity().startActivity(analysisIntent);
 
 
 //        File file = new File(myDir, fname);
@@ -122,10 +129,7 @@ public class DrawSimplistCircuitTest{
 //                });
 //
 //        onView(nthChildOf(withId(R.id.saved_circuits_scrollview))).perform(click());
-        ArrayList<CircuitProject> CircuitProjects = mHomeActivityRule.getActivity().
-                getCircuitProjects();
-        CircuitProject circuitProject = CircuitProjects.get(0);
-        onView(withTagValue(withStringMatching(circuitProject.getFolderID()))).perform( scrollTo(), click());
+
 
 //        onView(with(R.id.saved_circuits_scroll).atPosition(0));
 //
@@ -136,12 +140,9 @@ public class DrawSimplistCircuitTest{
 //
 //        onView(withId(R.id.saved_circuits_scroll))
 //                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-
-
         SystemClock.sleep(1000*10); // wait for proceessing to complete todo: find way to only continue once other threads complete
-
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
-        ArrayList<CircuitElm> circuitElms_copy = new ArrayList<CircuitElm>();
+        ArrayList<CircuitElm> circuitElms_copy = new ArrayList<>();
         for(CircuitElm circuitElm : circuitElms) {
             circuitElms_copy.add(circuitElm.clone());
         }
@@ -152,7 +153,7 @@ public class DrawSimplistCircuitTest{
             SimplePoint circuitElm_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
             onView(withId(R.id.circuitFrame)).perform(clickXY(circuitElm_midpoint_coords.getX(),
                     circuitElm_midpoint_coords.getY()));
-            SystemClock.sleep(1000);
+            SystemClock.sleep(300);
             onView(withId(R.id.eraseButton)).perform(click());
         }
 
@@ -191,13 +192,44 @@ public class DrawSimplistCircuitTest{
         SystemClock.sleep(1000);
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("Resistor")).perform(click());
+        onView(withId(R.id.circuitFrame)).perform(clickXY(wire_midpoint_coords.getX(),
+                wire_midpoint_coords.getY()));
         SystemClock.sleep(1000);
         onView(withId(R.id.solveButton)).perform(click());
         SystemClock.sleep(1000);
         Espresso.pressBack();
         SystemClock.sleep(1000);
 
-        onView(withId(R.id.solveButton)).perform(click());
+        //todo: when you press the back button it spawns a new activity seperate from mHomeActivity
+        // stupid horizontalScrollView
+        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+                getCircuitProjects();
+        CircuitProject circuitProject_one = circuitProjects.get(0);
+        onView(withTagValue(withStringMatching(circuitProject_one.getFolderID()))).perform(scrollTo(),
+                click());
+        onView(withId(R.id.processing_fab)).perform(click());
+        SystemClock.sleep(1000);
+        Espresso.pressBack();
+
+        ArrayList<CircuitProject> circuitProjects_copy = new ArrayList<>();
+        for(CircuitProject circuitProject : circuitProjects) {
+            circuitProjects_copy.add(circuitProject.clone());
+        }
+
+        Iterator<CircuitProject> iter_2 = circuitProjects_copy.iterator();
+        while (iter_2.hasNext()) {
+            CircuitProject circuitProject = iter_2.next();
+            onView(withTagValue(withStringMatching(circuitProject.getFolderID()))).perform(scrollTo(),
+                    click());
+            onView(withId(R.id.delete_fab)).perform(click());
+        }
+//        circuitProject_one = circuitProjects.get(0);
+//        Log.d(TAG, String.valueOf(circuitProjects.size()));
+//        Log.d(TAG, String.valueOf(circuitProject_one));
+//        onView(withTagValue(withStringMatching(circuitProject_one.getFolderID()))).perform(click());
+//        onView(withId(R.id.delete_fab)).perform(click());
+
+        SystemClock.sleep(5000);
 
 //        float[] coordinates =  GeneralLocation.BOTTOM_RIGHT.calculateCoordinates(view);
 //        coordinates[0] = coordinates[0] - 100;

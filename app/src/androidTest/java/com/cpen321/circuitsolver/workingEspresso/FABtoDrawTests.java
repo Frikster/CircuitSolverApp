@@ -1,10 +1,12 @@
-package com.cpen321.circuitsolver;
+package com.cpen321.circuitsolver.workingEspresso;
 
 import android.os.SystemClock;
+import android.support.test.espresso.Espresso;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
 import android.view.View;
 
+import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 
 import org.junit.Rule;
@@ -41,7 +43,10 @@ public class FABtoDrawTests {
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         SystemClock.sleep(1000);
         onView(withText("Draw Circuit")).perform(click());
+        SystemClock.sleep(1000);
+        Espresso.pressBack();
         SystemClock.sleep(5000);
+
 
     }
 }
