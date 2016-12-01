@@ -260,20 +260,22 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         solveButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (componentState != SOLVED) {
-                    prevComponentState = componentState;
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    if (componentState != SOLVED) {
+                        prevComponentState = componentState;
+                    }
+                    componentState = SOLVED;
+                    CircuitNode.resetNumNodes();
+                    AllocateNodes circuit = new AllocateNodes(circuitElms);
+                    circuit.allocate();
+                    SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
+                    if (interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))) {
+                        Toast.makeText(DrawActivity.this, "Solved!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DrawActivity.this, "Invalid Circuit..", Toast.LENGTH_SHORT).show();
+                    }
+                    displayElementInfo();
                 }
-                componentState = SOLVED;
-                CircuitNode.resetNumNodes();
-                AllocateNodes circuit = new AllocateNodes(circuitElms);
-                circuit.allocate();
-                SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
-                if (interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))) {
-                    Toast.makeText(DrawActivity.this, "Solved!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(DrawActivity.this, "Invalid Circuit..", Toast.LENGTH_SHORT).show();
-                }
-                displayElementInfo();
                 return true;
             }
         });
