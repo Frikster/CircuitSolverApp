@@ -308,5 +308,8 @@ public class HomeActivity extends BaseActivity {
     public void setCandidateProject(CircuitProject candidateProject){
         this.candidateProject = candidateProject;
     }
+    public ArrayList<CircuitProject> getCircuitProjects(){
+        return circuitProjects;
+    }
 
 }

@@ -72,4 +72,9 @@ public class ProcessingActivity extends AppCompatActivity {
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
         startActivity(displayIntent);
     }
+
+    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
+    public void setCircuitProject(CircuitProject candidateProject){
+        this.circuitProject = candidateProject;
+    }
 }

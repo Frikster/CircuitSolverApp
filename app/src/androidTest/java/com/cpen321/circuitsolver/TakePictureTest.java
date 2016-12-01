@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -13,6 +14,11 @@ import android.provider.MediaStore;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.support.test.uiautomator.UiDevice;
+import android.support.test.uiautomator.UiObject;
+import android.support.test.uiautomator.UiObjectNotFoundException;
+import android.support.test.uiautomator.UiSelector;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
@@ -27,6 +33,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -79,7 +86,12 @@ public class TakePictureTest {
     }
 
     private Instrumentation.ActivityResult createImageCaptureActivityResultStub() {
-        // Put the drawable in a bundle.
+
+
+        //File photoFile = candidateProject.generateOriginalImageFile();
+
+        // Create the Intent that will include the bundle.
+        Intent resultData = new Intent();        // Put the drawable in a bundle.
         Bundle bundle = new Bundle();
         Bitmap bm = BitmapFactory.decodeResource(
                 mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
@@ -89,16 +101,11 @@ public class TakePictureTest {
         CircuitProject candidateProject = new CircuitProject(ImageUtils.getTimeStamp()+"TEST_IMAGE",
                 mHomeActivityRule.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
         mHomeActivityRule.getActivity().setCandidateProject(candidateProject);
-
-        //File photoFile = candidateProject.generateOriginalImageFile();
-
-
-        // Create the Intent that will include the bundle.
-        Intent resultData = new Intent();
         resultData.putExtras(bundle);
 
         // Create the ActivityResult with the Intent.
         return new Instrumentation.ActivityResult(Activity.RESULT_OK, resultData);
     }
+
 
 }

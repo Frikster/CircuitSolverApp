@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by Jennifer on 10/10/2016.
  */
-public abstract class CircuitElm{
+public abstract class CircuitElm implements Cloneable{
 
 
 
@@ -257,5 +257,20 @@ public abstract class CircuitElm{
             return true;
         }
         return false;
+    }
+
+    // Fix java's "protected clone" mistake: http://stackoverflow.com/a/1138790/2734863
+    // note: returns null if cloning fails
+    @Override
+    public CircuitElm clone(){
+        //return (CircuitElm) super.clone();
+        Object clone = null;
+        try {
+            clone = super.clone();
+        }
+        catch (CloneNotSupportedException exception){
+            // Why the try/catch? http://stackoverflow.com/a/8609338/2734863
+        }
+        return (CircuitElm) clone;
     }
 }
