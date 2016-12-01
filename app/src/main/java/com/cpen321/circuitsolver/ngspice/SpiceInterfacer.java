@@ -72,7 +72,7 @@ public class SpiceInterfacer {
         callNgOutputParser(input, circuitNodeMap, circuitElmMap);
     }
 
-    public void callNgOutputParser(String input, Map<String, CircuitNode> nodes, Map<String, CircuitElm> elms ) {
+    public static void callNgOutputParser(String input, Map<String, CircuitNode> nodes, Map<String, CircuitElm> elms ) {
         boolean addWord = false;
         boolean isValueNum = false;
         boolean isNode = false;

@@ -31,6 +31,6 @@ public class EspressoTemplate {
 
     @Test
     public void simpleButtonTest() {
-        onView(withId(R.id.fab)).perform(click()).check(matches(isDisplayed()));;
+        //onView(withId(R.id.fab)).perform(click()).check(matches(isDisplayed()));;
     }
 }
