@@ -170,7 +170,7 @@ public class CapacitorElm extends CircuitElm implements SpiceElm {
     }
 
     @Override
-    public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
+    public void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
         //Edit ANODE_WIDTH, CATHODE_WIDTH, and SPACE_LENGTH as needed
         float ANODE_WIDTH = 45;
         float CATHODE_WIDTH = 45;

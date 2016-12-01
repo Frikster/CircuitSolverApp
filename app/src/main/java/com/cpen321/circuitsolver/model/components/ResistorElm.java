@@ -42,18 +42,17 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
         numResistors++;
     }
 
-    //TODO do this method differently
-    @Override
-    public double getCurrent() {
-        return getVoltageDiff()/resistance;
-    }
-
     public double getVoltageDiff() {
-        return abs(getNode(0).getVoltage() - getNode(1).getVoltage());
+        if(getNode(0) == null || getNode(0) == null) {
+            return Double.MAX_VALUE;
+        }
+        return getNode(0).getVoltage() - getNode(1).getVoltage();
     }
 
+    @Override
     public double calculateCurrent() {
-        return 0;
+        setCurrent(-1*getVoltageDiff()/resistance);
+        return getCurrent();
     }
 
     public void setValue(double value) {

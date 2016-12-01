@@ -253,7 +253,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 if (componentState != SOLVED) {
                     prevComponentState = componentState;
                 }
-                componentState = SOLVED;
                 CircuitNode.resetNumNodes();
                 AllocateNodes circuit = new AllocateNodes(circuitElms);
                 circuit.allocate();
@@ -263,6 +262,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 } else {
                     Toast.makeText(DrawActivity.this, "Invalid Circuit..", Toast.LENGTH_SHORT).show();
                 }
+                for(CircuitElm circuitElm : circuitElms) {
+                    circuitElm.calculateCurrent();
+                }
+                componentState = SOLVED;
                 displayElementInfo();
                 return true;
             }
@@ -549,6 +552,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         if (componentState == SOLVED && selectedElm != null && !selectedElm.getType().equals(Constants.WIRE)) {
+//            voltageText.setText(Double.toString(Math.abs(selectedElm.getVoltageDiff())) + " V");
+//            currentText.setText(Double.toString(Math.abs(selectedElm.getCurrent())) + " A");
             voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
             currentText.setText(Double.toString(selectedElm.getCurrent()) + " A");
         } else {

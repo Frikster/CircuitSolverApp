@@ -27,6 +27,10 @@ public abstract class CircuitElm{
 
     private boolean isSelected;
 
+    /**
+     * Positive value means the flow of negative charge is from p1 to p2
+     * @return the current
+     */
     public double getCurrent() {
         return current;
     }
@@ -91,13 +95,14 @@ public abstract class CircuitElm{
     }
 
     /**
-     * Find the voltage difference across the element
+     * Find the voltage difference across the element, v(p2) - v(p2)
      * @return
      */
     public abstract double getVoltageDiff();
 
     /**
      * Find the current flowing through the element
+     * Updates current field
      * @return
      */
     public abstract double calculateCurrent();
@@ -259,7 +264,17 @@ public abstract class CircuitElm{
         return false;
     }
 
-    public void drawArrow(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint, boolean dirStartToStop){
+    public void drawCurrent(Canvas canvas, Paint paint) {
+        if(p1 != null && p2 != null) {
+            if(getCurrent() < 0) {
+                drawArrow(canvas, p1.getX(), p1.getY(), p2.getX(), p2.getY(), paint, true);
+            } else {
+                drawArrow(canvas, p1.getX(), p1.getY(), p2.getX(), p2.getY(), paint, false);
+            }
+        }
+    }
+
+    private void drawArrow(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint, boolean dirStartToStop){
             //Edit ARROW_WIDTH, ARROW_LENGTH, and SPACE_LENGTH as needed
             float ARROW_WIDTH = 25;
             float ARROW_LENGTH;
@@ -333,11 +348,11 @@ public abstract class CircuitElm{
                 y8 = y4i - ARROW_WIDTH * ((float) Math.sin(perpAngle));
             }
             //when drawn vertically pointing down
-            else if (y > 0) {
+            else if (y < 0) {
                 x3 = stopX;
-                y3 = startY + d;
+                y3 = startY - d;
                 x4 = stopX;
-                y4 = stopY - d;
+                y4 = stopY + d;
                 y5 = y3 +ARROW_LENGTH;
                 y6 = y3 +ARROW_LENGTH;
                 y7 = y4 +ARROW_LENGTH;
@@ -350,9 +365,9 @@ public abstract class CircuitElm{
             //when drawn vertically pointing up
             else {
                 x3 = stopX;
-                y3 = startY - d;
+                y3 = startY + d;
                 x4 = stopX;
-                y4 = stopY + d;
+                y4 = stopY - d;
                 y5 = y3-ARROW_LENGTH;
                 y6 = y3-ARROW_LENGTH;
                 y7 = y4-ARROW_LENGTH;

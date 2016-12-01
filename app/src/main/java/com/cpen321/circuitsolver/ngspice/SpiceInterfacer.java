@@ -127,7 +127,7 @@ public class SpiceInterfacer {
                     else {
                         CircuitElm currElm = elms.get(key);
                         if(currElm != null)
-                            currElm.setCurrent(Double.parseDouble(word));
+                            currElm.setCurrent(-1*Double.parseDouble(word));
                     }
                 }
             }
