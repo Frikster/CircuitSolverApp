@@ -1,6 +1,7 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
@@ -66,17 +67,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private int screenWidth;
 
     private DrawController drawController;
-
     private boolean firstZoom = true;
-
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
-
     private static final ReentrantLock circuitElmsLock = new ReentrantLock();
-
     private CircuitView circuitView;
-
     private static AddComponentState componentState = DC_SOURCE;
-
     private TouchState touchState = UP;
 
     private static SimplePoint startPoint = new SimplePoint(0, 0);
@@ -128,6 +123,58 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     public static CircuitElm getSelectedElm() {
         return selectedElm;
     }
+
+
+    @Override
+    public void onConfigurationChanged(Configuration configure) {
+        super.onConfigurationChanged(configure);
+
+//        // Convert list of elements to a circuit def file to save
+//        String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
+//        circuitProject.saveCircuitDefinitionFile(circStr);
+//
+//        float scaleX = ((float) Constants.PROCESSING_WIDTH)/((float) screenWidth);
+//        float scaleY = ((float) Constants.PROCESSING_WIDTH)/((float) screenHeight);
+//
+//        Bitmap tmp = Bitmap.createBitmap(Constants.PROCESSING_WIDTH, Constants.PROCESSING_WIDTH,
+//                Bitmap.Config.RGB_565);
+//        Canvas tmpcanvas = new Canvas(tmp);
+//        tmpcanvas.scale(scaleX, scaleY);
+//        this.circuitView.fakeDraw(tmpcanvas);
+//
+//        try {
+//            File screenShot = this.circuitProject.getOriginalImageLocation();
+//            FileOutputStream screenshotStream = new FileOutputStream(screenShot);
+//            tmp.compress(Bitmap.CompressFormat.PNG, 50, screenshotStream);
+//        } catch (FileNotFoundException ex) {
+//            ex.printStackTrace();
+//        } catch (IOException ioEx) {
+//            ioEx.printStackTrace();
+//        }
+
+
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+//        savedInstanceState.putParcelableArrayList("circuitElms",circuitElms);
+//
+//        savedInstanceState.putBoolean("MyBoolean", true);
+//        savedInstanceState.putDouble("myDouble", 1.9);
+//        savedInstanceState.putInt("MyInt", 1);
+//        savedInstanceState.putString("MyString", "Welcome back to Android");
+        // etc.
+    }
+
+//    @Override
+//    public void onRestoreInstanceState(Bundle savedInstanceState) {
+//        super.onRestoreInstanceState(savedInstanceState);
+//        // Restore UI state from the savedInstanceState.
+//        // This bundle has also been passed to onCreate.
+//        boolean myBoolean = savedInstanceState.getBoolean("MyBoolean");
+//        double myDouble = savedInstanceState.getDouble("myDouble");
+//        int myInt = savedInstanceState.getInt("MyInt");
+//        String myString = savedInstanceState.getString("MyString");
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -357,6 +404,28 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onPause() {
         super.onPause();
+        // Convert list of elements to a circuit def file to save
+        String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
+        circuitProject.saveCircuitDefinitionFile(circStr);
+
+        float scaleX = ((float) Constants.PROCESSING_WIDTH)/((float) screenWidth);
+        float scaleY = ((float) Constants.PROCESSING_WIDTH)/((float) screenHeight);
+
+        Bitmap tmp = Bitmap.createBitmap(Constants.PROCESSING_WIDTH, Constants.PROCESSING_WIDTH,
+                Bitmap.Config.RGB_565);
+        Canvas tmpcanvas = new Canvas(tmp);
+        tmpcanvas.scale(scaleX, scaleY);
+        this.circuitView.fakeDraw(tmpcanvas);
+
+        try {
+            File screenShot = this.circuitProject.getOriginalImageLocation();
+            FileOutputStream screenshotStream = new FileOutputStream(screenShot);
+            tmp.compress(Bitmap.CompressFormat.PNG, 50, screenshotStream);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ioEx) {
+            ioEx.printStackTrace();
+        }
         circuitView.pause();
     }
 
