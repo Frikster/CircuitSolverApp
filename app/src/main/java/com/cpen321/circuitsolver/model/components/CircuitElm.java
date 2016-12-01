@@ -11,8 +11,6 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Math.abs;
-
 /**
  * Created by Jennifer on 10/10/2016.
  */

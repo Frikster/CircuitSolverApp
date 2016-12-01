@@ -3,7 +3,7 @@ package com.cpen321.circuitsolver.opencv;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
+/**Class that modelizes a Corner
  * Created by Simon on 24.10.2016.
  */
 

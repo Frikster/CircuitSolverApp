@@ -24,6 +24,8 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
     public ResistorElm() {
         super();
+        this.name = "r" + numResistors;
+        numResistors++;
     }
 
     public ResistorElm(SimplePoint p1, SimplePoint p2){

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/backgroundGray"
     android:orientation="vertical" >
 
     <com.cpen321.circuitsolver.ui.draw.CircuitView
@@ -17,41 +17,24 @@
         android:layout_width="fill_parent"
         android:gravity="center">
 
-    <Button
-        android:id="@+id/componentMenuButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        <Button
+            android:id="@+id/componentMenuButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_button_tag"/>
 
-    <Button
-        android:text="Erase"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:id="@+id/eraseButton"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/componentMenuButton"
-        android:layout_toEndOf="@+id/componentMenuButton" />
+        <Button
+            android:text="@string/erase_button_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:id="@+id/eraseButton"/>
 
-    <Button
-        android:text="Solve"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/solveButton"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/eraseButton"
-        android:layout_toEndOf="@+id/eraseButton" />
-    <Button
-        android:text="Move/Edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/moveButton"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/solveButton"
-        android:layout_toEndOf="@+id/solveButton" />
+        <Button
+            android:text="@string/solve_button_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/solveButton" />
 
     </LinearLayout>
 
@@ -65,20 +48,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/editButtonPanel"
-            android:layout_gravity="bottom|start"
-            android:layout_alignParentStart="true">
-        </LinearLayout>
-
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/editButtonPanel"
             android:layout_centerHorizontal="true"
-            android:hint="Component Value"
+            android:hint="@string/component_value"
             android:inputType="numberDecimal"
             android:ems="10"
             android:shadowColor="@color/circuitBackground"
@@ -86,17 +60,18 @@
             android:id="@+id/component_value"
             android:backgroundTint="@color/backgroundGray" />
         <TextView
-            android:text="ohms"
+            android:text="@string/lowercase_ohms"
             android:id="@+id/units_display"
             android:textColor="@color/circuitBackground"
             android:layout_toRightOf="@id/component_value"
+            android:layout_toEndOf="@id/component_value"
             android:layout_alignBaseline="@id/component_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
 
     <TextView
-        android:text="voltage"
+        android:text="@string/lowercase_voltage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/componentValue"
@@ -107,7 +82,7 @@
         android:id="@+id/currentText" />
 
     <TextView
-        android:text="current"
+        android:text="@string/lowercase_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/currentText"

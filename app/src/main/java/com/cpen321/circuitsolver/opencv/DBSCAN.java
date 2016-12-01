@@ -3,7 +3,6 @@ package com.cpen321.circuitsolver.opencv;
 /**Class to perform the DB scan algorithm
  *Created by Simon Haefeli entirely 3.11.2016
  */
-import android.provider.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +18,11 @@ public class DBSCAN {
      * @return The points with their assignment (see PointDB class)
      */
     public List<PointDB> dbscanAlgo(List<PointDB> points, int radius, int minPoints){
+        System.gc();
         //Initialize distance matrix
         allPoints = new ArrayList<>(points);
-        double [][] distancesMatrix = new double[allPoints.size()][allPoints.size()];
+        int size = allPoints.size();
+        float [][] distancesMatrix = new float[size][size];
         for(int i=0;i<distancesMatrix.length;i++){
             System.out.print("\n");
             for(int j=0;j<distancesMatrix.length;j++){
@@ -29,7 +30,7 @@ public class DBSCAN {
                     distancesMatrix[i][j] = 0;
                 }
                 else{
-                    distancesMatrix[i][j] = Math.sqrt(Math.pow(allPoints.get(i).getX()-allPoints.get(j).getX(),2)+Math.pow(allPoints.get(i).getY()-allPoints.get(j).getY(),2));
+                    distancesMatrix[i][j] = (float)Math.sqrt(Math.pow(allPoints.get(i).getX()-allPoints.get(j).getX(),2)+Math.pow(allPoints.get(i).getY()-allPoints.get(j).getY(),2));
                 }
 
             }
@@ -68,7 +69,7 @@ public class DBSCAN {
      * @param minPoints Param of dbscan
      * @param distancesMatrix The distances matrix indicating the distance between all couple of points
      */
-    private void expand(PointDB corePt, List<PointDB> toConsider, int radius, int minPoints, double[][] distancesMatrix){
+    private void expand(PointDB corePt, List<PointDB> toConsider, int radius, int minPoints, float[][] distancesMatrix){
         for(PointDB point : toConsider) {
             if (!point.isAssigned()){
                 point.setCluster(corePt.getCluster());
@@ -91,7 +92,7 @@ public class DBSCAN {
      * @param distancesMatrix The distances matrix indicating the distance between all couple of points
      * @return
      */
-    private List<PointDB> neighbourghs(PointDB reference, int radius, double[][] distancesMatrix ){
+    private List<PointDB> neighbourghs(PointDB reference, int radius, float[][] distancesMatrix ){
         int index = allPoints.indexOf(reference);
         List<PointDB> neighbourghs = new ArrayList<>();
         for(int i=0;i<allPoints.size();i++){

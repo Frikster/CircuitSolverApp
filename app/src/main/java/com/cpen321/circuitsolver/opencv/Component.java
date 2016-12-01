@@ -1,6 +1,6 @@
 package com.cpen321.circuitsolver.opencv;
 
-/**
+/**Class that modelizes the components
  * Created by Simon on 24.10.2016.
  */
 

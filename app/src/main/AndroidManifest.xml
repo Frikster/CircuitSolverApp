@@ -16,19 +16,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_circuit"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.CameraActivity">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -46,26 +37,12 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.AnalysisActivity"
-            android:label="@string/title_activity_analysis"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.ProcessingActivity" />
-        <activity
-            android:name=".ui.EditActivity"
-            android:label="@string/title_activity_edit"
-            android:theme="@style/AppTheme.NoActionBar">
-
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
-        </activity>
-        <activity android:name=".ui.draw.DrawActivity"></activity>
+        <activity android:name=".ui.draw.DrawActivity"
+                  android:noHistory="true"></activity>
     </application>
 
 </manifest>

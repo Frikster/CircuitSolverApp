@@ -1,14 +1,11 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.graphics.Point;
-import android.util.Log;
 
 import com.cpen321.circuitsolver.model.SimplePoint;
 
-/**
- * Created by Neil on 2016-11-19.
- */
-
+// Class to hold the position of touch events to allow for the circuit to be zoomed in and
+// pan around
 public class DrawController {
     private SimplePoint fingerOne;
     private SimplePoint fingerTwo;
@@ -59,12 +56,6 @@ public class DrawController {
     }
 
     public Point getMiddlePoint() {
-//        if (this.fingerOne == null)
-//            return new Point(this.fingerTwo.getX(),
-//                    this.fingerTwo.getY());
-//        if (this.fingerTwo == null)
-//            return new Point(this.fingerOne.getX(),
-//                    this.fingerOne.getY());
         int middleX, middleY;
 
         int diffX, diffY;

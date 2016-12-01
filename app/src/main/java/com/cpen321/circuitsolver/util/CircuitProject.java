@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.service.CircuitDefParser;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,8 +18,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CircuitProject {
@@ -30,8 +27,6 @@ public class CircuitProject {
     private File circuitDefinition = null;
 
     private File savedFolder = null;
-
-    private List<CircuitElm> circElms = null;
 
     public CircuitProject(File directory) {
         this.savedFolder = directory;
@@ -46,10 +41,21 @@ public class CircuitProject {
 
     public Bitmap getThumbnail() {
         try {
-            return ImageUtils.downsizeImage(this.getOriginalImage(), 600);
+            if (this.downsizedImage != null) {
+                return this.getDownsizedImage();
+            } else {
+                return ImageUtils.downsizeImage(this.getOriginalImage(), Constants.PROCESSING_WIDTH);
+            }
         } catch (IOException ex) {
             return null;
         }
+    }
+
+    public File getOriginalImageLocation() throws IOException {
+        if (this.originalImage != null)
+            return this.originalImage;
+        else
+            return this.generateOriginalImageFile();
     }
 
     public String getCircuitText() throws IOException{
@@ -139,7 +145,7 @@ public class CircuitProject {
         FileOutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(filename);
-            imgBmp.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+            imgBmp.compress(Bitmap.CompressFormat.JPEG, Constants.COMPRESSION_QUALITY, outputStream);
             outputStream.close();
         } catch (FileNotFoundException ex) {
             System.out.println("FILE NOT FOUND");
@@ -154,6 +160,8 @@ public class CircuitProject {
 
     private void loadFromFolder() {
         File[] files = this.savedFolder.listFiles();
+        if (files == null)
+            return;
         for (File file : files) {
             if (file.getName().contains("original_"))
                 this.originalImage = file;

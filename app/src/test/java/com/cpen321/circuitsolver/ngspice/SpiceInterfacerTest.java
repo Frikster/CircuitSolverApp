@@ -9,7 +9,7 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 import com.cpen321.circuitsolver.model.components.WireElm;
-import com.cpen321.circuitsolver.service.AnalyzeCircuitImpl;
+import com.cpen321.circuitsolver.service.AllocateNodes;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -54,13 +54,13 @@ public class SpiceInterfacerTest {
         elements.add(new WireElm(new SimplePoint(0, 0), new SimplePoint(3, 0)));
         elements.add(new WireElm(new SimplePoint(3, 0), new SimplePoint(6, 0)));
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
-        List<CircuitNode> resultNodes = analyzeCircuitImpl.getNodes();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
+        List<CircuitNode> resultNodes = allocateNodes.getNodes();
         System.out.println(resultNodes);
         assertTrue(resultNodes.size() == 4);
 
-        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(analyzeCircuitImpl.getNodes() ,analyzeCircuitImpl.getElements());
+        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(allocateNodes.getNodes() , allocateNodes.getElements());
         String ngSpiceInput = spiceInterfacer.getNgSpiceInput();
         System.out.println(ngSpiceInput);
 
@@ -101,7 +101,7 @@ public class SpiceInterfacerTest {
         elements.add(new WireElm(new SimplePoint(3, 0), new SimplePoint(6, 0)));
 
         String input =
-                "Note: can't find init file.\n" +
+                "Note: can't find allocate file.\n" +
                         "\n" +
                         "Circuit: * my circuit\n" +
                         "\n" +
@@ -119,14 +119,14 @@ public class SpiceInterfacerTest {
                         "v2#branch                         -0.000648522\n" +
                         "v1#branch                           -0.0014253\n";
 
-        AnalyzeCircuitImpl analyzeCircuitImpl = new AnalyzeCircuitImpl(elements);
-        analyzeCircuitImpl.init();
-        List<CircuitNode> resultNodes = analyzeCircuitImpl.getNodes();
-        List<CircuitElm> resultElms = analyzeCircuitImpl.getElements();
+        AllocateNodes allocateNodes = new AllocateNodes(elements);
+        allocateNodes.allocate();
+        List<CircuitNode> resultNodes = allocateNodes.getNodes();
+        List<CircuitElm> resultElms = allocateNodes.getElements();
         System.out.println(resultNodes);
         assertTrue(resultNodes.size() == 4);
 
-        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(resultNodes ,analyzeCircuitImpl.getElements());
+        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(resultNodes , allocateNodes.getElements());
         spiceInterfacer.testParser(input);
 
         for(CircuitNode resultNode : resultNodes) {
@@ -163,7 +163,7 @@ public class SpiceInterfacerTest {
     @Test
     public void callNgOutputParserTest() {
         String input =
-                "Note: can't find init file.\n" +
+                "Note: can't find allocate file.\n" +
                         "\n" +
                         "Circuit: * my circuit\n" +
                         "\n" +

@@ -3,11 +3,8 @@ package com.cpen321.circuitsolver.service;
 import com.cpen321.circuitsolver.model.CircuitElmFactory;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.util.Constants;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,7 +14,7 @@ import java.util.List;
 public class CircuitDefParser {
 
     public List<CircuitElm> parseElements(String circTxt, int scaleToWidth, int scaleToHeight){
-        //TODO: Lots of dangerous out of bound index cases here. Need to build safer code.
+        //TODO: Safer code for out of bound index exceptions
         List<CircuitElm> elements = new ArrayList<>();
         int originalWidth = scaleToWidth;
         int originalHeight = scaleToHeight;
@@ -54,7 +51,7 @@ public class CircuitDefParser {
      */
     public List<CircuitElm> parseElements(String circTxt){
 
-        //TODO: Lots of dangerous out of bound index cases here. Need to build safer code.
+        //TODO: Safer code for out of bound index exceptions
         List<CircuitElm> elements = new ArrayList<>();
         //Each line represents a new circuit element
         String strElms[] = circTxt.split("\n");
@@ -107,7 +104,7 @@ public class CircuitDefParser {
      */
     public String elementsToTxt(List<CircuitElm> elements, int originalWidth, int originalHeight){
         StringBuilder sb = new StringBuilder();
-        sb.append("$ " + originalHeight + " " + originalWidth + "\n");
+        sb.append("$ " + originalWidth + " " + originalHeight + "\n");
         for(CircuitElm elm : elements){
             //Column 1 is element type
             sb.append(elm.getType() + " ");
@@ -133,8 +130,12 @@ public class CircuitDefParser {
         return sb.toString();
     }
 
+    public void transform(int margin, List<CircuitElm> circuitElms){
+        //TODO: create method that transforms coordinates of all elements to scale to fit in margin
+    }
+
     private CircuitElm parseCircuitElmLine(String line){
-        return parseCircuitElmLine(line, 1, 1, 5, 5);
+        return parseCircuitElmLine(line, 1, 1, 1, 1);
     }
 
     private CircuitElm parseCircuitElmLine(String line, int originalWidth, int originalHeight, int scaleToWidth, int scaleToHeight){

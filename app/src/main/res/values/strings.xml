@@ -13,4 +13,26 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+
+    <!--Draw Activity Strings-->
+    <string name="component_value">Component Value</string>
+
+    <string name="add_button_tag">Add</string>
+    <string name="change_button_tag">Change</string>
+    <string name="erase_button_tag">Erase</string>
+    <string name="solve_button_tag">Solve</string>
+
+    <string name="move_button_tag">Move</string>
+    <string name="edit_button_tag">Edit</string>
+
+    <string name="lowercase_ohms">ohms</string>
+    <string name="lowercase_voltage">voltage</string>
+    <string name="lowercase_current">current</string>
+
+
+    <!--Tensorflow strings-->
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
 </resources>

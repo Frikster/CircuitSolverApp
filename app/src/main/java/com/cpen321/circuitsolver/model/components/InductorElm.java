@@ -23,6 +23,12 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     private String name;
     private boolean isSelected;
 
+    public InductorElm() {
+        super();
+        this.name = "l" + numInductors;
+        numInductors++;
+    }
+
     public InductorElm(SimplePoint p1, SimplePoint p2, double inductance){
         super(p1, p2);
         this.inductance = inductance;
@@ -99,6 +105,7 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
     }
 
+
     @Override
     public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
         //Edit MAX_LENGTH as needed
@@ -129,13 +136,10 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
             x5 = stopX - (MAX_LENGTH + d - innerD) * ((float) Math.cos(angle));
             y5 = stopY - (MAX_LENGTH + d - innerD) * ((float) Math.sin(angle));
-
             x6 = stopX - (MAX_LENGTH + d - 2 * innerD) * ((float) Math.cos(angle));
             y6 = stopY - (MAX_LENGTH + d - 2 * innerD) * ((float) Math.sin(angle));
-
             x7 = stopX - (MAX_LENGTH + d - 3 * innerD) * ((float) Math.cos(angle));
             y7 = stopY - (MAX_LENGTH + d - 3 * innerD) * ((float) Math.sin(angle));
-
             x8 = stopX - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.cos(angle));
             y8 = stopY - (MAX_LENGTH + d - 4 * innerD) * ((float) Math.sin(angle));
         }
@@ -148,13 +152,10 @@ public class InductorElm extends CircuitElm implements SpiceElm {
 
             x5 = startX - (d + innerD) * ((float) Math.cos(angle));
             y5 = startY - (d + innerD) * ((float) Math.sin(angle));
-
             x6 = startX - (d + 2 * innerD) * ((float) Math.cos(angle));
             y6 = startY - (d + 2 * innerD) * ((float) Math.sin(angle));
-
             x7 = startX - (d + 3 * innerD) * ((float) Math.cos(angle));
             y7 = startY - (d + 3 * innerD) * ((float) Math.sin(angle));
-
             x8= startX - (d + 4 * innerD) * ((float) Math.cos(angle));
             y8 = startY - (d + 4 * innerD) * ((float) Math.sin(angle));
         }
@@ -192,7 +193,7 @@ public class InductorElm extends CircuitElm implements SpiceElm {
         canvas.drawLine(startX, startY, x3, y3, paint);
         canvas.drawLine(x4, y4, stopX, stopY, paint);
 
-        //draw loops
+        //draw "loops" section
         int radius = 75;
         drawCurved((int)x3,(int) y3, (int) x5,  (int)y5, radius ,canvas, paint);
         drawCurved((int)x5,(int) y5, (int) x6,  (int)y6, radius ,canvas, paint);
@@ -291,6 +292,7 @@ public class InductorElm extends CircuitElm implements SpiceElm {
     public static void resetNumElements() {
         numInductors = 1;
     }
+
     //draw curved line
     public void drawCurved(int x1, int y1, int x2, int y2, int curveRadius, Canvas canvas, Paint paint) {
         final Path path = new Path();

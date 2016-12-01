@@ -112,5 +112,7 @@ public class CircuitNode implements SpiceLabel{
         return this.label;
     }
 
+    public void setSpiceLabel(String label) { this.label = label; }
+
     public static void resetNumNodes() { numNodes = 0; }
 }
