@@ -224,27 +224,35 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                eraserPoint = new SimplePoint((int) (event.getRawX() - location[0]),
-                        (int) (event.getRawY() - location[0]));
-                if (selectedElm != null) {
-                    if (componentState == SOLVED) {
-                        componentState = prevComponentState;
+                if (event.getAction() == MotionEvent.ACTION_DOWN)
+                {
+                    eraserPoint = new SimplePoint((int) (event.getRawX() - location[0]),
+                            (int) (event.getRawY() - location[0]));
+                    if (selectedElm != null) {
+                        if (componentState == SOLVED) {
+                            componentState = prevComponentState;
+                        }
+                        circuitView.pause();
+                        circuitElms.remove(selectedElm);
+                        selectedElm = null;
+                        circuitView.resume();
                     }
-                    circuitView.pause();
-                    circuitElms.remove(selectedElm);
-                    selectedElm = null;
-                    circuitView.resume();
-                }
-                CircuitElm toRemove = getSelected(eraserPoint.getX(), eraserPoint.getY());
-                if (toRemove != null) {
-                    if (componentState == SOLVED) {
-                        componentState = prevComponentState;
+                    else{
+                        Toast.makeText(DrawActivity.this, "Select Component to Erase", Toast.LENGTH_SHORT).show();
                     }
-                    circuitView.pause();
-                    circuitElms.remove(toRemove);
-                    circuitView.resume();
+                    CircuitElm toRemove = getSelected(eraserPoint.getX(), eraserPoint.getY());
+                    if (toRemove != null) {
+                        if (componentState == SOLVED) {
+                            componentState = prevComponentState;
+                        }
+                        circuitView.pause();
+                        circuitElms.remove(toRemove);
+                        circuitView.resume();
+                    }
+
+
+                    displayElementInfo();
                 }
-                displayElementInfo();
                 return true;
             }
         });
