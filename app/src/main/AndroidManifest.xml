@@ -40,7 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.ProcessingActivity"/>
+        <activity android:name=".ui.ProcessingActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".ui.draw.DrawActivity"
             android:configChanges="orientation|screenSize|screenLayout">
         </activity>

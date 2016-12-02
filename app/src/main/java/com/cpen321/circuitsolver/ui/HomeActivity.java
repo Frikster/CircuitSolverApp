@@ -38,6 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.cpen321.circuitsolver.util.Constants.REQUEST_TAKE_PHOTO;
+
 public class HomeActivity extends BaseActivity {
     private static final String TAG = "HomeActivity";
     private static final String APP_NAME = "com.cpen321.circuitsolver";
@@ -147,13 +149,41 @@ public class HomeActivity extends BaseActivity {
         this.processingFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (HomeActivity.selectedTag == null)
-                    return;
+                    if (HomeActivity.selectedTag == null)
+                        return;
                 File circuitFolder = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES), HomeActivity.selectedTag);
-                Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-                displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
-                startActivity(displayIntent);
-                finish();
+                // try-catch: prevents the case where the user may end the app during the processingActivity
+                boolean notCorrupt = true;
+                try {
+                    CircuitProject circuitProject = new CircuitProject(circuitFolder);
+                    String circStr = circuitProject.getCircuitText();
+                }
+                catch(Exception e){
+                    notCorrupt = false;
+                    CircuitProject projToDelete = new CircuitProject(circuitFolder);
+                    projToDelete.deleteFileSystem();
+                    if (projToDelete.deleteFileSystem()) {
+                        HomeActivity.this.setSelectedTag(null);
+                        Toast.makeText(
+                                HomeActivity.this,
+                                "Project Corrupt. Deleted",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    } else {
+                        Toast.makeText(
+                                HomeActivity.this,
+                                "Project Corrupt. Attempt to Delete Failed.",
+                                Toast.LENGTH_SHORT
+                        ).show();
+                    }
+                    HomeActivity.this.updateSavedCircuits();
+                }
+                if(notCorrupt){
+                    Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
+                    displayIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    startActivity(displayIntent);
+                    finish();
+                }
             }
         });
 
@@ -202,7 +232,7 @@ public class HomeActivity extends BaseActivity {
                         APP_NAME,
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, Constants.REQUEST_TAKE_PHOTO);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
             else {
                 System.out.println("photo file is null");

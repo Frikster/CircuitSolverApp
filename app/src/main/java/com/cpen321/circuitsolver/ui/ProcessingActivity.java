@@ -52,8 +52,6 @@ public class ProcessingActivity extends AppCompatActivity {
                 MainOpencv main = new MainOpencv();
                 main.setComponentClassifier(new ImageClassifier(getAssets()));
                 main.houghLines(bMap);
-//                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap,
-//                        isNoOpenCvTest));
                 ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(
                         main.getCircuitText());
                 ProcessingActivity.this.circuitProject.print();
