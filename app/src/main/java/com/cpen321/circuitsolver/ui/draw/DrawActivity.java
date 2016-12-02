@@ -259,6 +259,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                             circuitView.pause();
                             changeElementType(selectedElm, componentState);
                             circuitView.resume();
+                            displayElementInfo();
                         }
                         return true;
                     }
@@ -338,6 +339,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
                 if (componentState == SOLVED && componentValueText.getTag() != null) {
                     componentState = prevComponentState;
+                    displayElementInfo();
                 }
 
                 componentValueText.setTag("not null");
@@ -418,6 +420,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     public static CircuitElm getCandidateElement() {
         return candidateElement;
+    }
+
+    public static boolean isZooming() {
+        return zooming;
     }
 
     private static boolean zooming = false;
