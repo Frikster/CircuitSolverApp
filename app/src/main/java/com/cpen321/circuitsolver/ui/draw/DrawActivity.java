@@ -591,23 +591,28 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             switch (selectedElm.getType()) {
                 case Constants.CAPACITOR: {
                     unitsText.setText(Constants.CAPACITOR_UNITS);
+                    componentValueText.setEnabled(true);
                     break;
                 }
                 case Constants.RESISTOR: {
                     unitsText.setText(Constants.RESISTOR_UNITS);
+                    componentValueText.setEnabled(true);
                     break;
                 }
                 case Constants.DC_VOLTAGE: {
                     unitsText.setText(Constants.VOLTAGE_UNITS);
+                    componentValueText.setEnabled(true);
                     break;
                 }
                 case Constants.INDUCTOR: {
                     unitsText.setText(Constants.INDUCTOR_UNTIS);
+                    componentValueText.setEnabled(true);
                     break;
                 }
                 case Constants.WIRE: {
                     unitsText.setText(Constants.WIRE_UNITS);
                     componentValueText.setText("--");
+                    componentValueText.setEnabled(false);
                     break;
                 }
             }

@@ -42,7 +42,9 @@ public class SpiceInterfacer {
                 return;
             }
         }
-        nodes.get(0).setSpiceLabel("0");
+        if(nodes.size() > 0) {
+            nodes.get(0).setSpiceLabel("0");
+        }
     }
 
     /**
@@ -61,7 +63,7 @@ public class SpiceInterfacer {
         return true;
     }
 
-    //TODO every mothid below this point should be private later or removed
+    //TODO every method below this point should be private later or removed
 
     public String getNgSpiceInput() {
         return addControl(createNetlist());
