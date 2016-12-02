@@ -77,4 +77,23 @@ public class UseCase1 {
         intended(hasComponent(new ComponentName(getTargetContext(), DrawActivity.class)));
     }
 
+    @Test
+    public void selectComponent(){
+        // - - Click component: turn red, "Add" -> "Change", bottom value matches component
+    }
+
+    @Test
+    public void changeComponent(){
+        // - Change component ->  bottom value matches component + component change
+    }
+
+    @Test
+    public void changeComponentandSolve(){
+        // - Change component value and solve -> see update, "solved!" appears (http://stackoverflow.com/a/28606603/2734863), + display current direction
+    }
+
+    @Test
+    public void changeComponentandSolveUnsolvable(){
+        //- Circuit unsolvable click solve: Unsolvable toast appears
+    }
 }
