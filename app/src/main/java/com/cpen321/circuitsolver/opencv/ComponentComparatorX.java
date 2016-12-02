@@ -11,7 +11,7 @@ import java.util.Comparator;
 public class ComponentComparatorX implements Comparator<Element> {
     @Override
     public int compare(Element a, Element b){
-        if(a.positionX >= b.positionX){
+        if(a.getX() >= b.getX()){
             return 1;
         }
         else{
