@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundGray"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:id="@+id/activity_draw_layout">
 
     <com.cpen321.circuitsolver.ui.draw.CircuitView
         android:id="@+id/circuitFrame"

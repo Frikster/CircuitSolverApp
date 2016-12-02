@@ -54,6 +54,8 @@ import static android.support.test.espresso.core.deps.guava.base.Preconditions.c
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.Util.clickXY;
+import static com.cpen321.circuitsolver.usecases.Util.midpoint;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -273,29 +275,9 @@ public class DrawSimplistCircuitTest{
 //    }
 
 
-    public static SimplePoint midpoint(SimplePoint p1, SimplePoint p2) {
-        return new SimplePoint((p1.getX() + p2.getX())/2, (p1.getY() + p2.getY())/2);
-    }
 
-    public static ViewAction clickXY(final int x, final int y){
-        return new GeneralClickAction(
-                Tap.SINGLE,
-                new CoordinatesProvider() {
-                    @Override
-                    public float[] calculateCoordinates(View view) {
 
-                        final int[] screenPos = new int[2];
-                        view.getLocationOnScreen(screenPos);
 
-                        final float screenX = screenPos[0] + x;
-                        final float screenY = screenPos[1] + y;
-                        float[] coordinates = {screenX, screenY};
-
-                        return coordinates;
-                    }
-                },
-                Press.FINGER);
-    }
 
     public static ViewAction swipeDownLeft() {
         return new GeneralSwipeAction(Swipe.SLOW, new CoordinatesProvider() {

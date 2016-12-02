@@ -1,12 +1,10 @@
 package com.cpen321.circuitsolver.ui.draw;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -582,7 +580,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void displayElementInfo() {
         if (selectedElm == null) {
-            unitsText.setText(Constants.NOTHING_SELECTED);
+            unitsText.setText(Constants.NOTHING);
             componentValueText.setText("--");
             voltageText.setText("--");
             currentText.setText("--");
@@ -608,7 +606,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     break;
                 }
                 case Constants.WIRE: {
-                    unitsText.setText(Constants.WIRE_UNTIS);
+                    unitsText.setText(Constants.WIRE_UNITS);
                     componentValueText.setText("--");
                     break;
                 }
