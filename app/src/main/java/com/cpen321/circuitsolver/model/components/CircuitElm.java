@@ -265,7 +265,7 @@ public abstract class CircuitElm implements Cloneable{
     }
 
     public void drawCurrent(Canvas canvas, Paint paint) {
-        if(p1 != null && p2 != null) {
+        if(p1 != null && p2 != null && (getCurrent() != 0)) {
             if(getCurrent() < 0) {
                 drawArrow(canvas, p1.getX(), p1.getY(), p2.getX(), p2.getY(), paint, true);
             } else {

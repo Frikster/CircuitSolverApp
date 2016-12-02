@@ -287,23 +287,26 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         solveButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (componentState != SOLVED) {
-                    prevComponentState = componentState;
+                int action = event.getAction();
+                if (action == MotionEvent.ACTION_UP) {
+                    if (componentState != SOLVED) {
+                        prevComponentState = componentState;
+                    }
+                    CircuitNode.resetNumNodes();
+                    AllocateNodes circuit = new AllocateNodes(circuitElms);
+                    circuit.allocate();
+                    SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
+                    if (interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))) {
+                        Toast.makeText(DrawActivity.this, "solved", Toast.LENGTH_SHORT).show();
+                        for (CircuitElm circuitElm : circuitElms) {
+                            circuitElm.calculateCurrent();
+                        }
+                        componentState = SOLVED;
+                        displayElementInfo();
+                    } else {
+                        Toast.makeText(DrawActivity.this, "invalid circuit", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                CircuitNode.resetNumNodes();
-                AllocateNodes circuit = new AllocateNodes(circuitElms);
-                circuit.allocate();
-                SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
-                if (interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))) {
-                    Toast.makeText(DrawActivity.this, "Solved!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(DrawActivity.this, "Invalid Circuit", Toast.LENGTH_SHORT).show();
-                }
-                for(CircuitElm circuitElm : circuitElms) {
-                    circuitElm.calculateCurrent();
-                }
-                componentState = SOLVED;
-                displayElementInfo();
                 return true;
             }
         });
