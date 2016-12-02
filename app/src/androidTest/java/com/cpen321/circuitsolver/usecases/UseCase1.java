@@ -197,6 +197,7 @@ public class UseCase1 {
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("Resistor")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
         checkSelectedToast(Constants.RESISTOR, mDrawActivityRule);
+        SystemClock.sleep(2000);
         assert(countElem(circuitElms, Constants.RESISTOR) == counts_before_res + 1);
         assert(countElem(circuitElms, Constants.DC_VOLTAGE) == counts_before_src - 1);
 
@@ -205,14 +206,14 @@ public class UseCase1 {
         onView(withId(R.id.componentMenuButton)).perform(click());
         onView(withText("DC Source")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
         checkSelectedToast(Constants.DC_VOLTAGE, mDrawActivityRule);
+        SystemClock.sleep(2000);
         assert(countElem(circuitElms, Constants.RESISTOR) == counts_before_res);
         assert(countElem(circuitElms, Constants.DC_VOLTAGE) == counts_before_src);
 
         onView(withId(R.id.circuitFrame)).perform(clickXY(dc_midpoint_coords.getX(),
                 dc_midpoint_coords.getY()));
-//        SystemClock.sleep(3000);
+        SystemClock.sleep(2000);
         onView(withId(R.id.solveButton)).perform(click());
-
         // Check changes
         onView(withText(startsWith("Solved"))).inRoot(isToast()).check(matches(isDisplayed()));
         onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
@@ -247,15 +248,21 @@ public class UseCase1 {
 
         // Create a state where there will always be an unsolvable circuit, namely everything being a voltage source
         for(CircuitElm circuitElm:circuitElms){
-            SimplePoint elem_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
-            onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
-                    elem_midpoint_coords.getY()));
-            onView(withId(R.id.componentMenuButton)).perform(click());
-            onView(withText("DC Source")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
+            if(circuitElm.getType() == Constants.RESISTOR){
+                SimplePoint elem_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
+                onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
+                        elem_midpoint_coords.getY()));
+                onView(withId(R.id.componentMenuButton)).perform(click());
+                onView(withText("DC Source")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
+                SystemClock.sleep(2000);
+            }
         }
-
+        CircuitElm selectedCircuitElm = circuitElms.get(0);
+        SimplePoint elem_midpoint_coords = midpoint(selectedCircuitElm.getP2(),selectedCircuitElm.getP1());
+        onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
+                elem_midpoint_coords.getY()));
         // Solve the illegal circuit
-//        SystemClock.sleep(10000);
+        SystemClock.sleep(2000);
         onView(withId(R.id.solveButton)).perform(click());
 
         // Check changes
@@ -264,5 +271,21 @@ public class UseCase1 {
         onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
         onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
         onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
+
+        int flag = 2;
+        // Randomly restore some resistors
+        for(CircuitElm circuitElm:circuitElms){
+            flag = flag + 1;
+            if(circuitElm.getType() == Constants.DC_VOLTAGE){
+                if((flag%2)==0){
+                    elem_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
+                    onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
+                            elem_midpoint_coords.getY()));
+                    onView(withId(R.id.componentMenuButton)).perform(click());
+                    onView(withText("Resistor")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
+                    SystemClock.sleep(2000);
+                }
+            }
+        }
     }
 }
