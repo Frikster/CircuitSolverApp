@@ -500,7 +500,7 @@ public class MainOpencv {
                 Collections.sort(lineFromLeftToRight, new LinesComparatorYX());
             }
 
-            //get the lines 2 by 2, see if they are adjacent, and if so make one line from the two7
+            //get the lines 2 by 2, see if they are adjacent, and if so make one line from the two
 
 
             for (int x = 0; x < lineFromLeftToRight.size() - 1; x +=2 ) {
