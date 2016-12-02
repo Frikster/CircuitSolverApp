@@ -210,7 +210,7 @@ public class UseCase1 {
 
         onView(withId(R.id.circuitFrame)).perform(clickXY(dc_midpoint_coords.getX(),
                 dc_midpoint_coords.getY()));
-        SystemClock.sleep(3000);
+//        SystemClock.sleep(3000);
         onView(withId(R.id.solveButton)).perform(click());
 
         // Check changes
@@ -219,8 +219,6 @@ public class UseCase1 {
         onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
         onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
         onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
-        onView(withId(R.id.currentText)).check(matches(not(withText("0.0"))));
-        onView(withId(R.id.voltageText)).check(matches(not(withText("0.0"))));
 
         //        SimplePoint elem_midpoint_coords = midpoint(selectedElem.getP2(),selectedElem.getP1());
 //        SystemClock.sleep(1000);
@@ -245,11 +243,26 @@ public class UseCase1 {
         onView(withTagValue(withStringMatching(circuitProject_one.getFolderID()))).perform(scrollTo(),
                 click());
         onView(withId(R.id.processing_fab)).perform(click());
-
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
-        CircuitElm selectedElem = circuitElms.get(0);
-        SimplePoint elem_midpoint_coords = midpoint(selectedElem.getP2(),selectedElem.getP1());
-        onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
-                elem_midpoint_coords.getY()));
+
+        // Create a state where there will always be an unsolvable circuit, namely everything being a voltage source
+        for(CircuitElm circuitElm:circuitElms){
+            SimplePoint elem_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
+            onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
+                    elem_midpoint_coords.getY()));
+            onView(withId(R.id.componentMenuButton)).perform(click());
+            onView(withText("DC Source")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
+        }
+
+        // Solve the illegal circuit
+//        SystemClock.sleep(10000);
+        onView(withId(R.id.solveButton)).perform(click());
+
+        // Check changes
+        onView(withText(startsWith("Invalid"))).inRoot(isToast()).check(matches(isDisplayed()));
+        onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
+        onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
+        onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
+        onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
     }
 }

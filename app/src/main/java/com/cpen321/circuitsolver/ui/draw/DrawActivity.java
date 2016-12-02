@@ -297,7 +297,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 if (interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))) {
                     Toast.makeText(DrawActivity.this, "Solved!", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(DrawActivity.this, "Invalid Circuit..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DrawActivity.this, "Invalid Circuit", Toast.LENGTH_SHORT).show();
                 }
                 for(CircuitElm circuitElm : circuitElms) {
                     circuitElm.calculateCurrent();
