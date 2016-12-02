@@ -40,6 +40,11 @@ public class WireElm extends CircuitElm {
     }
 
     @Override
+    public void drawCurrent(Canvas canvas, Paint paint) {
+
+    }
+
+    @Override
     public  void draw(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint) {
         canvas.drawLine(startX, startY, stopX, stopY, paint);
     }

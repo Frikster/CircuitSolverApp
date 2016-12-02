@@ -276,7 +276,7 @@ public abstract class CircuitElm{
 
     private void drawArrow(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint, boolean dirStartToStop){
             //Edit ARROW_WIDTH, ARROW_LENGTH, and SPACE_LENGTH as needed
-            float ARROW_WIDTH = 25;
+            float ARROW_WIDTH = 20;
             float ARROW_LENGTH;
             float x = stopX - startX;
             float y = stopY - startY;
