@@ -12,6 +12,7 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
+import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
@@ -80,6 +81,15 @@ public class UseCase1 {
     @Test
     public void selectComponent(){
         // - - Click component: turn red, "Add" -> "Change", bottom value matches component
+        // get circuitProjects
+        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+                getCircuitProjects();
+        CircuitProject circuitProject_one = circuitProjects.get(0);
+        onView(withTagValue(withStringMatching(circuitProject_one.getFolderID()))).perform(scrollTo(),
+                click());
+        onView(withId(R.id.processing_fab)).perform(click());
+        ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
+        Log.e(TAG,Integer.toString(circuitElms.size()));
     }
 
     @Test
