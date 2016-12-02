@@ -34,6 +34,8 @@ public final class Constants {
     public static int twoCornersTooNear = 15*4;
     public static int thresholdXY = 10*4;
     public static int tooNearFromComponent = 10*4;
+    //The size of the subimage for tensorflow
+    public static int imageWH =10*7;
 
 
 //    Tensorflow values!
