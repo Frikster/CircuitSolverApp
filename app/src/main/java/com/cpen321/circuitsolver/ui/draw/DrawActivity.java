@@ -126,9 +126,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
 
-    @Override
-    public void onConfigurationChanged(Configuration configure) {
-        super.onConfigurationChanged(configure);
+//    @Override
+//    public void onConfigurationChanged(Configuration configure) {
+//        super.onConfigurationChanged(configure);
 
 //        // Convert list of elements to a circuit def file to save
 //        String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
@@ -164,7 +164,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 //        savedInstanceState.putInt("MyInt", 1);
 //        savedInstanceState.putString("MyString", "Welcome back to Android");
         // etc.
-    }
+ //   }
 
 //    @Override
 //    public void onRestoreInstanceState(Bundle savedInstanceState) {

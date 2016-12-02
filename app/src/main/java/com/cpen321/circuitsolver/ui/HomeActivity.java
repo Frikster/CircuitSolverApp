@@ -179,7 +179,7 @@ public class HomeActivity extends BaseActivity {
                 }
                 if(notCorrupt){
                     Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
-                    displayIntent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                     startActivity(displayIntent);
                     finish();
                 }
