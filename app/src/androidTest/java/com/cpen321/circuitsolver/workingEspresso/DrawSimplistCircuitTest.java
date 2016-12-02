@@ -54,6 +54,7 @@ import static android.support.test.espresso.core.deps.guava.base.Preconditions.c
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.Matchers.equalTo;
 
 /**
@@ -399,27 +400,7 @@ public class DrawSimplistCircuitTest{
         }
     }
 
-    public static Matcher<Object> withStringMatching(String expectedText) {
-        checkNotNull(expectedText);
-        return withStringMatching(equalTo(expectedText));
-    }
 
-    @SuppressWarnings("rawtypes")
-    public static Matcher<Object> withStringMatching(final Matcher<String> itemTextMatcher) {
-        checkNotNull(itemTextMatcher);
-        return new BoundedMatcher<Object, String>(String.class) {
-            @Override
-            public boolean matchesSafely(String string) {
-                return itemTextMatcher.matches(string);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("with string: ");
-                itemTextMatcher.describeTo(description);
-            }
-        };
-    }
 
 //    public static ViewAction customClick() {
 //        return actionWithAssertions(

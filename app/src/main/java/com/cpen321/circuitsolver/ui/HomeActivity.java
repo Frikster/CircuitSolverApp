@@ -45,7 +45,6 @@ public class HomeActivity extends BaseActivity {
     private static final String APP_NAME = "com.cpen321.circuitsolver";
 
     private LinearLayout savedCircuitsScroll;
-    //private LinearLayout exampleCircuitScroll;
 
     private ArrayList<CircuitProject> circuitProjects = new ArrayList<>();
     private CircuitProject candidateProject;
@@ -57,9 +56,9 @@ public class HomeActivity extends BaseActivity {
     private View loadFab;
     private View drawFab;
     private FloatingActionButton deleteFab;
-    //private Button drawCircuitButton;
 
     private static ArrayList<Activity> activities=new ArrayList<Activity>();
+
 
 
     private View.OnClickListener thumbnailListener = new View.OnClickListener() {
@@ -330,5 +329,15 @@ public class HomeActivity extends BaseActivity {
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
+    }
+
+    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
+    public ArrayList<CircuitProject> getCircuitProjects(){
+        return circuitProjects;
+    }
+
+    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
+    public void setCandidateProject(CircuitProject candidateProject){
+        this.candidateProject = candidateProject;
     }
 }
