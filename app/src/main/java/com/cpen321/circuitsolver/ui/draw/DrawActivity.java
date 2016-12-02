@@ -552,10 +552,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         if (componentState == SOLVED && selectedElm != null && !selectedElm.getType().equals(Constants.WIRE)) {
-//            voltageText.setText(Double.toString(Math.abs(selectedElm.getVoltageDiff())) + " V");
-//            currentText.setText(Double.toString(Math.abs(selectedElm.getCurrent())) + " A");
-            voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
-            currentText.setText(Double.toString(selectedElm.getCurrent()) + " A");
+            voltageText.setText(Double.toString(Math.abs(selectedElm.getVoltageDiff())) + " V");
+            currentText.setText(Double.toString(Math.abs(selectedElm.getCurrent())) + " A");
+//            voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
+//            currentText.setText(Double.toString(selectedElm.getCurrent()) + " A");
         } else {
             voltageText.setText("--");
             currentText.setText("--");
