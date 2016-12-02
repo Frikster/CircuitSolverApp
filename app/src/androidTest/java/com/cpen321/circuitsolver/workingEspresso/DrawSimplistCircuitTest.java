@@ -143,7 +143,8 @@ public class DrawSimplistCircuitTest{
 //
 //        onView(withId(R.id.saved_circuits_scroll))
 //                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-        SystemClock.sleep(1000*10); // wait for proceessing to complete todo: find way to only continue once other threads complete
+        getInstrumentation().waitForIdleSync(); // I believe this is what I want for waiting for a thread
+        //SystemClock.sleep(1000*10); // wait for proceessing to complete todo: find way to only continue once other threads complete
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
         ArrayList<CircuitElm> circuitElms_copy = new ArrayList<>();
         for(CircuitElm circuitElm : circuitElms) {
