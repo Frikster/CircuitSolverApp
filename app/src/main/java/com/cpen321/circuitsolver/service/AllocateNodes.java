@@ -34,45 +34,45 @@ public class AllocateNodes {
 
         for(CircuitElm e: elements){
             //Wire elements are technically part of one node (voltage is the same at both ends)
-            if(e.getType().equals(Constants.WIRE)){
-                SimplePoint p1 = e.getPoint(0);
-                SimplePoint p2 = e.getPoint(1);
-                CircuitNode cn;
-                //if p1 corresponds to node but p2 doesn't, then add p2 to corresponding node
-                if(nodesContainPoint(p1) && !nodesContainPoint(p2)) {
-                    cn = getNodeWithPoint(p1);
-                    cn.addPoint(p2);
-                }
-                //if p2 corresponds to node but p1 doesn't, then add p1 to corresponding node
-                else if(nodesContainPoint(p2) && !nodesContainPoint(p1)) {
-                    cn = getNodeWithPoint(p2);
-                    cn.addPoint(p1);
-                }
-                //if p1 and p2 correspond to unique nodes, merge nodes
-                else if(nodesContainPoint(p2) && nodesContainPoint(p1) && !getNodeWithPoint(p1).equals(getNodeWithPoint(p2))) {
-                    CircuitNode n1 = getNodeWithPoint(p1);
-                    CircuitNode n2 = getNodeWithPoint(p2);
-                    cn = mergeNodes(n1, n2);
-                }
-                //if p1 and p2 do not correspond to any nodes, create new node corresponding to both points
-                else if(!nodesContainPoint(p1) && !nodesContainPoint(p2)){
-                    cn = new CircuitNode();
-                    cn.addPoint(p1);
-                    cn.addPoint(p2);
-                    nodes.add(cn);
-                }
-                //if p1 and p2 correspond to same node, no need to do anything
-                else{
-                    cn = getNodeWithPoint(p1);
-                }
-
-                //Both ends of the wire are connected to the same node
-                e.setNode(0, cn);
-                e.setNode(1, cn);
-
-            }
-            //Handle node allocation for all circuit elements other than wires...
-            else{
+//            if(e.getType().equals(Constants.WIRE)){
+//                SimplePoint p1 = e.getPoint(0);
+//                SimplePoint p2 = e.getPoint(1);
+//                CircuitNode cn;
+//                //if p1 corresponds to node but p2 doesn't, then add p2 to corresponding node
+//                if(nodesContainPoint(p1) && !nodesContainPoint(p2)) {
+//                    cn = getNodeWithPoint(p1);
+//                    cn.addPoint(p2);
+//                }
+//                //if p2 corresponds to node but p1 doesn't, then add p1 to corresponding node
+//                else if(nodesContainPoint(p2) && !nodesContainPoint(p1)) {
+//                    cn = getNodeWithPoint(p2);
+//                    cn.addPoint(p1);
+//                }
+//                //if p1 and p2 correspond to unique nodes, merge nodes
+//                else if(nodesContainPoint(p2) && nodesContainPoint(p1) && !getNodeWithPoint(p1).equals(getNodeWithPoint(p2))) {
+//                    CircuitNode n1 = getNodeWithPoint(p1);
+//                    CircuitNode n2 = getNodeWithPoint(p2);
+//                    cn = mergeNodes(n1, n2);
+//                }
+//                //if p1 and p2 do not correspond to any nodes, create new node corresponding to both points
+//                else if(!nodesContainPoint(p1) && !nodesContainPoint(p2)){
+//                    cn = new CircuitNode();
+//                    cn.addPoint(p1);
+//                    cn.addPoint(p2);
+//                    nodes.add(cn);
+//                }
+//                //if p1 and p2 correspond to same node, no need to do anything
+//                else{
+//                    cn = getNodeWithPoint(p1);
+//                }
+//
+//                //Both ends of the wire are connected to the same node
+//                e.setNode(0, cn);
+//                e.setNode(1, cn);
+//
+//            }
+//            //Handle node allocation for all circuit elements other than wires...
+//            else{
                 for(int i = 0; i < e.getNumPoints(); i++){
                     SimplePoint p = e.getPoint(i);
                     CircuitNode cn;
@@ -88,7 +88,7 @@ public class AllocateNodes {
                     }
 
                 }
-            }
+            //}
 
         }
 

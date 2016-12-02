@@ -10,10 +10,12 @@ import com.cpen321.circuitsolver.util.Constants;
 /**
  * Created by Jennifer on 10/12/2016.
  */
-public class WireElm extends CircuitElm {
+public class WireElm extends VoltageElm {
 
+    //We want NgSpice to treat wires as 0V voltage sources in order to get the current going through the wire
     public WireElm() {
         super();
+        super.setValue(0);
     }
 
     public WireElm(SimplePoint p1, SimplePoint p2) {
@@ -26,8 +28,7 @@ public class WireElm extends CircuitElm {
     }
 
     public double calculateCurrent() {
-        //TODO: implement this method
-        return 0;
+        return getCurrent();
     }
 
     public void setValue(double value) {
@@ -37,11 +38,6 @@ public class WireElm extends CircuitElm {
     @Override
     public String getType() {
         return Constants.WIRE;
-    }
-
-    @Override
-    public void drawCurrent(Canvas canvas, Paint paint) {
-
     }
 
     @Override

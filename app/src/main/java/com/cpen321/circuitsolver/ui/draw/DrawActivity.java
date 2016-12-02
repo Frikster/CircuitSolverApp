@@ -619,7 +619,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             this.toggleAddButtonText(true);
         }
 
-        if (componentState == SOLVED && selectedElm != null && !selectedElm.getType().equals(Constants.WIRE)) {
+        if (componentState == SOLVED && selectedElm != null) {
             voltageText.setText(Double.toString(Math.abs(selectedElm.getVoltageDiff())) + " V");
             currentText.setText(Double.toString(Math.abs(selectedElm.getCurrent())) + " A");
 //            voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
