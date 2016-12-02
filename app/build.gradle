@@ -55,7 +55,7 @@ dependencies {
     // Set this dependency to use JUnit 4 rules
     androidTestCompile 'com.android.support.test:rules:0.4'
     // Set this dependency to build and run UI Automator tests
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    //androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
 
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile project(':libtensorflow_demo_2')
