@@ -20,6 +20,7 @@ public class WireElm extends VoltageElm {
 
     public WireElm(SimplePoint p1, SimplePoint p2) {
         super(p1, p2);
+        super.setValue(0);
     }
 
     public double getVoltageDiff() {
