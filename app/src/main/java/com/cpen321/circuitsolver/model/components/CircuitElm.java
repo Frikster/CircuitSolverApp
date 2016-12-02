@@ -27,6 +27,10 @@ public abstract class CircuitElm implements Cloneable{
 
     private boolean isSelected;
 
+    /**
+     * Positive value means the flow of negative charge is from p1 to p2
+     * @return the current
+     */
     public double getCurrent() {
         return current;
     }
@@ -91,13 +95,14 @@ public abstract class CircuitElm implements Cloneable{
     }
 
     /**
-     * Find the voltage difference across the element
+     * Find the voltage difference across the element, v(p2) - v(p2)
      * @return
      */
     public abstract double getVoltageDiff();
 
     /**
      * Find the current flowing through the element
+     * Updates current field
      * @return
      */
     public abstract double calculateCurrent();
@@ -257,6 +262,127 @@ public abstract class CircuitElm implements Cloneable{
             return true;
         }
         return false;
+    }
+
+    public void drawCurrent(Canvas canvas, Paint paint) {
+        if(p1 != null && p2 != null) {
+            if(getCurrent() < 0) {
+                drawArrow(canvas, p1.getX(), p1.getY(), p2.getX(), p2.getY(), paint, true);
+            } else {
+                drawArrow(canvas, p1.getX(), p1.getY(), p2.getX(), p2.getY(), paint, false);
+            }
+        }
+    }
+
+    private void drawArrow(Canvas canvas, float startX, float startY, float stopX, float stopY, Paint paint, boolean dirStartToStop){
+            //Edit ARROW_WIDTH, ARROW_LENGTH, and SPACE_LENGTH as needed
+            float ARROW_WIDTH = 20;
+            float ARROW_LENGTH;
+            float x = stopX - startX;
+            float y = stopY - startY;
+            float slope = y / x;
+            float b = stopY - slope * stopX;
+            float hypotenuse =  (float) Math.hypot(x, y);
+            float SPACE_LENGTH = 3*hypotenuse/4;
+            float d = (hypotenuse - SPACE_LENGTH) / 2;
+            float angle = (float) Math.atan(slope);
+            float perpAngle = (float) Math.atan(x / y);
+            float innerD = (hypotenuse - 2 * d) / 5;
+
+            float x3, x4, x5, x6, x7, x8, y3, y4, y5, y6, y7, y8;
+            float x3i, y3i,x4i,y4i;
+
+            //set the direction of the arrow
+            if(dirStartToStop) {
+                ARROW_LENGTH = 20;
+            }else{
+                ARROW_LENGTH = -20;
+            }
+
+            //when drawn from left to right
+            if (x > 0) {
+                x3 = stopX - (SPACE_LENGTH + d) * ((float) Math.cos(angle));
+                y3 = stopY - (SPACE_LENGTH + d) * ((float) Math.sin(angle));
+                x4 = stopX - (d) * ((float) Math.cos(angle));
+                y4 = stopY - (d) * ((float) Math.sin(angle));
+
+                x3i = stopX - (ARROW_LENGTH+SPACE_LENGTH + d) * ((float) Math.cos(angle));
+                y3i = stopY - (ARROW_LENGTH+SPACE_LENGTH + d) * ((float) Math.sin(angle));
+                x4i = stopX - (ARROW_LENGTH+d) * ((float) Math.cos(angle));
+                y4i = stopY - (ARROW_LENGTH+d) * ((float) Math.sin(angle));
+
+                x5 = x3i - ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y5 = y3i + ARROW_WIDTH * ((float) Math.sin(perpAngle));
+
+                x6 = x3i + ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y6 = y3i - ARROW_WIDTH * ((float) Math.sin(perpAngle));
+
+                x7 = x4i - ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y7 = y4i + ARROW_WIDTH * ((float) Math.sin(perpAngle));
+
+                x8 = x4i + ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y8 = y4i - ARROW_WIDTH * ((float) Math.sin(perpAngle));
+            }
+            //when drawn right to left
+            else if (x < 0) {
+                x3 = startX - (d) * ((float) Math.cos(angle));
+                y3 = startY - (d) * ((float) Math.sin(angle));
+                x4 = startX - (SPACE_LENGTH + d) * ((float) Math.cos(angle));
+                y4 = startY - (SPACE_LENGTH + d) * ((float) Math.sin(angle));
+
+                x3i = startX - (d-ARROW_LENGTH) * ((float) Math.cos(angle));
+                y3i = startY - (d-ARROW_LENGTH) * ((float) Math.sin(angle));
+                x4i = startX - (SPACE_LENGTH + d-ARROW_LENGTH) * ((float) Math.cos(angle));
+                y4i = startY - (SPACE_LENGTH + d-ARROW_LENGTH) * ((float) Math.sin(angle));
+
+                x5 = x3i - ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y5 = y3i + ARROW_WIDTH * ((float) Math.sin(perpAngle));
+
+                x6 = x3i + ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y6 = y3i - ARROW_WIDTH * ((float) Math.sin(perpAngle));
+
+                x7 = x4i - ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y7 = y4i + ARROW_WIDTH * ((float) Math.sin(perpAngle));
+
+                x8 = x4i + ARROW_WIDTH * ((float) Math.cos(perpAngle));
+                y8 = y4i - ARROW_WIDTH * ((float) Math.sin(perpAngle));
+            }
+            //when drawn vertically pointing down
+            else if (y < 0) {
+                x3 = stopX;
+                y3 = startY - d;
+                x4 = stopX;
+                y4 = stopY + d;
+                y5 = y3 +ARROW_LENGTH;
+                y6 = y3 +ARROW_LENGTH;
+                y7 = y4 +ARROW_LENGTH;
+                y8 = y4 +ARROW_LENGTH;
+                x5 = startX + ARROW_WIDTH;
+                x6 = startX - ARROW_WIDTH;
+                x7 = startX + ARROW_WIDTH;
+                x8 = startX - ARROW_WIDTH;
+            }
+            //when drawn vertically pointing up
+            else {
+                x3 = stopX;
+                y3 = startY + d;
+                x4 = stopX;
+                y4 = stopY - d;
+                y5 = y3-ARROW_LENGTH;
+                y6 = y3-ARROW_LENGTH;
+                y7 = y4-ARROW_LENGTH;
+                y8 = y4-ARROW_LENGTH;
+                x5 = startX + ARROW_WIDTH;
+                x6 = startX - ARROW_WIDTH;
+                x7 = startX + ARROW_WIDTH;
+                x8 = startX - ARROW_WIDTH;
+            }
+            //draw arrow lines
+            canvas.drawLine(x3, y3, x5, y5, paint);
+            canvas.drawLine(x3, y3, x6, y6, paint);
+            canvas.drawLine(x4, y4, x7, y7, paint);
+            canvas.drawLine(x4, y4, x8, y8, paint);
+
     }
 
     // Fix java's "protected clone" mistake: http://stackoverflow.com/a/1138790/2734863

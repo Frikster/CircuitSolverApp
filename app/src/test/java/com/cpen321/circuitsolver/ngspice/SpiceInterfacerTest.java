@@ -150,9 +150,9 @@ public class SpiceInterfacerTest {
                 String spiceLabel = ((VoltageElm) resultElm).getSpiceLabel();
                 Double current = resultElm.getCurrent();
                 if(spiceLabel.equals("v2")) {
-                    assertEquals(current, -0.000648522);
+                    assertEquals(current, 0.000648522);
                 } else if(spiceLabel.equals("v1")) {
-                    assertEquals(current, -0.0014253);
+                    assertEquals(current, 0.0014253);
                 } else {
                     fail();
                 }
@@ -204,9 +204,7 @@ public class SpiceInterfacerTest {
             put("v2#branch",elm2);
         }};
 
-        SpiceInterfacer spiceInterfacer = new SpiceInterfacer(null, null);
-
-        spiceInterfacer.callNgOutputParser(input, nodes, elms);
+        SpiceInterfacer.callNgOutputParser(input, nodes, elms);
         Log.v("node1 voltage", String.valueOf(node1.getVoltage()));
         Log.v("node2 voltage", String.valueOf(node2.getVoltage()));
         Log.v("node3 voltage", String.valueOf(node3.getVoltage()));
@@ -216,8 +214,8 @@ public class SpiceInterfacerTest {
         assertEquals(node1.getVoltage(),24.0);
         assertEquals(node2.getVoltage(),9.74697);
         assertEquals(node3.getVoltage(),15.0);
-        assertEquals(elm1.getCurrent(),-0.0014253);
-        assertEquals(elm2.getCurrent(),-0.000648522);
+        assertEquals(elm1.getCurrent(),0.0014253);
+        assertEquals(elm2.getCurrent(),0.000648522);
     }
 
 

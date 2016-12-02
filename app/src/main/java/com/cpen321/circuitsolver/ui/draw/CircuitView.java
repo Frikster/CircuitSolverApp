@@ -13,6 +13,8 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
 
+import static com.cpen321.circuitsolver.ui.draw.AddComponentState.SOLVED;
+
 
 /**
  * Created by lotus on 14/11/16.
@@ -35,7 +37,7 @@ public class CircuitView extends SurfaceView implements Runnable {
         paint = new Paint();
         run = false;
         paint.setColor(Color.BLACK);
-        paint.setStrokeWidth(10);
+        paint.setStrokeWidth(7);
         this.scale = 1;
     }
 
@@ -75,6 +77,10 @@ public class CircuitView extends SurfaceView implements Runnable {
             SimplePoint end = selected.getP2();
             paint.setColor(Color.RED);
             selected.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
+            if(state == SOLVED) {
+                paint.setColor(Color.BLUE);
+                selected.drawCurrent(canvas, paint);
+            }
         }
         //AddComponentState state = DrawActivity.getComponentState();
         paint.setColor(Color.RED);

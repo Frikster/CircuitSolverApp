@@ -214,7 +214,9 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        boolean continueToProcessing = false;
         if (requestCode == Constants.RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            continueToProcessing = true;
             Uri selectedImage = data.getData();
             String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
@@ -238,7 +240,7 @@ public class HomeActivity extends BaseActivity {
             }
             try {
                 FileOutputStream fos = new FileOutputStream(photoFile);
-                bm.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                bm.compress(Bitmap.CompressFormat.JPEG, Constants.COMPRESSION_QUALITY, fos);
                 fos.close();
             } catch (FileNotFoundException e) {
                 Log.d(TAG, "File not found: " + e.getMessage());
@@ -247,11 +249,16 @@ public class HomeActivity extends BaseActivity {
             }
 
         }
+        else if(requestCode == REQUEST_TAKE_PHOTO){
+            continueToProcessing = true;
+        }
 
-        Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
-        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
-        startActivity(analysisIntent);
-        finish();
+        if(continueToProcessing) {
+            Intent analysisIntent = new Intent(getApplicationContext(), ProcessingActivity.class);
+            analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.candidateProject.getFolderPath());
+            startActivity(analysisIntent);
+            finish();
+        }
     }
 
     private void deleteFolderOrFile(File file) {
@@ -294,22 +301,4 @@ public class HomeActivity extends BaseActivity {
             this.savedCircuitsScroll.addView(newImage);
         }
     }
-//    protected void loadExamples(){
-//        this.exampleCircuitScroll.removeAllViews();
-//        ImageView newImage = new ImageView(getApplicationContext());
-//        newImage.setTag("example_1");
-//        newImage.setPadding(10, 10, 10, 10);
-//        newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.example_1));
-//        newImage.setOnClickListener(this.thumbnailListener);
-//        this.exampleCircuitScroll.addView(newImage);
-//    }
-
-    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
-    public void setCandidateProject(CircuitProject candidateProject){
-        this.candidateProject = candidateProject;
-    }
-    public ArrayList<CircuitProject> getCircuitProjects(){
-        return circuitProjects;
-    }
-
 }

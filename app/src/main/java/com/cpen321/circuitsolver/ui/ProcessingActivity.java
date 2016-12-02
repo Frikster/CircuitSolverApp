@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.opencv.ImageClassifier;
@@ -18,7 +19,6 @@ public class ProcessingActivity extends AppCompatActivity {
 
     private String dataLocation;
     private CircuitProject circuitProject;
-
     private boolean isNoOpenCvTest = false;
 
     @Override
@@ -48,16 +48,16 @@ public class ProcessingActivity extends AppCompatActivity {
                     return;
                 }
 
-                System.out.println("right before processing");
+                Log.d("UI","right before processing");
                 MainOpencv main = new MainOpencv();
                 main.setComponentClassifier(new ImageClassifier(getAssets()));
-                main.houghLines(bMap, isNoOpenCvTest);
+                main.houghLines(bMap);
 //                ProcessingActivity.this.circuitProject.saveProcessedImage(main.houghLines(bMap,
 //                        isNoOpenCvTest));
                 ProcessingActivity.this.circuitProject.saveCircuitDefinitionFile(
-                        main.getCircuitText(isNoOpenCvTest));
+                        main.getCircuitText());
                 ProcessingActivity.this.circuitProject.print();
-                System.out.println("out of processing");
+                Log.d("UI","out of processing");
                 ProcessingActivity.this.displayOutputImage();
 
             }

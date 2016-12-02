@@ -39,7 +39,10 @@ public class NgSpiceTest extends AndroidJUnitRunner {
             "v1#branch                           -0.0014253\n";
     @Before
     public void initialize() {
-        Looper.prepare();
+        if (Looper.myLooper() == null)
+        {
+            Looper.prepare();
+        }
     }
 
     @Test
