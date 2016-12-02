@@ -16,13 +16,13 @@ public class WireCalculator {
     private List<double[]> residualLinesWithoutChunk;
     private List<List<Element>> wires = new ArrayList<>();
 
-    public WireCalculator(List<Element> objectizedCompAndCorners, Corner firstCorner,  List<double[]> residualLinesWithoutChunk){
+    protected WireCalculator(List<Element> objectizedCompAndCorners, Corner firstCorner,  List<double[]> residualLinesWithoutChunk){
         this.objectizedCompAndCorners = new ArrayList<>(objectizedCompAndCorners);
         this.firstCorner = firstCorner;
         this.residualLinesWithoutChunk = new ArrayList<>(residualLinesWithoutChunk);
     }
 
-    public List<List<Element>> process(){
+    protected List<List<Element>> process(){
         detectWires(objectizedCompAndCorners,firstCorner, thresholdXY,residualLinesWithoutChunk);
         return wires;
     }

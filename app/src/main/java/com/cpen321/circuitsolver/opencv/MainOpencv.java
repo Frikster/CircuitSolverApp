@@ -31,13 +31,12 @@ import static org.opencv.imgproc.Imgproc.cvtColor;
  */
 
 public class MainOpencv {
-    private List<List<Element>> wires  = new ArrayList<>();
     private List<List<Element>> separatedComponents  = new ArrayList<>();
 
     private int bitMapWidth;
     private int bitMapHeight;
 
-    Mat originalMat;
+    private Mat originalMat;
     private ImageClassifier componentClassifier;
 
     public void setComponentClassifier(ImageClassifier classifier) {
@@ -81,7 +80,7 @@ public class MainOpencv {
         // first line assumes component is only made of diagonals
         //List<PointDB> assPoints = dbscan(keepChunks(smoothedLines,maxLinesToBeChunk), tmp3, radius, minPoints);
         // second line only assumes components are made of many lines (hori, vert, or diagonal)
-        List<PointDB> assPoints = dbscan(smoothedLines, tmp3, radius, minPoints);
+        List<PointDB> assPoints = dbscan(smoothedLines, radius, minPoints);
         List<PointDB> assignedPoints = assignedPoints(assPoints);
         TuplePoints residAssigned = dbToArray(assignedPoints , smoothedLines, maxLinesToBeChunk);
         List<double[]> residualLines = residAssigned.getFirst();
@@ -101,7 +100,7 @@ public class MainOpencv {
             firstCorner = objectizeCorners(validCorners).get(0);
         }
         WireCalculator wireCalcul = new WireCalculator(objectizedCompAndCorners,firstCorner,residualLinesWithoutChunk);
-        wires = new ArrayList<>(wireCalcul.process());
+        List<List<Element>> wires = new ArrayList<>(wireCalcul.process());
 
         WireProcessor wireProc = new WireProcessor(wires,objectizedComponents);
         separatedComponents = new ArrayList<>(wireProc.process());
@@ -134,12 +133,12 @@ public class MainOpencv {
     //###########Functions to get the found elements in a suitable way############################
     //############################################################################################
 
-    /**
+    /**get the found circuit elements for circuit logic
      *
      * @return The final result of opencv, beeing passed to the next part of CircuitSolver
      * The final result is a collection of wires and components, each having a starting and an end point
      */
-    public List<CircuitElm> getCircuitElements(){
+    private List<CircuitElm> getCircuitElements(){
         CircuitElmFactory factory= new CircuitElmFactory();
         List<CircuitElm> circuitElements = new ArrayList<>();
         for(List<Element> circElem : separatedComponents){
@@ -180,9 +179,8 @@ public class MainOpencv {
     public String getCircuitText(){
 
         CircuitDefParser parser = new CircuitDefParser();
-        String circStr = parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
+        return parser.elementsToTxt(getCircuitElements(), bitMapWidth, bitMapHeight);
 
-        return circStr;
     }
 
 
@@ -211,16 +209,14 @@ public class MainOpencv {
     /**Performs the DBSCAN algorithm and colors the different points in a certain colour according to their cluster
      *
      * @param pts The points to be clustered
-     * @param toDraw The matrix where to draw the result of the algorithm
      * @param radius Param1 of the dbscan algo
      * @param minPoints Param2 of the dbscan algo
      * @return The points with their cluster (that can be accessed by point.getCluster())
      */
-    private List<PointDB> dbscan(List<double[]> pts, Mat toDraw, int radius, int minPoints){
+    private List<PointDB> dbscan(List<double[]> pts, int radius, int minPoints){
 
         DBSCAN db=new DBSCAN();
-        List<PointDB> points = db.dbscanAlgo(objectizePointsForDB(pts),radius,minPoints);
-        return points;
+        return db.dbscanAlgo(objectizePointsForDB(pts),radius,minPoints);
     }
 
 
@@ -338,7 +334,6 @@ public class MainOpencv {
     private List<Corner> objectizeCorners (List<double[]> corners){
         List<Corner> cornerObjects = new ArrayList<>();
         for(double[] corner : corners){
-            Set<Character> dir = new HashSet<>();
             Corner c = new Corner(corner[0], corner[1]);
             c.setNewDirection('w');
             c.setNewDirection('e');
@@ -391,7 +386,7 @@ public class MainOpencv {
      *
      * @param component the coordinates of all the components
      * @param frameWidth The frame witdth we want around a component
-     * @return
+     * @return the sub-mat of the components
      */
 
     private Mat getSubMat( double[] component, int frameWidth) {
@@ -500,7 +495,7 @@ public class MainOpencv {
                 Collections.sort(lineFromLeftToRight, new LinesComparatorYX());
             }
 
-            //get the lines 2 by 2, see if they are adjacent, and if so make one line from the two7
+            //get the lines 2 by 2, see if they are adjacent, and if so make one line from the two
 
 
             for (int x = 0; x < lineFromLeftToRight.size() - 1; x +=2 ) {

@@ -11,23 +11,21 @@ import static com.cpen321.circuitsolver.util.Constants.thresholdXY;
  */
 
 public class WireProcessor {
-    List<List<Element>> wires;
-    List<Component> objectizedComponents;
-    List<List<Element>> separatedComponents = new ArrayList<>();
+    private List<List<Element>> wires;
+    private List<Component> objectizedComponents;
 
-    public WireProcessor(List<List<Element>> wires,  List<Component> objectizedComponents){
+    protected WireProcessor(List<List<Element>> wires,  List<Component> objectizedComponents){
         this.wires = new ArrayList<>(wires);
         this.objectizedComponents = new ArrayList<>(objectizedComponents);
     }
 
-    public List<List<Element>> process(){
-        separatedComponents = separateComponents(wires);
+    protected List<List<Element>> process(){
+        List<List<Element>> separatedComponents = separateComponents(wires);
         separatedComponents = completeMissingEndings(separatedComponents, thresholdXY, distanceFromComponent);
         separatedComponents = addOrphansToWires(separatedComponents, objectizedComponents, distanceFromComponent);
         separatedComponents = addMisingWires(separatedComponents,findCornersToWire(separatedComponents));
         separatedComponents = removeDuplicateWires(separatedComponents);
         separatedComponents = removeWireOnComponents(separatedComponents);
-
         return separatedComponents;
     }
 
@@ -83,7 +81,7 @@ public class WireProcessor {
 
     /** Small utilitary method to know if all wires are standardized in [corner,component,corner]
      *
-     * @param wires
+     * @param wires the wires found so far
      * @return true if all standardized
      */
     private boolean TwoAdjacentComponent(List<List<Element>> wires){
@@ -102,7 +100,7 @@ public class WireProcessor {
     /**Takes all the wires as a parameter and adds a Corner at the end if it finishes by a Component
      *
      * @param wires The detected wires
-     * @return
+     * @return the wires where all components have a beginning and an ending corner
      */
 
     private List<List<Element>> completeMissingEndings(List<List<Element>> wires, int thresholdXY,
@@ -168,12 +166,12 @@ public class WireProcessor {
             }
 
             if (foundOrphan) {
-                Component co = (Component) e;
-                Corner c1 = new Corner(co.getX() - distanceFromComponent, co.getY());
-                Corner c2 = new Corner(co.getX() + distanceFromComponent, co.getY());
+
+                Corner c1 = new Corner(e.getX() - distanceFromComponent, e.getY());
+                Corner c2 = new Corner(e.getX() + distanceFromComponent, e.getY());
                 List<Element> wire = new ArrayList<>();
                 wire.add(c1);
-                wire.add(co);
+                wire.add(e);
                 wire.add(c2);
                 orphans.add(wire);
             }

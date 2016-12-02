@@ -85,7 +85,7 @@ public class CircuitView extends SurfaceView implements Runnable {
         //AddComponentState state = DrawActivity.getComponentState();
         paint.setColor(Color.RED);
         CircuitElm candidate = DrawActivity.getCandidateElement();
-        if (candidate != null) {
+        if (candidate != null && !DrawActivity.isZooming()) {
             String type = convertStateToType(DrawActivity.getComponentState());
             candidate.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
         }
