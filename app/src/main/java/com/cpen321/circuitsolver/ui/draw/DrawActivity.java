@@ -82,6 +82,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private static CircuitElm candidateElement = null;
 
     private int[] location = new int[2];
+    private static int truncateBits = 5; //helps with drawing parallel lines by limiting angles
 
     public static ArrayList<CircuitElm> getCircuitElms() {
         return circuitElms;
@@ -269,8 +270,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int x = (int) ((event.getRawX() - location[0]) / circuitView.scale);
-                int y = (int) ((event.getRawY() - location[0]) / circuitView.scale);
                 if (selectedElm != null) {
                     if (componentState == SOLVED) {
                         componentState = prevComponentState;
@@ -278,15 +277,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     circuitView.pause();
                     circuitElms.remove(selectedElm);
                     selectedElm = null;
-                    circuitView.resume();
-                }
-                CircuitElm toRemove = getSelected(x, y);
-                if (toRemove != null) {
-                    if (componentState == SOLVED) {
-                        componentState = prevComponentState;
-                    }
-                    circuitView.pause();
-                    circuitElms.remove(toRemove);
                     circuitView.resume();
                 }
                 displayElementInfo();
@@ -463,7 +453,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         } else {
             int x;
             int y;
-            int truncateBits = 5;
             v.getLocationOnScreen(location);
             x = (int) ((event.getRawX() - location[0]) / this.circuitView.scale);
             y = (int) ((event.getRawY() - location[1]) / this.circuitView.scale);
