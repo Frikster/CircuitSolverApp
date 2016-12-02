@@ -5,8 +5,8 @@ package com.cpen321.circuitsolver.opencv;
  */
 
 public abstract class Element {
-    protected double positionX;
-    protected double positionY;
+    private double positionX;
+    private double positionY;
 
     public Element(double x, double y){
         positionX = x;

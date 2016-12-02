@@ -15,12 +15,12 @@ public class CornerDetector {
     private List<double[]> residualLinesWithoutChunk;
     private List<PointDB> assignedPoints;
 
-    public CornerDetector(List<double[]> residualLinesWithoutChunk, List<PointDB> assignedPoints){
+    protected CornerDetector(List<double[]> residualLinesWithoutChunk, List<PointDB> assignedPoints){
         this.residualLinesWithoutChunk = new ArrayList<>(residualLinesWithoutChunk);
         this.assignedPoints = new ArrayList<>(assignedPoints);
     }
 
-    public List<double[]> process(){
+    protected List<double[]> process(){
 
         List<double[]> verticalLines = verticalLines(residualLinesWithoutChunk);
         List<double[]> horizontalLines = horizontalLines(residualLinesWithoutChunk);
@@ -46,9 +46,7 @@ public class CornerDetector {
         List<double[]> verticalLines = new ArrayList<>();
         for(double[] line : lines){
             double x1 = line[0];
-            double y1 = line[1];
             double x2 = line[2];
-            double y2 = line[3];
 
             if(x1 == x2){
                 verticalLines.add(line);
@@ -66,9 +64,7 @@ public class CornerDetector {
     private List<double[]> horizontalLines(List<double[]> lines){
         List<double[]> horizontalLines = new ArrayList<>();
         for(double[] line : lines){
-            double x1 = line[0];
             double y1 = line[1];
-            double x2 = line[2];
             double y2 = line[3];
 
             if(y1 == y2){
@@ -95,12 +91,9 @@ public class CornerDetector {
         for(double[] verticalLine : verticals){
             double x11 = verticalLine[0];
             double y11 = verticalLine[1];
-            double x21 = verticalLine[2];
             double y21 = verticalLine[3];
             for(double[] horizontalLine: horizontals){
-                double x12 = horizontalLine[0];
                 double y12 = horizontalLine[1];
-                double x22 = horizontalLine[2];
                 double y22 = horizontalLine[3];
 
                 if(Math.abs(y11-y12)<= searchRadius){
