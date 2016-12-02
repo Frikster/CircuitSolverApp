@@ -45,7 +45,7 @@ public class VoltageElm extends CircuitElm implements SpiceElm {
     }
 
     public double calculateCurrent() {
-        return 0;
+        return getCurrent();
     }
 
     public void setValue(double value) {

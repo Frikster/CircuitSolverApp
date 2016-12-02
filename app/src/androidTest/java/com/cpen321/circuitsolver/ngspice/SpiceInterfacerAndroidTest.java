@@ -31,7 +31,10 @@ import static junit.framework.Assert.fail;
 public class SpiceInterfacerAndroidTest extends AndroidJUnitRunner {
     @Before
     public void initialize() {
-        Looper.prepare();
+        if (Looper.myLooper() == null)
+        {
+            Looper.prepare();
+        }
     }
 
     @Test
@@ -85,9 +88,9 @@ public class SpiceInterfacerAndroidTest extends AndroidJUnitRunner {
                 String spiceLabel = ((VoltageElm) resultElm).getSpiceLabel();
                 Double current = resultElm.getCurrent();
                 if(spiceLabel.equals("v2")) {
-                    assertEquals(current, -0.000648522);
+                    assertEquals(current, 0.000648522);
                 } else if(spiceLabel.equals("v1")) {
-                    assertEquals(current, -0.0014253);
+                    assertEquals(current, 0.0014253);
                 } else {
                     fail();
                 }
