@@ -71,6 +71,7 @@ public class UseCase1 {
     @Before
     public void sendBitmapifNoneExists(){
         // todo: possibly populate with list of bitmaps
+        // todo: refactor to remove the ASSUMING LEGAL CIRCUIT INPUT
         if(mHomeActivityRule.getActivity().getCircuitProjects().size() == 0){
             Bitmap bm = BitmapFactory.decodeResource(
                     mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
