@@ -301,6 +301,10 @@ public class HomeActivity extends BaseActivity {
     }
 
     protected void updateSavedCircuits(){
+        //todo: REMOVE THESE TWO AND TWO LINES AT END OF FUNCTION IF THEY ARE STILL HERE I FUCKED UP
+        LinearLayout ll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
+        int  beforechildCount = ll.getChildCount();
+
         File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File[] circuitProjects = imageStorageDir.listFiles();
         this.savedCircuitsScroll.removeAllViews();
@@ -329,6 +333,8 @@ public class HomeActivity extends BaseActivity {
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
+        LinearLayout ll_after = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
+        int  afterchildCount = ll.getChildCount();
     }
 
     // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION

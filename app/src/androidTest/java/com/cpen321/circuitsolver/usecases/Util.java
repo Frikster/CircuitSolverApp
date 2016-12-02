@@ -2,7 +2,6 @@ package com.cpen321.circuitsolver.usecases;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Environment;
 import android.support.test.espresso.Root;
@@ -13,10 +12,10 @@ import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
-import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiObjectNotFoundException;
-import android.support.test.uiautomator.UiSelector;
+//import android.support.test.uiautomator.UiDevice;
+//import android.support.test.uiautomator.UiObject;
+//import android.support.test.uiautomator.UiObjectNotFoundException;
+//import android.support.test.uiautomator.UiSelector;
 import android.util.Log;
 import android.view.View;
 
@@ -39,14 +38,10 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
-import static android.support.test.espresso.matcher.RootMatchers.withDecorView;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
@@ -55,17 +50,17 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class Util {
     public static void allowPermissionsIfNeeded() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            UiDevice device = UiDevice.getInstance(getInstrumentation());
-            UiObject allowPermissions = device.findObject(new UiSelector().text("Allow"));
-            if (allowPermissions.exists()) {
-                try {
-                    allowPermissions.click();
-                } catch (UiObjectNotFoundException e) {
-                    Log.d("TakePictureTest", "There is no permissions dialog to interact with ");
-                }
-            }
-        }
+//        if (Build.VERSION.SDK_INT >= 23) { // only targets 18-25 :(
+//            UiDevice device = UiDevice.getInstance(getInstrumentation());
+//            UiObject allowPermissions = device.findObject(new UiSelector().text("Allow"));
+//            if (allowPermissions.exists()) {
+//                try {
+//                    allowPermissions.click();
+//                } catch (UiObjectNotFoundException e) {
+//                    Log.d("TakePictureTest", "There is no permissions dialog to interact with ");
+//                }
+//            }
+//        }
     }
 
     public static SimplePoint midpoint(SimplePoint p1, SimplePoint p2) {
