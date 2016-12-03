@@ -79,7 +79,6 @@ public class UseCase4 {
             }
             // check values for each...
         }
-        // Check numer of elements
         assert(countElem(circuitElms, Constants.DC_VOLTAGE) == 1);
         assert(countElem(circuitElms, Constants.RESISTOR) == 1);
         assert(countElem(circuitElms, Constants.WIRE) == 2);
