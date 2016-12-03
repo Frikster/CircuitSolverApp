@@ -2,16 +2,32 @@ package com.cpen321.circuitsolver.usecases;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.SystemClock;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
+import android.widget.LinearLayout;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
+import com.cpen321.circuitsolver.util.CircuitProject;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
@@ -19,9 +35,6 @@ import org.junit.Test;
 
 public class UseCase5 {
     private final static String TAG = "UC5";
-
-    private ActivityTestRule<DrawActivity> mDrawActivityRule =
-            new ActivityTestRule<>(DrawActivity.class);
 
     @Rule
     public IntentsTestRule<HomeActivity> mHomeActivityRule =
@@ -40,10 +53,82 @@ public class UseCase5 {
 
     @Test
     public void deleteMultipleProjects() {
-        // - iteratively delete projects -> vanish from scroll
+        getInstrumentation().waitForIdleSync();
+        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+                getCircuitProjects();
+        if(circuitProjects.size() <= 3){
+            // make some more projects to delete
+            for(int i = 0; i <= 3; i++){
+                onView(withId(R.id.fab_expand_menu_button)).perform(click());
+                onView(withText("Draw Circuit")).perform(click()); //// TODO: constant
+                Espresso.pressBack();
+            }
+        }
+
+        // get count (in addition to circuitProjects.size()
+        LinearLayout ll = (LinearLayout) mHomeActivityRule.getActivity().findViewById(
+                R.id.saved_circuits_scroll);
+        final int initialChildCount = ll.getChildCount();
+        final int initialCircuitProjCount = circuitProjects.size();
+        assert(initialChildCount == initialCircuitProjCount);
+
+        ArrayList<CircuitProject> circuitProjects_copy = new ArrayList<>();
+        for(CircuitProject circuitProject : circuitProjects) {
+            circuitProjects_copy.add(circuitProject.clone());
+        }
+
+        //delete 3
+        Iterator<CircuitProject> scroll_iter = circuitProjects_copy.iterator();
+        int flag = 3;
+        while (scroll_iter.hasNext() && flag > 0) {
+            CircuitProject circuitProject = scroll_iter.next();
+            onView(withTagValue(withStringMatching(circuitProject.getFolderID()))).perform(scrollTo(),
+                    click());
+            onView(withId(R.id.delete_fab)).perform(click());
+            SystemClock.sleep(2000);
+            // toast check
+            flag--;
+        }
+
+        //Check you deleted 3
     }
 
     @Test
     public void deleteAllProjects() {
+        getInstrumentation().waitForIdleSync();
+        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+                getCircuitProjects();
+        if(circuitProjects.size() <= 3){
+            // make some more projects to delete
+            for(int i = 0; i <= 3; i++){
+                onView(withId(R.id.fab_expand_menu_button)).perform(click());
+                onView(withText("Draw Circuit")).perform(click()); //// TODO: constant
+                Espresso.pressBack();
+            }
+        }
+
+        // get count (in addition to circuitProjects.size()
+        LinearLayout ll = (LinearLayout) mHomeActivityRule.getActivity().findViewById(
+                R.id.saved_circuits_scroll);
+        final int initialChildCount = ll.getChildCount();
+        final int initialCircuitProjCount = circuitProjects.size();
+        assert(initialChildCount == initialCircuitProjCount);
+
+        ArrayList<CircuitProject> circuitProjects_copy = new ArrayList<>();
+        for(CircuitProject circuitProject : circuitProjects) {
+            circuitProjects_copy.add(circuitProject.clone());
+        }
+
+        // Delete all
+        Iterator<CircuitProject> scroll_iter = circuitProjects_copy.iterator();
+        while (scroll_iter.hasNext()) {
+            CircuitProject circuitProject = scroll_iter.next();
+            onView(withTagValue(withStringMatching(circuitProject.getFolderID()))).perform(scrollTo(),
+                    click());
+            onView(withId(R.id.delete_fab)).perform(click());
+            SystemClock.sleep(2000);
+        }
+
+        // Check all gone
     }
 }
