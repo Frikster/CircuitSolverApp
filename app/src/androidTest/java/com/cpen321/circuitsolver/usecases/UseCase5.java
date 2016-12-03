@@ -17,6 +17,7 @@ import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
+import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -51,8 +52,9 @@ public class UseCase5 {
     public IntentsTestRule<HomeActivity> mHomeActivityRule =
             new IntentsTestRule<>(HomeActivity.class);
 
-    @Test
+    //@Test
     public void deleteMultipleProjects() {
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         if(circuitProjects.size() <= 3){
@@ -99,6 +101,7 @@ public class UseCase5 {
 
     @Test
     public void deleteAllProjects() {
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         if(circuitProjects.size() <= 3){
