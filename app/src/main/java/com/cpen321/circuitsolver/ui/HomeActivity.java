@@ -1,6 +1,9 @@
 package com.cpen321.circuitsolver.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -16,9 +19,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.database.Cursor;
 import android.util.Log;
@@ -95,6 +107,52 @@ public class HomeActivity extends BaseActivity {
         HomeActivity.selectedTag = selectedTag;
     }
 
+    //*********
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_action_button, menu);
+        return true;
+    }
+
+    private LayoutInflater layoutInflater;
+    private PopupWindow popupWindow;
+    //private RelativeLayout relativeLayout = savedCircuitsScroll;
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_moreinfo:
+                //composeMessage();
+                layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+                ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.popup,null);
+                popupWindow = new PopupWindow(container, 800, 550, true);
+                popupWindow.showAtLocation(savedCircuitsScroll, Gravity.NO_GRAVITY, 150, 600);
+
+//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
+//
+//                final EditText et = new EditText(getApplicationContext());
+//
+//                // set prompts.xml to alertdialog builder
+//                alertDialogBuilder.setView(et);
+//
+//                // set dialog message
+//                alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int id) {
+//                    }
+//                });
+//
+//                // create alert dialog
+//                AlertDialog alertDialog = alertDialogBuilder.create();
+//                // show it
+//                alertDialog.show();
+//
+//                return true;
+
+            default:
+               return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1"
+    android:background="@color/backgroundGray"
+    android:textAlignment="center">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.33" />
+
+    <CheckedTextView
+        android:text="A few things to note:\n\n-Only draw horizontal and vertical lines\n-Draw circles for voltages sources\n-Only voltage sources and resistors are supported at this time\n-It will take roughly 3 seconds of processing for each component in an image\n\nEnjoy! :)\n\n"
+        android:layout_width="255dp"
+        android:layout_height="180dp"
+        android:id="@+id/checkedTextView"
+        android:layout_weight="0.05"
+        android:background="@android:color/black" />
+</LinearLayout>
