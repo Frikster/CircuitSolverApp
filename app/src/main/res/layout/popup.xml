@@ -14,6 +14,7 @@
 
     <CheckedTextView
         android:textColor="#FFFFFF"
+        android:textStyle="bold"
         android:text="Notes concerning the circuit\n\nWhen Drawing On Paper\n•Only draw horizontal and vertical lines\n•Draw circles for voltages sources\n\nIn App\n•Only voltage sources and resistors are supported at this time\n•you can only connect to the endpoints of other components when drawing\n•It will take roughly 3 seconds of processing for each component in an image\n\nEnjoy! :)\n\n"
         android:layout_width="255dp"
         android:layout_height="wrap_content"
