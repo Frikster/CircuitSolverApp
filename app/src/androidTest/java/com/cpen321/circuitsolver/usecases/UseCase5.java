@@ -1,7 +1,9 @@
 package com.cpen321.circuitsolver.usecases;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -10,8 +12,11 @@ import android.widget.LinearLayout;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
+import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
+import com.cpen321.circuitsolver.util.Constants;
+import com.cpen321.circuitsolver.util.ImageUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,6 +34,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.Util.allowPermissionsIfNeeded;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -39,25 +45,14 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 
 public class UseCase5 {
     private final static String TAG = "UC5";
+    private CircuitProject candidateProject;
 
     @Rule
     public IntentsTestRule<HomeActivity> mHomeActivityRule =
             new IntentsTestRule<>(HomeActivity.class);
 
-    @Before
-    public void sendBitmapifNoneExists(){
-        // todo: possibly populate with list of bitmaps
-        if(mHomeActivityRule.getActivity().getCircuitProjects().size() == 0){
-            Bitmap bm = BitmapFactory.decodeResource(
-                    mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
-            Util.createProjectfromBitmap(mHomeActivityRule, bm);
-            mHomeActivityRule.getActivity().recreate();
-        }
-    }
-
     @Test
     public void deleteMultipleProjects() {
-        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         if(circuitProjects.size() <= 3){
@@ -104,7 +99,6 @@ public class UseCase5 {
 
     @Test
     public void deleteAllProjects() {
-        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         if(circuitProjects.size() <= 3){
