@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -66,10 +67,14 @@ public class UseCase4 {
                     circuitElm_midpoint_coords.getY()));
             onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
             if(circuitElm.getType() != Constants.WIRE){
+                checkUnits(circuitElm);
+                onView(withId(R.id.component_value)).perform(replaceText("23.4"));
+                onView(withId(R.id.solveButton)).perform(click());
+                onView(withText(startsWith("Solved"))).inRoot(isToast()).check(matches(isDisplayed()));
+                SystemClock.sleep(2000);
                 onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
                 onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
                 onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
-                checkUnits(circuitElm);
             }
             else{
                 onView(withId(R.id.component_value)).check(matches((withText(Constants.NOTHING))));

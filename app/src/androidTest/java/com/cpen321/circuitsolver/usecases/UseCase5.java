@@ -17,7 +17,6 @@ import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
-import com.jakewharton.processphoenix.ProcessPhoenix;
 
 import org.junit.Before;
 import org.junit.Rule;

@@ -28,13 +28,19 @@ import java.util.Iterator;
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.cpen321.circuitsolver.usecases.Util.allowPermissionsIfNeeded;
+import static com.cpen321.circuitsolver.usecases.Util.checkSelectedToast;
 import static com.cpen321.circuitsolver.usecases.Util.clickXY;
 import static com.cpen321.circuitsolver.usecases.Util.countElem;
+import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.midpoint;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
@@ -78,6 +84,7 @@ public class UseCase3 {
 
     @Test
     public void eraseAll() {
+        SystemClock.sleep(2000);
         getInstrumentation().waitForIdleSync();
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
         ArrayList<CircuitElm> circuitElms_copy = new ArrayList<>();
@@ -104,12 +111,12 @@ public class UseCase3 {
     }
 
     @Test
-    public void eraseMultiple() {
+    public void modifyMultiple() {
+        SystemClock.sleep(2000);
         getInstrumentation().waitForIdleSync();
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
-        final int init = circuitElms.size();
         int flag = 2;
-        // Randomly delete some resistors
+        // Randomly modify some resistors
         for(CircuitElm circuitElm:circuitElms){
             flag = flag + 1;
             if((flag%2)==0){
@@ -117,25 +124,30 @@ public class UseCase3 {
                 onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
                         elem_midpoint_coords.getY()));
                 onView(withId(R.id.componentMenuButton)).perform(click());
+                onView(withId(R.id.component_value)).perform(replaceText("23.4"));
                 onView(withText("Resistor")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
+                checkSelectedToast(Constants.RESISTOR, mDrawActivityRule);
                 SystemClock.sleep(2000);
+                onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
+                onView(withId(R.id.solveButton)).perform(click());
+                onView(withText(startsWith("Solved"))).inRoot(isToast()).check(matches(isDisplayed()));
+                SystemClock.sleep(2000);
+                onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
+                onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
+                onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
             }
         }
-        // Check numer of elements
-        assert(countElem(circuitElms, Constants.DC_VOLTAGE) +
-                countElem(circuitElms, Constants.RESISTOR) +
-                countElem(circuitElms, Constants.WIRE) != 0);
-        assert(init > circuitElms.size());
-        onView(withId(R.id.componentMenuButton)).check(matches(withText("Add"))); //todo: constant
+         //todo: constant
+
     }
 
-    @Test
+    //@Test
     public void autoConnectCloseComponents(){
         // Test case showing that when you put one component close to another -> they connect automatically
         // Will implement by Dec. 13
     }
 
-    @Test
+    //@Test
     public void pinchZoomInOut(){
         // stub - simulating pinch zoom gestures appear to be much more complex
         // than it is worth: http://stackoverflow.com/a/11599282/2734863
