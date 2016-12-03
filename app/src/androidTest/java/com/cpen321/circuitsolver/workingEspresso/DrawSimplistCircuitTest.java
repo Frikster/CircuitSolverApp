@@ -3,26 +3,17 @@ package com.cpen321.circuitsolver.workingEspresso;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
-import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.GeneralLocation;
 import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Swipe;
-import android.support.test.espresso.action.Tap;
-import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.UiDevice;
-import android.support.test.uiautomator.UiObject;
-import android.support.test.uiautomator.UiObjectNotFoundException;
-import android.support.test.uiautomator.UiSelector;
-import android.util.Log;
 import android.view.View;
 
 import com.cpen321.circuitsolver.R;
@@ -35,8 +26,6 @@ import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 import com.cpen321.circuitsolver.util.ImageUtils;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,14 +39,18 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
-import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.Util.allowPermissionsIfNeeded;
 import static com.cpen321.circuitsolver.usecases.Util.clickXY;
 import static com.cpen321.circuitsolver.usecases.Util.midpoint;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
-import static org.hamcrest.Matchers.equalTo;
+
+//import android.support.test.uiautomator.UiDevice;
+//import android.support.test.uiautomator.UiObject;
+//import android.support.test.uiautomator.UiObjectNotFoundException;
+//import android.support.test.uiautomator.UiSelector;
 
 /**
  * Created by Cornelis Dirk Haupt on 11/28/2016.
@@ -368,22 +361,6 @@ public class DrawSimplistCircuitTest{
                     }
                 }, Press.FINGER);
     }
-
-    private static void allowPermissionsIfNeeded() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            UiDevice device = UiDevice.getInstance(getInstrumentation());
-            UiObject allowPermissions = device.findObject(new UiSelector().text("Allow"));
-            if (allowPermissions.exists()) {
-                try {
-                    allowPermissions.click();
-                } catch (UiObjectNotFoundException e) {
-                    Log.d("TakePictureTest", "There is no permissions dialog to interact with ");
-                }
-            }
-        }
-    }
-
-
 
 //    public static ViewAction customClick() {
 //        return actionWithAssertions(

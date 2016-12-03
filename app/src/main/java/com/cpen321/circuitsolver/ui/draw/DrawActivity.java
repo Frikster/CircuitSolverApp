@@ -340,7 +340,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     componentState = prevComponentState;
                     displayElementInfo();
                 }
-
                 componentValueText.setTag("not null");
             }
         });
