@@ -300,11 +300,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    protected void updateSavedCircuits(){
-        //todo: REMOVE THESE TWO AND TWO LINES AT END OF FUNCTION IF THEY ARE STILL HERE I FUCKED UP
-        LinearLayout ll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-        int  beforechildCount = ll.getChildCount();
-
+    public void updateSavedCircuits(){
         File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File[] circuitProjects = imageStorageDir.listFiles();
         this.savedCircuitsScroll.removeAllViews();
@@ -333,17 +329,31 @@ public class HomeActivity extends BaseActivity {
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
-        LinearLayout ll_after = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-        int  afterchildCount = ll.getChildCount();
     }
 
-    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
+    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THESE SETTERS. USE WITH CAUTION
+    // USED TO MOCK INITIAL CAMERA/LOAD FROM FILE INPUT
     public ArrayList<CircuitProject> getCircuitProjects(){
         return circuitProjects;
     }
-
-    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
     public void setCandidateProject(CircuitProject candidateProject){
         this.candidateProject = candidateProject;
     }
+    public void setCircuitProjects(ArrayList<CircuitProject> circuitProjects){
+        this.circuitProjects = circuitProjects;
+    }
+
+//    public void addScrollItem(CircuitProject candidateProject){
+//        ImageView newImage = new ImageView(getApplicationContext());
+//        newImage.setTag(candidateProject.getFolderID());
+//        newImage.setPadding(10, 10, 10, 10);
+//        try {
+//            newImage.setImageBitmap(candidateProject.getThumbnail());
+//        } catch (NullPointerException ex) {
+//            newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+//                    R.drawable.not_found));
+//        }
+//        newImage.setOnClickListener(this.thumbnailListener);
+//        this.savedCircuitsScroll.addView(newImage);
+//    }
 }
