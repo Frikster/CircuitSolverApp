@@ -125,7 +125,7 @@ public class HomeActivity extends BaseActivity {
                 //composeMessage();
                 layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                 ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.popup,null);
-                popupWindow = new PopupWindow(container, 750, 800, true);
+                popupWindow = new PopupWindow(container, 760, 800, true);
                 popupWindow.showAtLocation(savedCircuitsScroll, Gravity.NO_GRAVITY, 175, 600);
             default:
                return super.onOptionsItemSelected(item);
