@@ -117,7 +117,6 @@ public class HomeActivity extends BaseActivity {
 
     private LayoutInflater layoutInflater;
     private PopupWindow popupWindow;
-    //private RelativeLayout relativeLayout = savedCircuitsScroll;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
@@ -126,29 +125,8 @@ public class HomeActivity extends BaseActivity {
                 //composeMessage();
                 layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
                 ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.popup,null);
-                popupWindow = new PopupWindow(container, 800, 550, true);
-                popupWindow.showAtLocation(savedCircuitsScroll, Gravity.NO_GRAVITY, 150, 600);
-
-//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
-//
-//                final EditText et = new EditText(getApplicationContext());
-//
-//                // set prompts.xml to alertdialog builder
-//                alertDialogBuilder.setView(et);
-//
-//                // set dialog message
-//                alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                    }
-//                });
-//
-//                // create alert dialog
-//                AlertDialog alertDialog = alertDialogBuilder.create();
-//                // show it
-//                alertDialog.show();
-//
-//                return true;
-
+                popupWindow = new PopupWindow(container, 760, 800, true);
+                popupWindow.showAtLocation(savedCircuitsScroll, Gravity.NO_GRAVITY, 175, 600);
             default:
                return super.onOptionsItemSelected(item);
         }
