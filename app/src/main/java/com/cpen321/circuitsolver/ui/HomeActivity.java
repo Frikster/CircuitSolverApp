@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -115,18 +116,16 @@ public class HomeActivity extends BaseActivity {
         return true;
     }
 
-    private LayoutInflater layoutInflater;
-    private PopupWindow popupWindow;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_moreinfo:
-                //composeMessage();
-                layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.popup,null);
-                popupWindow = new PopupWindow(container, 760, 800, true);
-                popupWindow.showAtLocation(savedCircuitsScroll, Gravity.NO_GRAVITY, 175, 600);
+                CardView helpCard = (CardView) findViewById(R.id.help_card);
+                if (helpCard.getVisibility() == View.VISIBLE)
+                    helpCard.setVisibility(View.INVISIBLE);
+                else
+                    helpCard.setVisibility(View.VISIBLE);
             default:
                return super.onOptionsItemSelected(item);
         }
