@@ -60,7 +60,7 @@ public class MainOpencv {
         Mat tmp2 = new Mat (bMap.getWidth(), bMap.getHeight(), CvType.CV_8UC1);
         Utils.bitmapToMat(bMap, tmp);
 
-        Log.d("cv","Width/height : "+bitMapHeight +" , "+bitMapWidth);
+        Log.d("cv","height/width : "+bitMapHeight +" , "+bitMapWidth);
         //Convert to a canny edge detector grayscale mat
         Imgproc.Canny(tmp, tmp2, 40, 200);
 
