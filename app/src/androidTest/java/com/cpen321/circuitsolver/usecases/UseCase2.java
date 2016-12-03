@@ -113,8 +113,9 @@ public class UseCase2 {
                 getCircuitProjects();
         int  childCount = ll.getChildCount();
         assert(circuitProjects.size() - 1 == childCount && childCount == initialProjectCount);
-        // IMPORTANT NOTE: childCount is less one that you would expect since the mocked data from the initial
-        // setup doesn't get processed on the mocked mHomeActivityRule.getActivity(), but it does on the actual UI
+        // IMPORTANT NOTE: childCount is less one that you would expect since the intent being
+        // sent back from DrawActivity activates a new activity seperate from mHomeActivityRule.activity()
+        // However, iterative deletion does occur except for one scroll so it can correct itself, hence the "off-by-one"
     }
 
     @Test
