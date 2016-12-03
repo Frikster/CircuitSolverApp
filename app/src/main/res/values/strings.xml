@@ -35,4 +35,14 @@
     <string name="description_info">Info</string>
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+
+    <string name="instructions">
+        Welcome to CircuitSolver!\nWhen drawing on paper:\n
+        • only draw horizontal and vertical lines\n
+        • draw voltage sources +/- inside a circle\n\n
+        In App:\n
+        • only voltage sources and resistors are supported at the moment\n
+        • you can only connect components at the beginning or end of components\n
+        • it will take roughly 3 seconds per component to process
+    </string>
 </resources>

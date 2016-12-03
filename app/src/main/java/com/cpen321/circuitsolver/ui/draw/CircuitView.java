@@ -13,6 +13,9 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.SOLVED;
 
 
@@ -29,6 +32,8 @@ public class CircuitView extends SurfaceView implements Runnable {
     private Canvas canvas;
     public float scale;
     public Point zoomPoint;
+
+    private List<Point> points = new ArrayList<>();
 
     public CircuitView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -60,7 +65,7 @@ public class CircuitView extends SurfaceView implements Runnable {
 
     public void fakeDraw(Canvas canvas) {
         if (this.zoomPoint != null)
-            canvas.scale(this.scale, this.scale);
+            canvas.scale(this.scale, this.scale, this.getWidth()/2, this.getHeight()/2);
         canvas.drawColor(Color.WHITE);
         paint.setColor(Color.BLACK);
         //get component state
@@ -70,7 +75,6 @@ public class CircuitView extends SurfaceView implements Runnable {
             SimplePoint end = circuitElm.getP2();
             circuitElm.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
         }
-        ;
         CircuitElm selected = DrawActivity.getSelectedElm();
         if (selected != null) {
             SimplePoint start = selected.getP1();

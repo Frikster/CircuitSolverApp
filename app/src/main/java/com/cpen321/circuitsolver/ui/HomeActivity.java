@@ -1,6 +1,9 @@
 package com.cpen321.circuitsolver.ui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,11 +17,21 @@ import android.provider.MediaStore;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.database.Cursor;
 import android.util.Log;
@@ -95,6 +108,28 @@ public class HomeActivity extends BaseActivity {
         HomeActivity.selectedTag = selectedTag;
     }
 
+    //*********
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_action_button, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.action_moreinfo:
+                CardView helpCard = (CardView) findViewById(R.id.help_card);
+                if (helpCard.getVisibility() == View.VISIBLE)
+                    helpCard.setVisibility(View.INVISIBLE);
+                else
+                    helpCard.setVisibility(View.VISIBLE);
+            default:
+               return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -300,11 +335,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    protected void updateSavedCircuits(){
-        //todo: REMOVE THESE TWO AND TWO LINES AT END OF FUNCTION IF THEY ARE STILL HERE I FUCKED UP
-        LinearLayout ll = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-        int  beforechildCount = ll.getChildCount();
-
+    public void updateSavedCircuits(){
         File imageStorageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File[] circuitProjects = imageStorageDir.listFiles();
         this.savedCircuitsScroll.removeAllViews();
@@ -333,17 +364,31 @@ public class HomeActivity extends BaseActivity {
             newImage.setOnClickListener(this.thumbnailListener);
             this.savedCircuitsScroll.addView(newImage);
         }
-        LinearLayout ll_after = (LinearLayout) findViewById(R.id.saved_circuits_scroll);
-        int  afterchildCount = ll.getChildCount();
     }
 
-    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
+    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THESE SETTERS. USE WITH CAUTION
+    // USED TO MOCK INITIAL CAMERA/LOAD FROM FILE INPUT
     public ArrayList<CircuitProject> getCircuitProjects(){
         return circuitProjects;
     }
-
-    // USED FOR TESTING PURPOSES. UNKNOWN IF IT IS WISE TO HAVE THIS SETTER. USE WITH CAUTION
     public void setCandidateProject(CircuitProject candidateProject){
         this.candidateProject = candidateProject;
     }
+    public void setCircuitProjects(ArrayList<CircuitProject> circuitProjects){
+        this.circuitProjects = circuitProjects;
+    }
+
+//    public void addScrollItem(CircuitProject candidateProject){
+//        ImageView newImage = new ImageView(getApplicationContext());
+//        newImage.setTag(candidateProject.getFolderID());
+//        newImage.setPadding(10, 10, 10, 10);
+//        try {
+//            newImage.setImageBitmap(candidateProject.getThumbnail());
+//        } catch (NullPointerException ex) {
+//            newImage.setImageBitmap(BitmapFactory.decodeResource(getResources(),
+//                    R.drawable.not_found));
+//        }
+//        newImage.setOnClickListener(this.thumbnailListener);
+//        this.savedCircuitsScroll.addView(newImage);
+//    }
 }
