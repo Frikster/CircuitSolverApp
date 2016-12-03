@@ -24,10 +24,14 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
@@ -84,13 +88,18 @@ public class UseCase5 {
             CircuitProject circuitProject = scroll_iter.next();
             onView(withTagValue(withStringMatching(circuitProject.getFolderID()))).perform(scrollTo(),
                     click());
+            onView(withId(R.id.processing_fab)).check(matches(isDisplayed()));
+            onView(withId(R.id.delete_fab)).check(matches(isDisplayed()));
             onView(withId(R.id.delete_fab)).perform(click());
+            onView(withText(startsWith("Project Deleted"))).inRoot(isToast()).check(matches(isDisplayed()));
             SystemClock.sleep(2000);
             // toast check
             flag--;
         }
 
         //Check you deleted 3
+        assert(circuitProjects.size() == initialCircuitProjCount - 3);
+        assert(ll.getChildCount() == initialChildCount - 3);
     }
 
     @Test
@@ -125,10 +134,15 @@ public class UseCase5 {
             CircuitProject circuitProject = scroll_iter.next();
             onView(withTagValue(withStringMatching(circuitProject.getFolderID()))).perform(scrollTo(),
                     click());
+            onView(withId(R.id.processing_fab)).check(matches(isDisplayed()));
+            onView(withId(R.id.delete_fab)).check(matches(isDisplayed()));
             onView(withId(R.id.delete_fab)).perform(click());
+            onView(withText(startsWith("Project Deleted"))).inRoot(isToast()).check(matches(isDisplayed()));
             SystemClock.sleep(2000);
         }
 
         // Check all gone
+        assert(circuitProjects.size() == 0);
+        assert(ll.getChildCount() == 0);
     }
 }
