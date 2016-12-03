@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -458,8 +459,14 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             int x;
             int y;
             v.getLocationOnScreen(location);
-            x = (int) ((event.getRawX() - location[0]) / this.circuitView.scale);
-            y = (int) ((event.getRawY() - location[1]) / this.circuitView.scale);
+            x = (int) ((event.getRawX() - location[0]));
+            y = (int) ((event.getRawY() - location[1]));
+
+            float midX = this.circuitView.getWidth()/2;
+            float midY = this.circuitView.getHeight()/2;
+            x += (1f-this.circuitView.scale)*(x-midX);
+            y += (1f-this.circuitView.scale)*(y-midY);
+
             x = (x >> truncateBits) << truncateBits;
             y = (y >> truncateBits) << truncateBits;
             int lengthThreshHold = 40;

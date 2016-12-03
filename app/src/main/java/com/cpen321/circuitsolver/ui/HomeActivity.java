@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -115,40 +116,16 @@ public class HomeActivity extends BaseActivity {
         return true;
     }
 
-    private LayoutInflater layoutInflater;
-    private PopupWindow popupWindow;
-    //private RelativeLayout relativeLayout = savedCircuitsScroll;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_moreinfo:
-                //composeMessage();
-                layoutInflater = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-                ViewGroup container = (ViewGroup) layoutInflater.inflate(R.layout.popup,null);
-                popupWindow = new PopupWindow(container, 800, 550, true);
-                popupWindow.showAtLocation(savedCircuitsScroll, Gravity.NO_GRAVITY, 150, 600);
-
-//                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getApplicationContext());
-//
-//                final EditText et = new EditText(getApplicationContext());
-//
-//                // set prompts.xml to alertdialog builder
-//                alertDialogBuilder.setView(et);
-//
-//                // set dialog message
-//                alertDialogBuilder.setCancelable(false).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int id) {
-//                    }
-//                });
-//
-//                // create alert dialog
-//                AlertDialog alertDialog = alertDialogBuilder.create();
-//                // show it
-//                alertDialog.show();
-//
-//                return true;
-
+                CardView helpCard = (CardView) findViewById(R.id.help_card);
+                if (helpCard.getVisibility() == View.VISIBLE)
+                    helpCard.setVisibility(View.INVISIBLE);
+                else
+                    helpCard.setVisibility(View.VISIBLE);
             default:
                return super.onOptionsItemSelected(item);
         }
