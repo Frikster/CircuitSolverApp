@@ -356,7 +356,15 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     return;
                 }
 
-                selectedElm.setValue(Double.valueOf(newValue));
+                Double newValueDouble = selectedElm.getValue();
+
+                try {
+                    newValueDouble = Double.valueOf(newValue);
+                } catch(NumberFormatException e) {
+                    e.printStackTrace();
+                }
+
+                selectedElm.setValue(newValueDouble);
 
                 if (componentState == SOLVED && componentValueText.getTag() != null) {
                     componentState = prevComponentState;
