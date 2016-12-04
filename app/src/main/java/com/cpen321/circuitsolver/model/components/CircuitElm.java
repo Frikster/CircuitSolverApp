@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
+import com.cpen321.circuitsolver.model.SpiceElm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 /**
  * Created by Jennifer on 10/10/2016.
  */
-public abstract class CircuitElm implements Cloneable{
+public abstract class CircuitElm implements Cloneable, SpiceElm{
 
 
 

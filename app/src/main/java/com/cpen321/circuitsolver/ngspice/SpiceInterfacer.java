@@ -5,6 +5,7 @@ import android.util.Log;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
+import com.cpen321.circuitsolver.model.components.ResistorElm;
 import com.cpen321.circuitsolver.model.components.VoltageElm;
 
 import java.util.HashMap;
@@ -176,8 +177,8 @@ public class SpiceInterfacer {
             circuitNodeMap.put(node.getSpiceLabel(), node);
         }
         for(CircuitElm element : elements) {
-            if(element instanceof VoltageElm) {
-                circuitElmMap.put(((VoltageElm) element).getSpiceLabel() + "#branch", element);
+            if((element instanceof VoltageElm) || ((element instanceof ResistorElm) && (element.getValue() == 0))) {
+                circuitElmMap.put(element.getSpiceLabel() + "#branch", element);
             }
         }
     }

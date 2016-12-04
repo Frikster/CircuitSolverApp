@@ -6,25 +6,33 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.util.Constants;
 
+import java.io.PrintWriter;
+
+import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 /**
  * Created by Jennifer on 10/12/2016.
  */
 public class ResistorElm extends CircuitElm implements SpiceElm {
+    private static final String TAG = "ResistorElm";
+
     private static int numResistors = 1;
 
     private double resistance;
     private String name;
     private boolean isSelected;
+    private WireElm wire; //wire is used to represent 0 ohm resistor, used for NgSpice to get current
 
     public ResistorElm() {
         super();
         this.name = "r" + numResistors;
+        wire = new WireElm();
         numResistors++;
     }
 
@@ -32,6 +40,7 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
         super(p1, p2);
         this.resistance = 10;
         this.name = "r" + numResistors;
+        wire = new WireElm(p1, p2);
         numResistors++;
 
     }
@@ -39,6 +48,7 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
         super(p1, p2);
         this.resistance = resistance;
         this.name = "r" + numResistors;
+        wire = new WireElm(p1, p2);
         numResistors++;
     }
 
@@ -51,12 +61,26 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
     @Override
     public double calculateCurrent() {
-        setCurrent(-1*getVoltageDiff()/resistance);
-        return getCurrent();
+        if(resistance == 0) {
+            return getCurrent();
+        } else {
+            setCurrent(-1*getVoltageDiff()/resistance);
+            return getCurrent();
+        }
     }
 
     public void setValue(double value) {
         this.resistance = value;
+    }
+
+    @Override
+    public void setCurrent(double current) {
+        super.setCurrent(current);
+        if(resistance == 0) {
+            Log.d(TAG, "resistance 0, set current to " + current);
+        } else {
+            Log.d(TAG, "set current to " + current);
+        }
     }
 
     @Override
@@ -66,18 +90,33 @@ public class ResistorElm extends CircuitElm implements SpiceElm {
 
     @Override
     public String getSpiceLabel() {
-        return this.name;
+        if(resistance == 0) {
+            return wire.getSpiceLabel();
+        } else {
+            return this.name;
+        }
     }
 
     @Override
     public String constructSpiceLine() {
-        return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + resistance;
+        if(resistance == 0) {
+            return wire.constructSpiceLine();
+        } else {
+            return this.name + " " + getNode(0).getSpiceLabel() + " " + getNode(1).getSpiceLabel() + " " + resistance;
+        }
+    }
+
+    @Override
+    public void setNode(int i, CircuitNode node) {
+        wire.setNode(i, node);
+        super.setNode(i, node);
     }
 
     @Override
     public double getValue() {
         return this.resistance;
     }
+
 
     /**
      * Draws resistor as a red line
