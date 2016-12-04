@@ -16,25 +16,34 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:gravity="center">
+        android:gravity="center"
+        android:weightSum="1">
 
-        <Button
+        <ImageButton
             android:id="@+id/componentMenuButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Draw"/>
-
-        <Button
-            android:text="@string/erase_button_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
             android:layout_gravity="bottom"
-            android:id="@+id/eraseButton"/>
+            android:src="@drawable/ic_pen"
+            android:tint="@color/colorPrimary"/>
 
-        <Button
-            android:text="@string/solve_button_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:scaleType="fitCenter"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_eraser"
+            android:tint="@color/colorPrimary"
+            android:id="@+id/eraseButton" />
+
+        <ImageButton
+            android:scaleType="fitCenter"
+            android:layout_width="62dp"
+            android:layout_height="62dp"
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_solve"
+            android:tint="@color/colorPrimary"
             android:id="@+id/solveButton" />
 
     </LinearLayout>

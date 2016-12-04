@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,9 +58,9 @@ import static com.cpen321.circuitsolver.ui.draw.TouchState.UP;
 public class DrawActivity extends AppCompatActivity implements View.OnTouchListener {
     public static final String TAG = "DrawActivity";
 
-    private Button componentMenuButton;
-    private Button eraseButton;
-    private Button solveButton;
+    private ImageButton componentMenuButton;
+    private ImageButton eraseButton;
+    private ImageButton solveButton;
     private TextView unitsText;
     private TextView voltageText;
     private TextView currentText;
@@ -184,9 +187,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         setContentView(R.layout.activity_draw);
 
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
-        componentMenuButton = (Button) findViewById(R.id.componentMenuButton);
-        eraseButton = (Button) findViewById(R.id.eraseButton);
-        solveButton = (Button) findViewById(R.id.solveButton);
+        componentMenuButton = (ImageButton) findViewById(R.id.componentMenuButton);
+        eraseButton = (ImageButton) findViewById(R.id.eraseButton);
+        solveButton = (ImageButton) findViewById(R.id.solveButton);
         voltageText = (TextView) findViewById(R.id.voltageText);
         currentText = (TextView) findViewById(R.id.currentText);
         circuitView.setOnTouchListener(this);
@@ -240,7 +243,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     public boolean onMenuItemClick(MenuItem item) {
                         Toast.makeText(
                                 DrawActivity.this,
-                                "You Clicked : " + item.getTitle(),
+                                "Drag to draw",
                                 Toast.LENGTH_SHORT
                         ).show();
                         resetCoordinates();
@@ -273,16 +276,21 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         eraseButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (selectedElm != null) {
-                    if (componentState == SOLVED) {
-                        componentState = prevComponentState;
+                PopupMenu popup = new PopupMenu(DrawActivity.this, eraseButton);
+                if(event.getAction() == MotionEvent.ACTION_DOWN) {
+                    //eraseButton.setColorFilter(Color.argb(255, 255, 255, 255));
+                } else if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if (selectedElm != null) {
+                        if (componentState == SOLVED) {
+                            componentState = prevComponentState;
+                        }
+                        circuitView.pause();
+                        circuitElms.remove(selectedElm);
+                        selectedElm = null;
+                        circuitView.resume();
                     }
-                    circuitView.pause();
-                    circuitElms.remove(selectedElm);
-                    selectedElm = null;
-                    circuitView.resume();
+                    displayElementInfo();
                 }
-                displayElementInfo();
                 return true;
             }
         });
@@ -313,6 +321,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 return true;
             }
         });
+
+//        componentValueText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
 
         componentValueText.setTag("not null");
 
@@ -649,9 +664,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private void toggleAddButtonText(boolean addText) {
         if (addText) {
-            this.componentMenuButton.setText(R.string.change_button_tag);
+            componentMenuButton.setImageResource(R.drawable.ic_swap);
         } else {
-            this.componentMenuButton.setText(R.string.add_button_tag);
+            componentMenuButton.setImageResource(R.drawable.ic_draw);
         }
     }
 
