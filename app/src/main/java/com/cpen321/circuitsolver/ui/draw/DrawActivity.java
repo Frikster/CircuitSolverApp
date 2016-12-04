@@ -1,5 +1,6 @@
 package com.cpen321.circuitsolver.ui.draw;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.PopupMenu;
@@ -313,6 +315,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         });
 
         componentValueText.setTag("not null");
+
         componentValueText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -433,6 +436,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
         if (event.getPointerCount() == 2) {
             zooming = true;
             SimplePoint fingerOne = new SimplePoint((int) event.getX(0), (int) event.getY(0));
@@ -472,7 +480,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
             x = (x >> truncateBits) << truncateBits;
             y = (y >> truncateBits) << truncateBits;
-            int lengthThreshHold = 40;
+            int lengthThreshHold = 55;
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:

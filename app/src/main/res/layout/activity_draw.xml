@@ -22,7 +22,7 @@
             android:id="@+id/componentMenuButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/add_button_tag"/>
+            android:text="Draw"/>
 
         <Button
             android:text="@string/erase_button_tag"
