@@ -6,9 +6,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.util.Constants;
@@ -24,14 +26,15 @@ import static com.cpen321.circuitsolver.ui.draw.AddComponentState.SOLVED;
  */
 
 public class CircuitView extends SurfaceView implements Runnable {
-    Thread thread;
-    SurfaceHolder holder;
-    Paint paint;
-    boolean run;
+    private Thread thread;
+    private SurfaceHolder holder;
+    private Paint paint;
+    private boolean run;
 
     private Canvas canvas;
     public float scale;
     public Point zoomPoint;
+    private final int color;
 
     private List<Point> points = new ArrayList<>();
 
@@ -44,6 +47,9 @@ public class CircuitView extends SurfaceView implements Runnable {
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(7);
         this.scale = 1;
+//        TypedValue typedValue = new  TypedValue();
+//        getContext().getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        color = Color.rgb(217, 44, 44);
     }
 
     @Override
@@ -67,7 +73,7 @@ public class CircuitView extends SurfaceView implements Runnable {
         if (this.zoomPoint != null)
             canvas.scale(this.scale, this.scale, this.getWidth()/2, this.getHeight()/2);
         canvas.drawColor(Color.WHITE);
-        paint.setColor(Color.BLACK);
+        paint.setColor(Color.DKGRAY);
         //get component state
         AddComponentState state = DrawActivity.getComponentState();
         for (CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
@@ -79,15 +85,15 @@ public class CircuitView extends SurfaceView implements Runnable {
         if (selected != null) {
             SimplePoint start = selected.getP1();
             SimplePoint end = selected.getP2();
-            paint.setColor(Color.RED);
+            paint.setColor(color);
             selected.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
             if(state == SOLVED) {
-                paint.setColor(Color.BLUE);
+                paint.setColor(color);
                 selected.drawCurrent(canvas, paint);
             }
         }
         //AddComponentState state = DrawActivity.getComponentState();
-        paint.setColor(Color.RED);
+        paint.setColor(color);
         CircuitElm candidate = DrawActivity.getCandidateElement();
         if (candidate != null && !DrawActivity.isZooming()) {
             String type = convertStateToType(DrawActivity.getComponentState());
