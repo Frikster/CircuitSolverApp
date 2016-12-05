@@ -622,8 +622,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         if (selectedElm == null) {
             unitsText.setText(Constants.NOTHING);
             componentValueText.setText("--");
-            voltageText.setText("--");
-            currentText.setText("--");
+            voltageText.setText("");
+            currentText.setText("");
             this.toggleAddButtonText(false);
         } else {
             componentValueText.setTag(null); //Used to distinguish between whether editText was changed by user, or pragmatically
@@ -665,8 +665,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 //            voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
 //            currentText.setText(Double.toString(selectedElm.getCurrent()) + " A");
         } else {
-            voltageText.setText("--");
-            currentText.setText("--");
+            voltageText.setText("");
+            currentText.setText("");
         }
     }
 

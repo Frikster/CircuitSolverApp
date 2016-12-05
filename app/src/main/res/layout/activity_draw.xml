@@ -48,6 +48,7 @@
 
     </LinearLayout>
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:background="@color/colorPrimary"
@@ -58,47 +59,53 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editButtonPanel"
+            android:layout_gravity="bottom|start"
+            android:weightSum="1">
+            <TextView
+                android:hint="Voltage"
+                android:textColor="@color/circuitBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/voltageText"
+                android:layout_weight="0.5" />
+
+            <TextView
+                android:hint="Current"
+                android:textColor="@color/circuitBackground"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:id="@+id/currentText"
+                android:layout_weight="0.5" />
+        </LinearLayout>
+
         <EditText
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:hint="@string/component_value"
+            android:hint="Component Value"
             android:inputType="numberDecimal"
             android:ems="10"
             android:shadowColor="@color/circuitBackground"
             android:textColor="@color/circuitBackground"
             android:id="@+id/component_value"
-            android:backgroundTint="@color/backgroundGray" />
+            android:backgroundTint="@color/backgroundGray"
+            android:layout_below="@+id/editButtonPanel" />
         <TextView
-            android:text="@string/lowercase_ohms"
+            android:text="ohms"
             android:id="@+id/units_display"
             android:textColor="@color/circuitBackground"
             android:layout_toRightOf="@id/component_value"
-            android:layout_toEndOf="@id/component_value"
             android:layout_alignBaseline="@id/component_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RelativeLayout>
-
-    <TextView
-        android:text="@string/lowercase_voltage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/componentValue"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="24dp"
-        android:layout_marginEnd="24dp"
-        android:id="@+id/currentText" />
-
-    <TextView
-        android:text="@string/lowercase_current"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/currentText"
-        android:layout_alignRight="@+id/currentText"
-        android:layout_alignEnd="@+id/currentText"
-        android:id="@+id/voltageText" />
 
 
 </RelativeLayout>
