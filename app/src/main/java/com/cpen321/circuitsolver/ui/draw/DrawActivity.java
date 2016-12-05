@@ -391,6 +391,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     @Override
     public void onBackPressed() {
+        componentState = prevComponentState;
 
         // Convert list of elements to a circuit def file to save
         String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
@@ -424,6 +425,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onPause() {
         super.onPause();
+        componentState = prevComponentState;
+
         // Convert list of elements to a circuit def file to save
         String circStr = parser.elementsToTxt(circuitElms, screenWidth, screenHeight);
         circuitProject.saveCircuitDefinitionFile(circStr);
