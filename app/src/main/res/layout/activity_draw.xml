@@ -67,6 +67,7 @@
             android:weightSum="1">
             <TextView
                 android:hint="Voltage"
+                android:gravity="center"
                 android:textColor="@color/circuitBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,6 +76,7 @@
 
             <TextView
                 android:hint="Current"
+                android:gravity="center"
                 android:textColor="@color/circuitBackground"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -85,10 +87,10 @@
         </LinearLayout>
 
         <EditText
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:gravity="center"
             android:hint="Component Value"
             android:inputType="numberDecimal"
             android:ems="10"
@@ -98,7 +100,7 @@
             android:backgroundTint="@color/backgroundGray"
             android:layout_below="@+id/editButtonPanel" />
         <TextView
-            android:text="ohms"
+            android:hint="Units"
             android:id="@+id/units_display"
             android:textColor="@color/circuitBackground"
             android:layout_toRightOf="@id/component_value"

@@ -45,6 +45,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -88,6 +90,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
     private int[] location = new int[2];
     private static int truncateBits = 5; //helps with drawing parallel lines by limiting angles
+    private static final int sigFigs = 5;
 
     public static ArrayList<CircuitElm> getCircuitElms() {
         return circuitElms;
@@ -352,7 +355,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 if (newValue.isEmpty())
                     return;
 
-                if (newValue.equals("--")) {
+                if (newValue.equals("")) {
                     return;
                 }
 
@@ -621,7 +624,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private void displayElementInfo() {
         if (selectedElm == null) {
             unitsText.setText(Constants.NOTHING);
-            componentValueText.setText("--");
+            componentValueText.setText("");
             voltageText.setText("");
             currentText.setText("");
             this.toggleAddButtonText(false);
@@ -651,7 +654,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 case Constants.WIRE: {
                     unitsText.setText(Constants.WIRE_UNITS);
-                    componentValueText.setText("--");
+                    componentValueText.setText("");
                     componentValueText.setEnabled(false);
                     break;
                 }
@@ -660,8 +663,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         if (componentState == SOLVED && selectedElm != null) {
-            voltageText.setText(Double.toString(Math.abs(selectedElm.getVoltageDiff())) + " V");
-            currentText.setText(Double.toString(Math.abs(selectedElm.getCurrent())) + " A");
+            double voltage = limitSigfig(sigFigs, selectedElm.getVoltageDiff());
+            double current = limitSigfig(sigFigs, selectedElm.getCurrent());
+            voltageText.setText(Double.toString(Math.abs(voltage)) + " V");
+            currentText.setText(Double.toString(Math.abs(current)) + " A");
 //            voltageText.setText(Double.toString(selectedElm.getVoltageDiff()) + " V");
 //            currentText.setText(Double.toString(selectedElm.getCurrent()) + " A");
         } else {
@@ -727,5 +732,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 new SimplePoint(700, 800), 12));
     }
 
+    private double limitSigfig(int sigFigs, double input) {
+        BigDecimal bd = new BigDecimal(input);
+        bd = bd.round(new MathContext(sigFigs));
+        return bd.doubleValue();
+    }
 
 }
