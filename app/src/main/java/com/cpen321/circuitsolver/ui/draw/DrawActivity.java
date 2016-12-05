@@ -204,6 +204,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         screenHeight = displaymetrics.heightPixels;
         screenWidth = displaymetrics.widthPixels;
+        displayElementInfo();
 
         //For loading previous circuit or new openCV interpreted circuit
         Bundle extras = getIntent().getExtras();
@@ -628,7 +629,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             voltageText.setText("");
             currentText.setText("");
             this.toggleAddButtonText(false);
+            eraseButton.setAlpha(.5f);
         } else {
+            eraseButton.setAlpha(1f);
             componentValueText.setTag(null); //Used to distinguish between whether editText was changed by user, or pragmatically
             componentValueText.setText(Double.toString(selectedElm.getValue()));
             switch (selectedElm.getType()) {
