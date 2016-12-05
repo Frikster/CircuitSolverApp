@@ -4,20 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -52,6 +48,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.DC_SOURCE;
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.ERASE;
+import static com.cpen321.circuitsolver.ui.draw.AddComponentState.INVALID;
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.RESISTOR;
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.SOLVED;
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.WIRE;
@@ -204,7 +201,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         screenHeight = displaymetrics.heightPixels;
         screenWidth = displaymetrics.widthPixels;
-        displayElementInfo();
+        updateDisplayInfo();
 
         //For loading previous circuit or new openCV interpreted circuit
         Bundle extras = getIntent().getExtras();
@@ -268,7 +265,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                             circuitView.pause();
                             changeElementType(selectedElm, componentState);
                             circuitView.resume();
-                            displayElementInfo();
+                            updateDisplayInfo();
                         }
                         return true;
                     }
@@ -285,7 +282,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     //eraseButton.setColorFilter(Color.argb(255, 255, 255, 255));
                 } else if(event.getAction() == MotionEvent.ACTION_UP) {
                     if (selectedElm != null) {
-                        if (componentState == SOLVED) {
+                        if (componentState == SOLVED || componentState == INVALID) {
                             componentState = prevComponentState;
                         }
                         circuitView.pause();
@@ -293,7 +290,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         selectedElm = null;
                         circuitView.resume();
                     }
-                    displayElementInfo();
+                    updateDisplayInfo();
                 }
                 return true;
             }
@@ -304,7 +301,13 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getAction();
                 if (action == MotionEvent.ACTION_UP) {
-                    if (componentState != SOLVED) {
+                    if (componentState == SOLVED) {
+                        Toast.makeText(DrawActivity.this, "Select an element to view its values.", Toast.LENGTH_SHORT).show();
+                        return false;
+                    } else if(componentState == INVALID) {
+                        Toast.makeText(DrawActivity.this, "invalid circuit", Toast.LENGTH_SHORT).show();
+                        return false;
+                    } else {
                         prevComponentState = componentState;
                     }
                     CircuitNode.resetNumNodes();
@@ -317,10 +320,11 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                             circuitElm.calculateCurrent();
                         }
                         componentState = SOLVED;
-                        displayElementInfo();
                     } else {
                         Toast.makeText(DrawActivity.this, "invalid circuit", Toast.LENGTH_SHORT).show();
+                        componentState = INVALID;
                     }
+                    updateDisplayInfo();
                 }
                 return true;
             }
@@ -370,9 +374,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
                 selectedElm.setValue(newValueDouble);
 
-                if (componentState == SOLVED && componentValueText.getTag() != null) {
+                if (((componentState == SOLVED || componentState == INVALID) && componentValueText.getTag() != null)) { //Some bug here where wires triggered if statement
                     componentState = prevComponentState;
-                    displayElementInfo();
+                    Toast.makeText(DrawActivity.this, "prev state wut the heck", Toast.LENGTH_SHORT).show();
+                    updateDisplayInfo();
                 }
                 componentValueText.setTag("not null");
             }
@@ -537,7 +542,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         circuitView.pause();
                         selectedElm = null;
                         circuitView.resume();
-                        if (componentState == SOLVED) {
+                        if (componentState == SOLVED || componentState == INVALID) {
                             componentState = prevComponentState;
                         }
                         switch (componentState) {
@@ -589,7 +594,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     resetCoordinates();
                     break;
             }
-            displayElementInfo();
+            updateDisplayInfo();
             return true;
         }
         return true;
@@ -622,7 +627,26 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         endPoint = new SimplePoint(0, 0);
     }
 
-    private void displayElementInfo() {
+    private void updateDisplayInfo() {
+        if(circuitElms.isEmpty()) {
+            solveButton.setAlpha(0.5f);
+        } else {
+            solveButton.setAlpha(1f);
+        }
+        switch(componentState) {
+            case SOLVED: {
+                solveButton.setImageResource(R.drawable.ic_solved);
+                break;
+            }
+            case INVALID: {
+                solveButton.setImageResource(R.drawable.ic_invalid);
+                break;
+            }
+            default: {
+                solveButton.setImageResource(R.drawable.ic_solve);
+                break;
+            }
+        }
         if (selectedElm == null) {
             unitsText.setText(Constants.NOTHING);
             componentValueText.setText("");
@@ -657,7 +681,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                 }
                 case Constants.WIRE: {
                     unitsText.setText(Constants.WIRE_UNITS);
-                    componentValueText.setText("");
+                    componentValueText.setTag(null);
+                    componentValueText.setText("--");
                     componentValueText.setEnabled(false);
                     break;
                 }
