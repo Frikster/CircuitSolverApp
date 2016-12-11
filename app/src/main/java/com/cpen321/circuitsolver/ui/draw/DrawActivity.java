@@ -486,7 +486,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         int truncatedY = (y >> truncateBits) << truncateBits;
         int lengthThreshHold = 55;
 
-        if(event.getPointerCount() == 1) {
+        if(event.getPointerCount() == 2) {
+            zooming = true;
+        } if(event.getPointerCount() == 1) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     zooming = false;
