@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -77,7 +79,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private int screenHeight;
     private int screenWidth;
 
-    private DrawController drawController;
     private boolean firstZoom = true;
     private static ArrayList<CircuitElm> circuitElms = new ArrayList<CircuitElm>();
     private static final ReentrantLock circuitElmsLock = new ReentrantLock();
@@ -96,17 +97,14 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private static int truncateBits = 5; //helps with drawing parallel lines by limiting angles
     private static final int sigFigs = 5;
 
-    public static ArrayList<CircuitElm> getCircuitElms() {
-        return circuitElms;
-    }
 
-    public static AddComponentState getComponentState() {
-        return componentState;
-    }
-
-    public TouchState getTouchState() {
-        return touchState;
-    }
+    // Scaling objects
+    private static ScaleGestureDetector mScaleDetector;
+    private static float mScaleFactor = 1.f;
+    // The focus point for the scaling
+    private static float scalePointX;
+    private static float scalePointY;
+    private static Rect rect;
 
     public static int getEndY() {
         return endPoint.getY();
@@ -193,6 +191,8 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_draw);
 
+        mScaleDetector = new ScaleGestureDetector(this, new ScaleListener());
+
         circuitView = (CircuitView) findViewById(R.id.circuitFrame);
         componentMenuButton = (ImageButton) findViewById(R.id.componentMenuButton);
         eraseButton = (ImageButton) findViewById(R.id.eraseButton);
@@ -202,7 +202,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView.setOnTouchListener(this);
         unitsText = (TextView) findViewById(R.id.units_display);
         componentValueText = (EditText) findViewById(R.id.component_value);
-        this.drawController = new DrawController();
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -479,47 +478,15 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        if (event.getPointerCount() == 2) {
-            zooming = true;
-            SimplePoint fingerOne = new SimplePoint((int) event.getX(0), (int) event.getY(0));
-            SimplePoint fingerTwo = new SimplePoint((int) event.getX(1), (int) event.getY(1));
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_MOVE: {
-                    if (this.firstZoom) {
-                        this.firstZoom = false;
-                        this.drawController.setStartFingerOne(fingerOne);
-                        this.drawController.setStartFingerTwo(fingerTwo);
-                    } else {
-                        this.drawController.setFingerOne(fingerOne);
-                        this.drawController.setFingerTwo(fingerTwo);
-                    }
-                    break;
-                }
-                case MotionEvent.ACTION_POINTER_UP: {
-                    this.firstZoom = true;
-                }
-                default: {
-                    this.drawController.setFingerOne(fingerOne);
-                    this.drawController.setFingerTwo(fingerTwo);
-                }
-            }
-            this.circuitView.control(this.drawController);
-        } else {
-            int x;
-            int y;
-            v.getLocationOnScreen(location);
-            x = (int) ((event.getRawX() - location[0]));
-            y = (int) ((event.getRawY() - location[1]));
+        mScaleDetector.onTouchEvent(event);
+        int x = (int) ((event.getX() - scalePointX)/mScaleFactor + scalePointX);
+        int y = (int) ((event.getY() - scalePointY)/mScaleFactor + scalePointY);
 
-            float midX = this.circuitView.getWidth()/2;
-            float midY = this.circuitView.getHeight()/2;
-            x += (1f-this.circuitView.scale)*(x-midX);
-            y += (1f-this.circuitView.scale)*(y-midY);
+        int truncatedX = (x >> truncateBits) << truncateBits;
+        int truncatedY = (y >> truncateBits) << truncateBits;
+        int lengthThreshHold = 55;
 
-            int truncatedX = (x >> truncateBits) << truncateBits;
-            int truncatedY = (y >> truncateBits) << truncateBits;
-            int lengthThreshHold = 55;
-
+        if(event.getPointerCount() == 1) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     zooming = false;
@@ -539,7 +506,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (zooming){
+                    if (zooming) {
                         resetCoordinates();
                         break;
                     }
@@ -568,7 +535,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (zooming){
+                    if (zooming) {
                         resetCoordinates();
                         break;
                     }
@@ -601,9 +568,10 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     break;
             }
             updateDisplayInfo();
-            return true;
         }
         return true;
+
+
     }
 
     private boolean isOnElement(int x, int y, CircuitElm e) {
@@ -772,6 +740,20 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         return bd.doubleValue();
     }
 
+    private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+            scalePointX =  detector.getFocusX();
+            scalePointY = detector.getFocusY();
+
+            // Don't let the object get too small or too large.
+            mScaleFactor = Math.max(0.1f, Math.min(mScaleFactor, 10.0f));
+
+            return true;
+        }
+    }
+
     public static class CircuitView extends SurfaceView implements Runnable {
         private Thread thread;
         private SurfaceHolder holder;
@@ -817,12 +799,15 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         }
 
         public void fakeDraw(Canvas canvas) {
-            if (this.zoomPoint != null)
-                canvas.scale(this.scale, this.scale, this.getWidth()/2, this.getHeight()/2);
+
+            rect = canvas.getClipBounds();
+            canvas.scale(mScaleFactor, mScaleFactor, scalePointX, scalePointY);
+
+                //canvas.scale(this.scale, this.scale, this.getWidth()/2, this.getHeight()/2);
             canvas.drawColor(Color.WHITE);
             paint.setColor(Color.DKGRAY);
             //get component state
-            for (CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
+            for (CircuitElm circuitElm : circuitElms) {
                 SimplePoint start = circuitElm.getP1();
                 SimplePoint end = circuitElm.getP2();
                 circuitElm.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
@@ -841,14 +826,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             //AddComponentState state = DrawActivity.getComponentState();
             paint.setColor(color);
             if (candidateElement != null && !DrawActivity.isZooming()) {
-                String type = convertStateToType(DrawActivity.getComponentState());
+                String type = convertStateToType(componentState);
                 candidateElement.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
             }
-        }
-
-        public void control(DrawController controller) {
-            this.scale = (controller.getZoomScale() + this.scale) / 2f;
-            this.zoomPoint = controller.getMiddlePoint();
         }
 
         public void pause() {
