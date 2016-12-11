@@ -625,6 +625,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         }
         if (selectedElm == null) {
             unitsText.setText(Constants.NOTHING);
+            componentValueText.setEnabled(false);
             componentValueText.setText("");
             voltageText.setText("");
             currentText.setText("");
