@@ -4,14 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -44,6 +50,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.cpen321.circuitsolver.ui.draw.AddComponentState.DC_SOURCE;
@@ -458,10 +465,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         circuitView.resume();
     }
 
-    public static CircuitElm getCandidateElement() {
-        return candidateElement;
-    }
-
     public static boolean isZooming() {
         return zooming;
     }
@@ -513,16 +516,16 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
             x += (1f-this.circuitView.scale)*(x-midX);
             y += (1f-this.circuitView.scale)*(y-midY);
 
-            x = (x >> truncateBits) << truncateBits;
-            y = (y >> truncateBits) << truncateBits;
+            int truncatedX = (x >> truncateBits) << truncateBits;
+            int truncatedY = (y >> truncateBits) << truncateBits;
             int lengthThreshHold = 55;
 
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     zooming = false;
                     selectedElm = getSelected(x, y);
-                    startPoint = new SimplePoint(x, y);
-                    endPoint = new SimplePoint(x, y);
+                    startPoint = new SimplePoint(truncatedX, truncatedY);
+                    endPoint = new SimplePoint(truncatedX, truncatedY);
                     for (CircuitElm circuitElm : circuitElms) {
                         //check to see if the new points we are drawing are near existing ones, if so connect them
                         int threshHold = 50;
@@ -540,7 +543,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         resetCoordinates();
                         break;
                     }
-                    endPoint = new SimplePoint(x, y);
+                    endPoint = new SimplePoint(truncatedX, truncatedY);
                     if (startPoint.distanceFrom(endPoint) > lengthThreshHold) {
                         circuitView.pause();
                         selectedElm = null;
@@ -569,7 +572,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         resetCoordinates();
                         break;
                     }
-                    endPoint = new SimplePoint(x, y);
+                    endPoint = new SimplePoint(truncatedX, truncatedY);
                     for (CircuitElm circuitElm : circuitElms) {
                         //check to see if the new points we are drawing are near existing ones, if so connect them
                         int threshHold = 50;
@@ -767,6 +770,120 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
         BigDecimal bd = new BigDecimal(input);
         bd = bd.round(new MathContext(sigFigs));
         return bd.doubleValue();
+    }
+
+    public static class CircuitView extends SurfaceView implements Runnable {
+        private Thread thread;
+        private SurfaceHolder holder;
+        private Paint paint;
+        private boolean run;
+
+        private Canvas canvas;
+        public float scale;
+        public Point zoomPoint;
+        private final int color;
+
+        private List<Point> points = new ArrayList<>();
+
+        public CircuitView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            thread = null;
+            holder = getHolder();
+            paint = new Paint();
+            run = false;
+            paint.setColor(Color.BLACK);
+            paint.setStrokeWidth(7);
+            this.scale = 1;
+//        TypedValue typedValue = new  TypedValue();
+//        getContext().getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+            color = Color.rgb(217, 44, 44);
+        }
+
+        @Override
+        public void run() {
+            while (run) {
+                if (!holder.getSurface().isValid()) {
+                    continue;
+                }
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                this.canvas = holder.lockCanvas();
+                this.fakeDraw(this.canvas);
+                holder.unlockCanvasAndPost(canvas);
+            }
+        }
+
+        public void fakeDraw(Canvas canvas) {
+            if (this.zoomPoint != null)
+                canvas.scale(this.scale, this.scale, this.getWidth()/2, this.getHeight()/2);
+            canvas.drawColor(Color.WHITE);
+            paint.setColor(Color.DKGRAY);
+            //get component state
+            for (CircuitElm circuitElm : DrawActivity.getCircuitElms()) {
+                SimplePoint start = circuitElm.getP1();
+                SimplePoint end = circuitElm.getP2();
+                circuitElm.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
+            }
+            CircuitElm selected = DrawActivity.getSelectedElm();
+            if (selected != null) {
+                SimplePoint start = selected.getP1();
+                SimplePoint end = selected.getP2();
+                paint.setColor(color);
+                selected.draw(canvas, start.getX(), start.getY(), end.getX(), end.getY(), paint);
+                if(componentState == SOLVED) {
+                    paint.setColor(color);
+                    selected.drawCurrent(canvas, paint);
+                }
+            }
+            //AddComponentState state = DrawActivity.getComponentState();
+            paint.setColor(color);
+            if (candidateElement != null && !DrawActivity.isZooming()) {
+                String type = convertStateToType(DrawActivity.getComponentState());
+                candidateElement.draw(canvas, DrawActivity.getStartX(), DrawActivity.getStartY(), DrawActivity.getEndX(), DrawActivity.getEndY(), paint);
+            }
+        }
+
+        public void control(DrawController controller) {
+            this.scale = (controller.getZoomScale() + this.scale) / 2f;
+            this.zoomPoint = controller.getMiddlePoint();
+        }
+
+        public void pause() {
+            run = false;
+            while (thread != null) {
+                try {
+                    thread.join();
+                    break;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            thread = null;
+        }
+
+        public void resume() {
+            run = true;
+            thread = new Thread(this);
+            thread.start();
+        }
+
+        //this is just a terrible workaround cause no time to change old code
+        private String convertStateToType(AddComponentState state) {
+            switch (state) {
+                case DC_SOURCE:
+                    return Constants.DC_VOLTAGE;
+                case RESISTOR:
+                    return Constants.RESISTOR;
+                case WIRE:
+                    return Constants.WIRE;
+                default:
+                    return Constants.WIRE;
+            }
+        }
+
     }
 
 }

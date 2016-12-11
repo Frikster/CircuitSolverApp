@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:id="@+id/activity_draw_layout">
 
-    <com.cpen321.circuitsolver.ui.draw.CircuitView
+    <view class="com.cpen321.circuitsolver.ui.draw.DrawActivity$CircuitView"
         android:id="@+id/circuitFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
