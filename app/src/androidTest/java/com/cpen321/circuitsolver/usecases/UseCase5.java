@@ -1,5 +1,8 @@
 package com.cpen321.circuitsolver.usecases;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
@@ -9,6 +12,7 @@ import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -24,6 +28,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC1;
+import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC3;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -39,6 +45,29 @@ public class UseCase5 {
     @Rule
     public IntentsTestRule<HomeActivity> mHomeActivityRule =
             new IntentsTestRule<>(HomeActivity.class);
+
+    private static boolean ranOnce = false;
+    @Before
+    public void setupBitmaps(){
+        if(!ranOnce) {
+            Util.deleteAllProjects(mHomeActivityRule.getActivity());
+            mHomeActivityRule.getActivity().setCircuitProjects(new ArrayList<CircuitProject>());
+            Intent intent = mHomeActivityRule.getActivity().getIntent();
+            mHomeActivityRule.getActivity().finish();
+            mHomeActivityRule.getActivity().startActivity(intent);
+            // Use circuit test cases from constant class.
+            // Add more and tests will iterate through all of them
+            for (int test_circuit_id : TEST_CIRCUITS_UC1) {
+                Bitmap bm = BitmapFactory.decodeResource(
+                        mHomeActivityRule.getActivity().getResources(), test_circuit_id);
+                Util.createProjectfromBitmap(mHomeActivityRule.getActivity(), bm);
+                Espresso.pressBack();
+            }
+            mHomeActivityRule.getActivity().finish();
+            mHomeActivityRule.getActivity().startActivity(intent);
+        }
+        ranOnce = true;
+    }
 
     //@Test
     public void deleteMultipleProjects() {

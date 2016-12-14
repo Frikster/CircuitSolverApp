@@ -194,8 +194,8 @@ public class UseCase1{
         //onView(withText(startsWith("Solved"))).inRoot(isToast()).check(matches(isDisplayed()));
         //onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
         onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
-        onView(withId(R.id.currentText)).check(matches(not(withText(""))));
-        onView(withId(R.id.voltageText)).check(matches(not(withText(""))));
+        onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
+        onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
     }
 
 
@@ -237,8 +237,8 @@ public class UseCase1{
         //onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
         //onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
         onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING)))); //todo: default value is not in constants
-        onView(withId(R.id.currentText)).check(matches((withText(""))));
-        onView(withId(R.id.voltageText)).check(matches((withText(""))));
+        onView(withId(R.id.currentText)).check(matches((withText(Constants.NOTHING))));
+        onView(withId(R.id.voltageText)).check(matches((withText(Constants.NOTHING))));
 
         // Change all components to resistors except for one
         for(CircuitElm circuitElm:circuitElms){

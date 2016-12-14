@@ -1,7 +1,11 @@
 package com.cpen321.circuitsolver.usecases;
 
 import android.content.ComponentName;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.SystemClock;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 
@@ -10,8 +14,10 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
+import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -27,11 +33,13 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasCom
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC3;
 import static com.cpen321.circuitsolver.usecases.Util.checkUnits;
 import static com.cpen321.circuitsolver.usecases.Util.clickXY;
 import static com.cpen321.circuitsolver.usecases.Util.countElem;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.midpoint;
+import static com.cpen321.circuitsolver.util.Constants.WIRE_UNITS;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
@@ -65,22 +73,25 @@ public class UseCase4 {
             SimplePoint circuitElm_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
             onView(withId(R.id.circuitFrame)).perform(clickXY(circuitElm_midpoint_coords.getX(),
                     circuitElm_midpoint_coords.getY()));
-            onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
+            // NOTE: a few days ago we dicided to change the UI buttons to have images instead.
+            // This breaks the tests since Espresso has problems specifically with our tinted VectorDrawables
+            // See here: http://stackoverflow.com/questions/33763425/using-espresso-to-test-drawable-changes
+            // onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
             if(circuitElm.getType() != Constants.WIRE){
                 checkUnits(circuitElm);
                 onView(withId(R.id.component_value)).perform(replaceText("23.4"));
                 onView(withId(R.id.solveButton)).perform(click());
                 onView(withText(startsWith("Solved"))).inRoot(isToast()).check(matches(isDisplayed()));
                 SystemClock.sleep(2000);
-                onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
+                onView(withId(R.id.component_value)).check(matches(not(withText(Constants.WIRE_UNITS))));
                 onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
                 onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
             }
             else{
-                onView(withId(R.id.component_value)).check(matches((withText(Constants.NOTHING))));
-                onView(withId(R.id.currentText)).check(matches((withText(Constants.NOTHING))));
-                onView(withId(R.id.voltageText)).check(matches((withText(Constants.NOTHING))));
-                onView(withId(R.id.units_display)).check(matches(withText(Constants.NOTHING)));
+                onView(withId(R.id.component_value)).check(matches((withText(Constants.WIRE_UNITS))));
+                onView(withId(R.id.currentText)).check(matches(not(withText(Constants.NOTHING))));
+                onView(withId(R.id.voltageText)).check(matches(not(withText(Constants.NOTHING))));
+                onView(withId(R.id.units_display)).check(matches(withText(Constants.WIRE_UNITS)));
             }
             // check values for each...
         }
