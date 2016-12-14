@@ -314,7 +314,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                         Toast.makeText(DrawActivity.this, "Select an element to view its values.", Toast.LENGTH_SHORT).show();
                         return false;
                     } else if(componentState == INVALID) {
-                        Toast.makeText(DrawActivity.this, "invalid circuit", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DrawActivity.this, "Invalid circuit", Toast.LENGTH_SHORT).show();
                         return false;
                     } else {
                         prevComponentState = componentState;
@@ -324,7 +324,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
                     circuit.allocate();
                     SpiceInterfacer interfacer = new SpiceInterfacer(circuit.getNodes(), circuit.getElements());
                     if (interfacer.solveCircuit(NgSpice.getInstance(DrawActivity.this))) {
-                        Toast.makeText(DrawActivity.this, "solved", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DrawActivity.this, "Solved", Toast.LENGTH_SHORT).show();
                         for (CircuitElm circuitElm : circuitElms) {
                             circuitElm.calculateCurrent();
                         }
@@ -384,7 +384,7 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 
                 if (((componentState == SOLVED || componentState == INVALID) && componentValueText.getTag() != null)) { //Some bug here where wires triggered if statement
                     componentState = prevComponentState;
-                    Toast.makeText(DrawActivity.this, "prev state wut the heck", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(DrawActivity.this, "prev state wut the heck", Toast.LENGTH_SHORT).show(); this will break tests
                     updateDisplayInfo();
                 }
                 componentValueText.setTag("not null");

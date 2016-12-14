@@ -43,7 +43,6 @@ public class UseCase2 {
     public IntentsTestRule<HomeActivity> mHomeActivityRule =
             new IntentsTestRule<>(HomeActivity.class);
 
-    //todo: this is getting messy. Refactor.
     private static boolean ranOnce = false;
     @Before
     public void setupBitmaps(){

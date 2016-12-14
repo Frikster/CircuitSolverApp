@@ -229,7 +229,7 @@ public class UseCase1{
         onView(withId(R.id.solveButton)).perform(click());
 
         // Check changes
-        onView(withText(startsWith("invalid"))).inRoot(isToast()).check(matches(isDisplayed()));
+        onView(withText(startsWith("Invalid"))).inRoot(isToast()).check(matches(isDisplayed())); //todo: move Invalid to constants
         // NOTE: a few days ago we dicided to change the UI buttons to have images instead.
         // This breaks the tests since Espresso has problems specifically with our tinted VectorDrawables
         // See here: http://stackoverflow.com/questions/33763425/using-espresso-to-test-drawable-changes

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.SystemClock;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 
@@ -28,15 +29,20 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC2;
+import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC3;
 import static com.cpen321.circuitsolver.usecases.Util.allowPermissionsIfNeeded;
 import static com.cpen321.circuitsolver.usecases.Util.clickXY;
 import static com.cpen321.circuitsolver.usecases.Util.countElem;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.midpoint;
+import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
@@ -56,34 +62,64 @@ public class UseCase3 {
             new IntentsTestRule<>(HomeActivity.class);
 
     @Before
-    public void sendBitmap(){
-        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
-                getCircuitProjects();
-        initialProjectCount = circuitProjects.size();
-        // todo: possibly populate with list of bitmaps
-        candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
-                mHomeActivityRule.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
-        ArrayList<CircuitProject> circuitProjects_updated = new ArrayList<>();
-        for(CircuitProject circuitProf : circuitProjects) {
-            circuitProjects_updated.add(circuitProf.clone());
+    public void setupBitmaps(){
+        initialProjectCount = TEST_CIRCUITS_UC3.size();
+        Util.deleteAllProjects(mHomeActivityRule.getActivity());
+        mHomeActivityRule.getActivity().setCircuitProjects(new ArrayList<CircuitProject>());
+        Intent intent = mHomeActivityRule.getActivity().getIntent();
+        mHomeActivityRule.getActivity().finish();
+        mHomeActivityRule.getActivity().startActivity(intent);
+        // Use circuit test cases from constant class.
+        // Add more and tests will iterate through all of them
+        for (int test_circuit_id : TEST_CIRCUITS_UC3) {
+            Bitmap bm = BitmapFactory.decodeResource(
+                    mHomeActivityRule.getActivity().getResources(), test_circuit_id);
+            Util.createProjectfromBitmap(mHomeActivityRule.getActivity(), bm);
+            SystemClock.sleep(2000);
+            Espresso.pressBack();
         }
-        circuitProjects_updated.add(candidateProject.clone());
-        mHomeActivityRule.getActivity().setCircuitProjects(circuitProjects_updated);
-
-        Bitmap bm = BitmapFactory.decodeResource(
-                mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
-        candidateProject.saveOriginalImage(bm);
-        Intent analysisIntent = new Intent(mHomeActivityRule.getActivity().getApplicationContext(),
-                ProcessingActivity.class);
-        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
-        allowPermissionsIfNeeded();
-        mHomeActivityRule.getActivity().startActivity(analysisIntent);
+        mHomeActivityRule.getActivity().finish();
+        mHomeActivityRule.getActivity().startActivity(intent);
     }
 
-    //@Test
+
+
+//    @Before
+//    public void sendBitmap(){
+//        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+//                getCircuitProjects();
+//        initialProjectCount = circuitProjects.size();
+//        // todo: possibly populate with list of bitmaps
+//        candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
+//                mHomeActivityRule.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+//        ArrayList<CircuitProject> circuitProjects_updated = new ArrayList<>();
+//        for(CircuitProject circuitProf : circuitProjects) {
+//            circuitProjects_updated.add(circuitProf.clone());
+//        }
+//        circuitProjects_updated.add(candidateProject.clone());
+//        mHomeActivityRule.getActivity().setCircuitProjects(circuitProjects_updated);
+//
+//        Bitmap bm = BitmapFactory.decodeResource(
+//                mHomeActivityRule.getActivity().getResources(), R.drawable.example_1);
+//        candidateProject.saveOriginalImage(bm);
+//        Intent analysisIntent = new Intent(mHomeActivityRule.getActivity().getApplicationContext(),
+//                ProcessingActivity.class);
+//        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
+//        allowPermissionsIfNeeded();
+//        mHomeActivityRule.getActivity().startActivity(analysisIntent);
+//    }
+
+    @Test
     public void eraseAll() {
-        SystemClock.sleep(2000);
-        getInstrumentation().waitForIdleSync();
+        // selectProjectAndOpenIt()
+        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+                getCircuitProjects();
+        CircuitProject circuitProject_one = circuitProjects.get(0);
+        onView(withTagValue(withStringMatching(circuitProject_one.getFolderID()))).perform(scrollTo(),
+                click());
+        onView(withId(R.id.processing_fab)).perform(click());
+
+
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
         ArrayList<CircuitElm> circuitElms_copy = new ArrayList<>();
         for (CircuitElm circuitElm : circuitElms) {
@@ -102,16 +138,25 @@ public class UseCase3 {
         assert(countElem(circuitElms, com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE) == 0);
         assert(countElem(circuitElms, Constants.RESISTOR) == 0);
         assert(countElem(circuitElms, Constants.WIRE) == 0);
-        onView(withId(R.id.componentMenuButton)).check(matches(withText("Add"))); //todo: constant
-        onView(withId(R.id.component_value)).check(matches(withText(Constants.NOTHING)));
-        onView(withId(R.id.currentText)).check(matches(withText(Constants.NOTHING)));
-        onView(withId(R.id.voltageText)).check(matches(withText(Constants.NOTHING)));
+        // NOTE: a few days ago we dicided to change the UI buttons to have images instead.
+        // This breaks the tests since Espresso has problems specifically with our tinted VectorDrawables
+        // See here: http://stackoverflow.com/questions/33763425/using-espresso-to-test-drawable-changes
+        //onView(withId(R.id.componentMenuButton)).check(matches(withText("Add"))); //todo: constant
+        onView(withId(R.id.component_value)).check(matches(withText("")));
+        onView(withId(R.id.currentText)).check(matches(withText("")));
+        onView(withId(R.id.voltageText)).check(matches(withText("")));
     }
 
     @Test
     public void modifyMultiple() {
-        SystemClock.sleep(2000);
-        getInstrumentation().waitForIdleSync();
+        // selectProjectAndOpenIt()
+        ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
+                getCircuitProjects();
+        CircuitProject circuitProject_one = circuitProjects.get(0);
+        onView(withTagValue(withStringMatching(circuitProject_one.getFolderID()))).perform(scrollTo(),
+                click());
+        onView(withId(R.id.processing_fab)).perform(click());
+
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
         int flag = 2;
         // Randomly modify some resistors
@@ -121,7 +166,10 @@ public class UseCase3 {
                 SimplePoint elem_midpoint_coords = midpoint(circuitElm.getP2(),circuitElm.getP1());
                 onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
                         elem_midpoint_coords.getY()));
-                onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
+                // NOTE: a few days ago we dicided to change the UI buttons to have images instead.
+                // This breaks the tests since Espresso has problems specifically with our tinted VectorDrawables
+                // See here: http://stackoverflow.com/questions/33763425/using-espresso-to-test-drawable-changes
+                // onView(withId(R.id.componentMenuButton)).check(matches(withText("Change")));
                 if(circuitElm.getType() != Constants.DC_VOLTAGE){
                     onView(withId(R.id.componentMenuButton)).perform(click());
                     onView(withText("Resistor")).perform(click()); //todo: move "Resistor" to Constants - make list of all element possibilities cycle through em all
@@ -132,7 +180,7 @@ public class UseCase3 {
                     onView(withId(R.id.circuitFrame)).perform(clickXY(elem_midpoint_coords.getX(),
                             elem_midpoint_coords.getY()));
                     onView(withId(R.id.component_value)).perform(replaceText("23.4"));
-                    onView(withId(R.id.component_value)).check(matches(not(withText(Constants.NOTHING))));
+                    onView(withId(R.id.component_value)).check(matches((withText("23.4"))));
                 }
             }
         }
@@ -140,8 +188,7 @@ public class UseCase3 {
 
     //@Test
     public void autoConnectCloseComponents(){
-        // Test case showing that when you put one component close to another -> they connect automatically
-        // Will implement by Dec. 13
+        // Planned test case showing that when you put one component close to another -> they connect automatically
     }
 
     //@Test
