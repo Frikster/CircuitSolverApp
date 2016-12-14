@@ -34,6 +34,8 @@ import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
+ * Run Use Cases Tests Individually for them to work
+ * USE CASE 2: View component values of a previous analyzed circuit
  */
 public class UseCase2 {
     private final static String TAG = "UC2";

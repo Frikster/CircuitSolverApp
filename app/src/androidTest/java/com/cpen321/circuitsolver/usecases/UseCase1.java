@@ -51,6 +51,7 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/1/2016.
+ * Run Use Cases Tests Individually for them to work
  * USE CASE 1: Edit a previous saved circuit in order to change some components or change numerical values.
  * ASSUMPTION: Circuits defined in TEST_CIRCUITS_UC1 are legal
  */
@@ -230,6 +231,7 @@ public class UseCase1{
 
         // Check changes
         onView(withText(startsWith("Invalid"))).inRoot(isToast()).check(matches(isDisplayed())); //todo: move Invalid to constants
+        SystemClock.sleep(2000);
         // NOTE: a few days ago we dicided to change the UI buttons to have images instead.
         // This breaks the tests since Espresso has problems specifically with our tinted VectorDrawables
         // See here: http://stackoverflow.com/questions/33763425/using-espresso-to-test-drawable-changes

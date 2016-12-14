@@ -37,6 +37,8 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
+ * USE CASE 5: Delete saved circuit
+ * Run Use Cases Tests Individually for them to work
  */
 
 public class UseCase5 {

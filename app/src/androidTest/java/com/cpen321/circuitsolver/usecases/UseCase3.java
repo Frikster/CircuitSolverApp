@@ -42,6 +42,8 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
+ * Run Use Cases Tests Individually for them to work
+ * USE CASE 3: Solve a circuit from an uploaded or taken circuit picture
  */
 public class UseCase3 {
     private final static String TAG = "UC3";

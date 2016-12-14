@@ -45,6 +45,8 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
+ * Run Use Cases Tests Individually for them to work
+ * USE CASE 4: Create virtual circuit by directly drawing in the app
  */
 
 public class UseCase4 {
