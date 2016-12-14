@@ -54,8 +54,7 @@ public final class UseCaseConstants {
                     R.drawable.example_1,
                     R.drawable.example_2,
                     R.drawable.example_2
-                    /* add additional test circuits here.
-                    Note you'll have to add loops to the code as well*/));
+                    /* add additional test circuits here*/));
 
 
 }

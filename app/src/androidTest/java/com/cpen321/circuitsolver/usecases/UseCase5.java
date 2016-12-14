@@ -48,7 +48,7 @@ public class UseCase5 {
             new IntentsTestRule<>(HomeActivity.class);
 
     private static boolean ranOnce = false;
-    @Before
+    //@Before
     public void setupBitmaps(){
         if(!ranOnce) {
             Util.deleteAllProjects(mHomeActivityRule.getActivity());
@@ -70,7 +70,7 @@ public class UseCase5 {
         ranOnce = true;
     }
 
-    //@Test
+    @Test
     public void deleteMultipleProjects() {
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
@@ -94,6 +94,9 @@ public class UseCase5 {
         for(CircuitProject circuitProject : circuitProjects) {
             circuitProjects_copy.add(circuitProject.clone());
         }
+        Intent intent = mHomeActivityRule.getActivity().getIntent();
+        mHomeActivityRule.getActivity().finish();
+        mHomeActivityRule.getActivity().startActivity(intent);
 
         //delete 3
         Iterator<CircuitProject> scroll_iter = circuitProjects_copy.iterator();
@@ -128,6 +131,9 @@ public class UseCase5 {
                 onView(withText("Draw Circuit")).perform(click()); //// TODO: constant
                 Espresso.pressBack();
             }
+            Intent intent = mHomeActivityRule.getActivity().getIntent();
+            mHomeActivityRule.getActivity().finish();
+            mHomeActivityRule.getActivity().startActivity(intent);
         }
 
         // get count (in addition to circuitProjects.size()
