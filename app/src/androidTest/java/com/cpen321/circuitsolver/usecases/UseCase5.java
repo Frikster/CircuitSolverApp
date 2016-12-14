@@ -30,6 +30,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC1;
 import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC3;
+import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC5;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -57,7 +58,7 @@ public class UseCase5 {
             mHomeActivityRule.getActivity().startActivity(intent);
             // Use circuit test cases from constant class.
             // Add more and tests will iterate through all of them
-            for (int test_circuit_id : TEST_CIRCUITS_UC1) {
+            for (int test_circuit_id : TEST_CIRCUITS_UC5) {
                 Bitmap bm = BitmapFactory.decodeResource(
                         mHomeActivityRule.getActivity().getResources(), test_circuit_id);
                 Util.createProjectfromBitmap(mHomeActivityRule.getActivity(), bm);
@@ -71,7 +72,6 @@ public class UseCase5 {
 
     //@Test
     public void deleteMultipleProjects() {
-        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         if(circuitProjects.size() <= 3){

@@ -50,7 +50,10 @@ public final class UseCaseConstants {
     // Test circuits designed to comply with Use Case 1 input assumptions
     public static final List<Integer> TEST_CIRCUITS_UC5 =
             Collections.unmodifiableList(Arrays.asList(
-                    R.drawable.example_1
+                    R.drawable.example_1,
+                    R.drawable.example_1,
+                    R.drawable.example_2,
+                    R.drawable.example_2
                     /* add additional test circuits here.
                     Note you'll have to add loops to the code as well*/));
 
