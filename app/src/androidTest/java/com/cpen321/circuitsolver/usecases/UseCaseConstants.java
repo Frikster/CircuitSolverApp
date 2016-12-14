@@ -28,4 +28,13 @@ public final class UseCaseConstants {
                     /* add additional test circuits here.
                     Note that we see no need to test multiple circuits for UC1
                      So you'll have to add loops to the code as well*/));
+
+    // Test circuits designed to comply with Use Case 1 input assumptions
+    public static final List<Integer> TEST_CIRCUITS_UC2 =
+            Collections.unmodifiableList(Arrays.asList(
+                    R.drawable.example_1,
+                    R.drawable.example_2
+                    /* add additional test circuits here.
+                    Note that we see no need to test more than 2 circuits for UC2
+                     So you'll have to add loops to the code as well*/));
 }

@@ -67,7 +67,7 @@ public class UseCase1{
 
     private static boolean ranOnce = false;
     @Before
-    public void sendBitmaps(){
+    public void setupBitmaps(){
         if(!ranOnce) {
             Util.deleteAllProjects(mHomeActivityRule.getActivity());
             mHomeActivityRule.getActivity().setCircuitProjects(new ArrayList<CircuitProject>());
