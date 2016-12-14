@@ -67,6 +67,7 @@ public class ProcessingActivity extends AppCompatActivity {
 
     private void displayOutputImage() {
         Intent displayIntent = new Intent(getApplicationContext(), DrawActivity.class);
+        Log.e("Processing",this.circuitProject.getFolderPath());
         displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, this.circuitProject.getFolderPath());
         startActivity(displayIntent);
     }

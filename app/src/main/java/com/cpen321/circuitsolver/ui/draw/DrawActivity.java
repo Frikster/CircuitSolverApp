@@ -97,6 +97,9 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
     private static int truncateBits = 5; //helps with drawing parallel lines by limiting angles
     private static final int sigFigs = 5;
 
+    public static ArrayList<CircuitElm> getCircuitElms() {
+        return circuitElms;
+    }
 
     // Scaling objects
     private static ScaleGestureDetector mScaleDetector;
@@ -344,7 +347,6 @@ public class DrawActivity extends AppCompatActivity implements View.OnTouchListe
 //        });
 
         componentValueText.setTag("not null");
-
         componentValueText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {

@@ -1,23 +1,35 @@
 package com.cpen321.circuitsolver.usecases;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.StateListDrawable;
 import android.os.Environment;
+import android.os.SystemClock;
+import android.support.annotation.DrawableRes;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.PerformException;
 import android.support.test.espresso.Root;
+import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
 import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.util.HumanReadables;
+import android.support.test.espresso.util.TreeIterables;
 import android.support.test.rule.ActivityTestRule;
 //import android.support.test.uiautomator.UiDevice;
 //import android.support.test.uiautomator.UiObject;
 //import android.support.test.uiautomator.UiObjectNotFoundException;
 //import android.support.test.uiautomator.UiSelector;
-import android.util.Log;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.model.SimplePoint;
@@ -25,21 +37,26 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
-import com.cpen321.circuitsolver.util.CircuitProject;
+import com.cpen321.circuitsolver.util.*;
 import com.cpen321.circuitsolver.util.Constants;
-import com.cpen321.circuitsolver.util.ImageUtils;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.TimeoutException;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.scrollTo;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.core.deps.guava.base.Preconditions.checkNotNull;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.core.StringStartsWith.startsWith;
@@ -61,6 +78,24 @@ public class Util {
 //                }
 //            }
 //        }
+    }
+
+    public static void deleteAllProjects(HomeActivity homeActivity) {
+        for(CircuitProject circuitProject : homeActivity.getCircuitProjects()){
+            File circuitFolder = new File(homeActivity.getExternalFilesDir(
+                    Environment.DIRECTORY_PICTURES), circuitProject.getFolderID());
+            CircuitProject projToDelete = new CircuitProject(circuitFolder);
+            if (projToDelete.deleteFileSystem()) {
+                homeActivity.setSelectedTag(null);
+            } else {
+                try {
+                    throw new Exception("One or more files failed to delete after a test");
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            homeActivity.updateSavedCircuits();
+        }
     }
 
     public static SimplePoint midpoint(SimplePoint p1, SimplePoint p2) {
@@ -87,15 +122,16 @@ public class Util {
                 Press.FINGER);
     }
 
-    public static void createProjectfromBitmap(ActivityTestRule<HomeActivity> mHomeActivityRule, Bitmap bm){
+    public static void createProjectfromBitmap(HomeActivity homeActivity, Bitmap bm){
         CircuitProject candidateProject = new CircuitProject(ImageUtils.getTimeStamp(),
-                mHomeActivityRule.getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+                homeActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES));
+        homeActivity.addCircuitProject(candidateProject);
         candidateProject.saveOriginalImage(bm);
-        Intent analysisIntent = new Intent(mHomeActivityRule.getActivity().getApplicationContext(),
+        Intent analysisIntent = new Intent(homeActivity.getApplicationContext(),
                 ProcessingActivity.class);
         analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
         Util.allowPermissionsIfNeeded();
-        mHomeActivityRule.getActivity().startActivity(analysisIntent);
+        homeActivity.startActivity(analysisIntent);
     }
 
     public static Matcher<Object> withStringMatching(String expectedText) {
@@ -116,6 +152,80 @@ public class Util {
             public void describeTo(Description description) {
                 description.appendText("with string: ");
                 itemTextMatcher.describeTo(description);
+            }
+        };
+    }
+
+    public static Matcher<View> withActionIconDrawable(@DrawableRes final int resourceId) {
+        return new BoundedMatcher<View, ActionMenuItemView>(ActionMenuItemView.class) {
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("has image drawable resource " + resourceId);
+            }
+
+            @Override
+            public boolean matchesSafely(final ActionMenuItemView actionMenuItemView) {
+                return sameBitmap(actionMenuItemView.getContext(), actionMenuItemView.getItemData().getIcon(), resourceId);
+            }
+
+            private boolean sameBitmap(Context context, Drawable drawable, int resourceId) {
+                Drawable otherDrawable = context.getResources().getDrawable(resourceId);
+                if (drawable == null || otherDrawable == null) {
+                    return false;
+                }
+                if (drawable instanceof StateListDrawable && otherDrawable instanceof StateListDrawable) {
+                    drawable = drawable.getCurrent();
+                    otherDrawable = otherDrawable.getCurrent();
+                }
+                if (drawable instanceof BitmapDrawable) {
+                    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+                    Bitmap otherBitmap = ((BitmapDrawable) otherDrawable).getBitmap();
+                    return bitmap.sameAs(otherBitmap);
+                }
+                return false;
+            }
+
+        };
+    }
+
+    /** Perform action of waiting for a specific view id. */
+    public static ViewAction waitId(final int viewId, final long millis) {
+        return new ViewAction() {
+            @Override
+            public Matcher<View> getConstraints() {
+                return isRoot();
+            }
+
+            @Override
+            public String getDescription() {
+                return "wait for a specific view with id <" + viewId + "> during " + millis + " millis.";
+            }
+
+            @Override
+            public void perform(final UiController uiController, final View view) {
+                uiController.loopMainThreadUntilIdle();
+                final long startTime = System.currentTimeMillis();
+                final long endTime = startTime + millis;
+                final Matcher<View> viewMatcher = withId(viewId);
+
+                do {
+                    for (View child : TreeIterables.breadthFirstViewTraversal(view)) {
+                        // found view with required ID
+                        if (viewMatcher.matches(child)) {
+                            return;
+                        }
+                    }
+
+                    uiController.loopMainThreadForAtLeast(50);
+                }
+                while (System.currentTimeMillis() < endTime);
+
+                // timeout happens
+                throw new PerformException.Builder()
+                        .withActionDescription(this.getDescription())
+                        .withViewDescription(HumanReadables.describe(view))
+                        .withCause(new TimeoutException())
+                        .build();
             }
         };
     }
@@ -152,7 +262,7 @@ public class Util {
                 break;
             }
             case Constants.WIRE: {
-                onView(withId(R.id.units_display)).check(matches(withText(Constants.NOTHING)));
+                onView(withId(R.id.units_display)).check(matches(withText(com.cpen321.circuitsolver.util.Constants.NOTHING)));
                 break;
             }
             case Constants.DC_VOLTAGE: {

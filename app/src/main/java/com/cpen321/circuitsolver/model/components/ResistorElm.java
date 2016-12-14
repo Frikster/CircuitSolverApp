@@ -11,9 +11,6 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.SpiceElm;
 import com.cpen321.circuitsolver.util.Constants;
 
-import java.io.PrintWriter;
-
-import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 
 /**

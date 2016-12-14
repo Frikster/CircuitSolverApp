@@ -4,7 +4,6 @@ package com.cpen321.circuitsolver.service;
 import com.cpen321.circuitsolver.model.CircuitNode;
 import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
-import com.cpen321.circuitsolver.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;

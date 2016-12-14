@@ -9,42 +9,30 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.support.test.annotation.UiThreadTest;
 import android.support.test.espresso.Espresso;
-import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.cpen321.circuitsolver.R;
-import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
-import com.cpen321.circuitsolver.util.CircuitProject;
-import com.cpen321.circuitsolver.util.Constants;
-import com.cpen321.circuitsolver.util.ImageUtils;
+import com.cpen321.circuitsolver.util.*;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.intent.Intents.intended;
 import static android.support.test.espresso.intent.Intents.intending;
 import static android.support.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
@@ -52,7 +40,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.cpen321.circuitsolver.usecases.Util.allowPermissionsIfNeeded;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
 
 /**
  * Created by Cornelis Dirk Haupt on 12/2/2016.
@@ -93,7 +80,7 @@ public class UseCase2 {
         candidateProject.saveOriginalImage(bm);
         Intent analysisIntent = new Intent(mHomeActivityRule.getActivity().getApplicationContext(),
                 ProcessingActivity.class);
-        analysisIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
+        analysisIntent.putExtra(com.cpen321.circuitsolver.util.Constants.CIRCUIT_PROJECT_FOLDER, candidateProject.getFolderPath());
         allowPermissionsIfNeeded();
         mHomeActivityRule.getActivity().startActivity(analysisIntent);
     }

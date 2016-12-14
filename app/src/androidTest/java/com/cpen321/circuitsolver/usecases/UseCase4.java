@@ -85,7 +85,7 @@ public class UseCase4 {
             // check values for each...
         }
         assert(countElem(circuitElms, Constants.DC_VOLTAGE) == 1);
-        assert(countElem(circuitElms, Constants.RESISTOR) == 1);
+        assert(countElem(circuitElms, com.cpen321.circuitsolver.util.Constants.RESISTOR) == 1);
         assert(countElem(circuitElms, Constants.WIRE) == 2);
     }
 }

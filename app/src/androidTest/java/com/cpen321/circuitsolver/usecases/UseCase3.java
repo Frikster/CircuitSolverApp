@@ -14,9 +14,8 @@ import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
-import com.cpen321.circuitsolver.util.CircuitProject;
+import com.cpen321.circuitsolver.util.*;
 import com.cpen321.circuitsolver.util.Constants;
-import com.cpen321.circuitsolver.util.ImageUtils;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -100,7 +99,7 @@ public class UseCase3 {
             onView(withId(R.id.eraseButton)).perform(click());
         }
         // Check numer of elements
-        assert(countElem(circuitElms, Constants.DC_VOLTAGE) == 0);
+        assert(countElem(circuitElms, com.cpen321.circuitsolver.util.Constants.DC_VOLTAGE) == 0);
         assert(countElem(circuitElms, Constants.RESISTOR) == 0);
         assert(countElem(circuitElms, Constants.WIRE) == 0);
         onView(withId(R.id.componentMenuButton)).check(matches(withText("Add"))); //todo: constant

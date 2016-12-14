@@ -1,24 +1,14 @@
 package com.cpen321.circuitsolver.usecases;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.os.SystemClock;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
-import android.support.test.rule.ActivityTestRule;
 import android.widget.LinearLayout;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
-import com.cpen321.circuitsolver.ui.ProcessingActivity;
-import com.cpen321.circuitsolver.ui.draw.DrawActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
-import com.cpen321.circuitsolver.util.Constants;
-import com.cpen321.circuitsolver.util.ImageUtils;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -34,7 +24,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.cpen321.circuitsolver.usecases.Util.allowPermissionsIfNeeded;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
 import static org.hamcrest.core.StringStartsWith.startsWith;

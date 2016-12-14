@@ -1,40 +1,27 @@
 package com.cpen321.circuitsolver.ui;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.VisibleForTesting;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
-import android.database.Cursor;
-import android.util.Log;
 
 import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
@@ -45,9 +32,7 @@ import com.cpen321.circuitsolver.util.ImageUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -70,7 +55,7 @@ public class HomeActivity extends BaseActivity {
     private View drawFab;
     private FloatingActionButton deleteFab;
 
-    private static ArrayList<Activity> activities=new ArrayList<Activity>();
+    //private static ArrayList<Activity> activities=new ArrayList<Activity>();
 
 
 
@@ -134,7 +119,7 @@ public class HomeActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activities.add(this);
+        //activities.add(this);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -216,8 +201,8 @@ public class HomeActivity extends BaseActivity {
                     Intent displayIntent = new Intent(HomeActivity.this, DrawActivity.class);
                     displayIntent.putExtra(Constants.CIRCUIT_PROJECT_FOLDER, circuitFolder.getAbsolutePath());
                     startActivity(displayIntent);
-                    finish();
                 }
+                finish();
             }
         });
 
@@ -376,6 +361,9 @@ public class HomeActivity extends BaseActivity {
     }
     public void setCircuitProjects(ArrayList<CircuitProject> circuitProjects){
         this.circuitProjects = circuitProjects;
+    }
+    public void addCircuitProject(CircuitProject proj){
+        this.circuitProjects.add(proj);
     }
 
 //    public void addScrollItem(CircuitProject candidateProject){

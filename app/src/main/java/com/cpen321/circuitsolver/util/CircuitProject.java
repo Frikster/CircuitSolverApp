@@ -8,8 +8,6 @@ package com.cpen321.circuitsolver.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.cpen321.circuitsolver.model.components.CircuitElm;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +16,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 
 public class CircuitProject implements Cloneable {
     private File originalImage = null;

@@ -4,7 +4,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import com.cpen321.circuitsolver.ui.ProcessingActivity;
 import com.cpen321.circuitsolver.util.Constants;
 
 import org.tensorflow.demo.Classifier;
