@@ -1,11 +1,7 @@
 package com.cpen321.circuitsolver.usecases;
 
 import android.content.ComponentName;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.SystemClock;
-import android.support.test.espresso.Espresso;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.rule.ActivityTestRule;
 
@@ -14,15 +10,14 @@ import com.cpen321.circuitsolver.model.SimplePoint;
 import com.cpen321.circuitsolver.model.components.CircuitElm;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.ui.draw.DrawActivity;
-import com.cpen321.circuitsolver.util.CircuitProject;
 import com.cpen321.circuitsolver.util.Constants;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -33,13 +28,11 @@ import static android.support.test.espresso.intent.matcher.IntentMatchers.hasCom
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC3;
 import static com.cpen321.circuitsolver.usecases.Util.checkUnits;
 import static com.cpen321.circuitsolver.usecases.Util.clickXY;
 import static com.cpen321.circuitsolver.usecases.Util.countElem;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.midpoint;
-import static com.cpen321.circuitsolver.util.Constants.WIRE_UNITS;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
@@ -60,6 +53,7 @@ public class UseCase4 {
 
     @Test
     public void drawSimplistCircuitandSolve() {
+        getInstrumentation().waitForIdleSync();
         onView(withId(R.id.fab_expand_menu_button)).perform(click());
         SystemClock.sleep(1000);
         onView(withText("Draw Circuit")).perform(click());

@@ -12,7 +12,6 @@ import com.cpen321.circuitsolver.R;
 import com.cpen321.circuitsolver.ui.HomeActivity;
 import com.cpen321.circuitsolver.util.CircuitProject;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -28,8 +27,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC1;
-import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC3;
 import static com.cpen321.circuitsolver.usecases.UseCaseConstants.TEST_CIRCUITS_UC5;
 import static com.cpen321.circuitsolver.usecases.Util.isToast;
 import static com.cpen321.circuitsolver.usecases.Util.withStringMatching;
@@ -74,6 +71,7 @@ public class UseCase5 {
 
     @Test
     public void deleteMultipleProjects() {
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         if(circuitProjects.size() <= 3){

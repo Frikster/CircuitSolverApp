@@ -26,6 +26,7 @@ import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -91,6 +92,7 @@ public class UseCase1{
 
     @Test
     public void selectProjectAndOpenIt(){
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         CircuitProject circuitProject_one = circuitProjects.get(0);
@@ -102,6 +104,7 @@ public class UseCase1{
 
     @Test
     public void selectComponent(){
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         CircuitProject circuitProject_one = circuitProjects.get(0);
@@ -131,6 +134,7 @@ public class UseCase1{
 
     @Test
     public void changeComponent(){
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         CircuitProject circuitProject_one = circuitProjects.get(0);
@@ -178,6 +182,7 @@ public class UseCase1{
 
     @Test
     public void changeComponentandSolve(){
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitElm> circuitElms = mDrawActivityRule.getActivity().getCircuitElms();
         CircuitElm selectedDC_Voltage = getFirstOfType(circuitElms, Constants.DC_VOLTAGE);
         CircuitElm selectedResistor = getFirstOfType(circuitElms, Constants.RESISTOR);
@@ -202,6 +207,7 @@ public class UseCase1{
 
     @Test
     public void changeComponentandSolveUnsolvable(){
+        getInstrumentation().waitForIdleSync();
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
         CircuitProject circuitProject_one = circuitProjects.get(0);

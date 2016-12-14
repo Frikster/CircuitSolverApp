@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -71,6 +72,7 @@ public class UseCase2 {
 
     @Test
     public void goBackFromDraw() {
+        getInstrumentation().waitForIdleSync();
         // Go back from DrawActivity -> check that circuit exists
         // selectProjectAndOpenIt() code:
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
@@ -94,6 +96,7 @@ public class UseCase2 {
 
     @Test
     public void goBackFromDrawandPicknew() {
+        getInstrumentation().waitForIdleSync();
         //- Go back from DrawActivity -> pick new one -> go FAB -> changed
 
         // it is unknown why, but trying to call goBackFromDraw() from here causes a failure even

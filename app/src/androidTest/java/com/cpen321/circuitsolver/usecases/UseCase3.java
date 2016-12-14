@@ -23,6 +23,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.replaceText;
@@ -77,6 +78,7 @@ public class UseCase3 {
 
     @Test
     public void eraseAll() {
+        getInstrumentation().waitForIdleSync();
         // selectProjectAndOpenIt()
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
@@ -115,6 +117,7 @@ public class UseCase3 {
 
     @Test
     public void modifyMultiple() {
+        getInstrumentation().waitForIdleSync();
         // selectProjectAndOpenIt()
         ArrayList<CircuitProject> circuitProjects = mHomeActivityRule.getActivity().
                 getCircuitProjects();
