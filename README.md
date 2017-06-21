@@ -12,13 +12,13 @@
 
 Please follow the links above to our documentation for more information. Look at the [Final Presentation](https://github.com/Frikster/CircuitSolverApp/blob/master/docs/CPEN%20321%20Final%20Presentation.pdf) for a summary of everything.
 
-## Result
+## Functionality Showcase
 
-1. OpenCV (Canny Edge detection, Hough Lines transform and DBScan clutering) for image processing
-2. TensorFlow to recognize components found by OpenCV
-3. Android NDK and NgSpice open source circuit simulator for solving the resultant circuit given particular inputs
+1. OpenCV (Canny Edge detection, Hough Lines transform and DBScan clutering) was used for image processing
+2. TensorFlow was used to recognize components found by OpenCV
+3. Android NDK and NgSpice open source circuit simulator were used for solving the resultant circuit, given particular inputs
 
-
+![Final Presentation Video](http://i.imgur.com/PZ1KiCj.gif)
 
 ## Automated Testing using Espresso and JUnit
 
