@@ -18,7 +18,9 @@ Please follow the links above to our documentation for more information. Look at
 2. TensorFlow was used to recognize components found by OpenCV
 3. Android NDK and NgSpice open source circuit simulator were used for solving the resultant circuit, given particular inputs
 
-![Final Presentation Video](http://i.imgur.com/PZ1KiCj.gif)
+Click the video link to watch the showcase: 
+
+[![Final Presentation Video](https://img.youtube.com/vi/Zddf8dFEy4M/0.jpg)](https://www.youtube.com/watch?v=Zddf8dFEy4M)
 
 ## Automated Testing using Espresso and JUnit
 
